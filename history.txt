@@ -22,3 +22,23 @@ documents (Frames, Pid)
 Пид-регулирование.
 
 Будет добавлено управление системой охлаждения.
+
+https://github.com/ocrdu/Arduino_SAMD21_turbo_PWM
+  PWM Freg 192.0 kHz:
+Main Clock Divider  1   5
+TCCx Prescaler      1   1
+Resolution          500 100
+
+SAMD21G18 timer/channel:
+
+TCC0/WO[0]: PA04, PA08         TCC0/WO[4]: PA14, PA22, PB10
+TCC0/WO[1]: PA05, PA09         TCC0/WO[5]: PA15, PA23, PB11
+TCC0/WO[2]: PA10, PA18         TCC0/WO[6]: PA12, PA16, PA20
+TCC0/WO[3]: PA11, PA19         TCC0/WO[7]: PA13, PA17, PA21
+
+TCC1/WO[0]: PA06, PA10, PA30   TCC1/WO[2]: PA08, PA24
+TCC1/WO[1]: PA07, PA11, PA31   TCC1/WO[3]: PA09, PA25
+
+TCC2/WO[0]: PA00, PA12, PA16
+TCC2/WO[1]: PA01, PA13, PA17
+
