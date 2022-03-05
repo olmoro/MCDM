@@ -37,22 +37,22 @@ void swPinOff()
 }
 
 
-void p15PinOn()  { digitalWrite( MPins::pa15_pin, LOW  ); }  // Включение тестового вывода
-void p15PinOff() { digitalWrite( MPins::pa15_pin, HIGH ); }  // Отключение  тестового вывода
+//void p15PinOn()  { digitalWrite( MPins::pa15_pin, LOW  ); }  // Включение тестового вывода
+//void p15PinOff() { digitalWrite( MPins::pa15_pin, HIGH ); }  // Отключение  тестового вывода
 
-void p14PinOn()  { digitalWrite( MPins::pa14_pin, LOW  ); }  // Включение тестового вывода
-void p14PinOff() { digitalWrite( MPins::pa14_pin, HIGH ); }  // Отключение  тестового вывода
+void test1On()  { digitalWrite( MPins::test1, LOW  ); }  // Включение тестового вывода
+void test1Off() { digitalWrite( MPins::test1, HIGH ); }  // Отключение  тестового вывода
 
-void tstPinOn()  { digitalWrite( MPins::tst_pin, LOW  ); }  // Включение тестового вывода
-void tstPinOff() { digitalWrite( MPins::tst_pin, HIGH ); }  // Отключение  тестового вывода
+void test2On()  { digitalWrite( MPins::test2, LOW  ); }  // Включение тестового вывода
+void test2Off() { digitalWrite( MPins::test2, HIGH ); }  // Отключение  тестового вывода
 
 
   // Инициализация дискретных портов
 void portsInit()
 {
-  pinMode( MPins::pa15_pin, OUTPUT);
-  pinMode( MPins::pa14_pin, OUTPUT);  
-  pinMode( MPins::tst_pin, OUTPUT);
+  //pinMode( MPins::pa15_pin, OUTPUT);
+  pinMode( MPins::test1, OUTPUT);  
+  pinMode( MPins::test2, OUTPUT);
   pinMode( MPins::sw_pin,  OUTPUT);
   // #ifdef REMONT
   //   pinMode( MPins::sw15_pin, OUTPUT );
@@ -64,9 +64,9 @@ void portsInit()
   #endif
 
   swPinOff();               // Силовые ключи нагрузки отключены
-  p15PinOff();
-  p14PinOff();
-  tstPinOn();               //
+  //p15PinOff();
+  test1Off();
+  test2On();               //
   dacInit();                // Set reference
   dacWrite10bit( 0x0000 );  //
 }

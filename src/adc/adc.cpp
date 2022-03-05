@@ -191,22 +191,31 @@ void measure()
   if( micros() - ts >= period )
   { 
     ts += period; 
-  p15PinOn();     // Метка для осциллографа
+
+    #ifdef TEST_MEASURE
+      test1On();     // Метка для осциллографа
+    #endif
     mvVoltage = getVoltage( averageAdcU( smoothU ) );
     tresholdUpU(mvVoltage);                // отключения по перенапряжению (взять быстрое)
-  p15PinOff();     // Метка для осциллографа
+    #ifdef TEST_MEASURE
+      test1Off();     // Метка для осциллографа
+    #endif
 
-  p14PinOn();     // Метка для осциллографа
+    #ifdef TEST_MEASURE
+      test1On();     // Метка для осциллографа
+    #endif
     maCurrent = getCurrent( averageAdcI( smoothI ) );
     tresholdUpI(maCurrent);     // Перегрузка по току  (взять быстрое)
-  p14PinOff();     // Метка для осциллографа
+    #ifdef TEST_MEASURE
+      test1Off();     // Метка для осциллографа
+    #endif
 
-    #ifdef OSC_FREQ
-      tstPinOff();    // Метка для осциллографа
+    #ifdef TEST_PID
+      test2Off();    // Метка для осциллографа
     #endif
     doPid( mvVoltage, maCurrent );    // fbU, fbI
-    #ifdef OSC_FREQ
-      tstPinOn();     // Метка для осциллографа
+    #ifdef TEST_PID
+      test2On();     // Метка для осциллографа
     #endif
   }
 }

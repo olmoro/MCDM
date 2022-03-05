@@ -10,6 +10,7 @@
             "includePath": [
                 "f:/GitHub/MCDM/include",
                 "f:/GitHub/MCDM/src",
+                "f:/GitHub/MCDM/lib/Arduino_SAMD21_turbo_PWM/src",
                 "f:/GitHub/MCDM/lib/FlashStorage/src",
                 "C:/Users/olmor/.platformio/packages/framework-arduino-samd/libraries/SAMD_AnalogCorrection/src",
                 "C:/Users/olmor/.platformio/packages/framework-arduino-samd/cores/arduino/api/deprecated",
@@ -37,6 +38,7 @@
                 "path": [
                     "f:/GitHub/MCDM/include",
                     "f:/GitHub/MCDM/src",
+                    "f:/GitHub/MCDM/lib/Arduino_SAMD21_turbo_PWM/src",
                     "f:/GitHub/MCDM/lib/FlashStorage/src",
                     "C:/Users/olmor/.platformio/packages/framework-arduino-samd/libraries/SAMD_AnalogCorrection/src",
                     "C:/Users/olmor/.platformio/packages/framework-arduino-samd/cores/arduino/api/deprecated",
@@ -75,7 +77,9 @@
                 "NOEE=1",
                 "WEMOS=1",
                 "HZ_10=1",
-                "OSC_FREQ=1",
+                "VER190=1",
+                "TEST_MEASURE=1",
+                "TEST_PID=1",
                 ""
             ],
             "cStandard": "c11",

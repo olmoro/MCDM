@@ -16,6 +16,8 @@
 #include "commands/commands.h"
 #include "power/power_reg.h"
 #include "adc/adc.h"
+    //#include "power/power_pwm.h"
+    #include "power/mpwm.h"
 
 #include <Arduino.h>            // N. порядок не нарушать!
 #include "wiring_private.h"     // N=1.
@@ -24,10 +26,12 @@
 void setup() 
 {
   SerialUSB.begin(115200);
+  //while(!SerialUSB);   //delay(1);
   delay(1);
 
   // инициализация UART порта обмена с ESP32 ( D0:PA11/UART-RX, D1:PA10/UART-TX )
   Serial1.begin(115200);            // это не порт монитора - тот SerialUSB
+  while(!Serial1);
 
   portsInit();
   wakeInit( 0x00, 500 );            // обмен без адреса, время ожидания 500 ms
@@ -36,6 +40,11 @@ void setup()
   initPids();                       // 
   initState1();
   initState2();
+
+
+  //  writePwm(0x0800);         // test
+
+SerialUSB.print("PWM frequency moro: ");  SerialUSB.println("Hz");
 }
 
 void loop() 

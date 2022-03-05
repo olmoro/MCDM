@@ -17,15 +17,15 @@
 * https://github.com/arduino/ArduinoCore-samd/pull/374/files
 * additional analog inputs: A6-A11 #374 
 *
-* Версия от 23 октября 2020г.
-* Версия от 09 декабря 2021г.
+* Версия от 05 марта 2022г. 
+* pcb: micD21.v51
 */
 
 #include "stdint.h"
 
 namespace MPins
 {
-//                q920_name      arduino_pin  M0-MINI   SAMD21_name
+//                  name        arduino_pin  M0-MINI   SAMD21_name
 // A0 PA02 - аналоговый выход на цепь разряда
 constexpr uint8_t dac_pin           =   14;    // A0   PA02
 
@@ -56,11 +56,11 @@ constexpr uint8_t pow_minus_mux     =    9;    // D3   additional analog as PA09
 // D0/D1 PA11/PA10 - SERCOM/UART (Serial1, обмен с ESP32)                                         Logic Analyzer Inputs
 constexpr uint8_t uart_rx           =    0;    // D0   PA11/UART-RX                                       Ch 0
 constexpr uint8_t uart_tx           =    1;    // D1   PA10/UART-TX                                       Ch 1
-                                               //      /reset                                             Ch 2
-constexpr uint8_t sw_pin            =   13;    // D13  PA17 Управление силовыми ключами (нагрузкой)       Ch 3
-constexpr uint8_t pa15_pin          =    5;    // D5   PA15 Зарезервирован                                Ch 4
-constexpr uint8_t pa14_pin          =    2; //4;    // D4   PA14 Зарезервирован                                Ch 5 20211214
-constexpr uint8_t tst_pin           =   12;    // D12  PA19 Тестовый вывод для осциллографирования        Ch 6
+constexpr uint8_t sw_pin            =   13;    // D13  PA17 Управление силовыми ключами (нагрузкой)       Ch 2
+                                               //      /reset                                             Ch 3
+constexpr uint8_t test1             =    2;    // D4   PA14 Тестовый вывод для осциллографирования        Ch 4
+constexpr uint8_t pa15_cool         =    5;    // D5   PA15 ШИМ на вентилятор                             Ch 5
+constexpr uint8_t test2             =   12;    // D12  PA19 Тестовый вывод для осциллографирования        Ch 6
 constexpr uint8_t out_pin           =   11;    // D11  PA16 ШИМ на силовой преобразователь                Ch 7
 
 // PB10, PB11, PA12, PA13 - не используются (нет на SAMD21 MINI)
