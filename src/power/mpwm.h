@@ -9,6 +9,7 @@
 #include "stdint.h"
 
 void initPwm();
-void writePwm(uint16_t value);
+void writePwmOut(uint32_t value);
+void writePwmCool(uint32_t value);
 
 #endif  //!_MPWM_H_

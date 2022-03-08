@@ -1,17 +1,11 @@
 /*
-  // https://shawnhymel.com/1710/arduino-zero-samd21-raw-pwm-using-cmsis/  ??
-  // Output PWM 24Khz on digital pin PA16 (D11 SAMD21 MINI)
-  // SAMD21 pin 11
-  // using timer TCC2 (10-bit resolution), channel CH0
-  // Версия от 23 октября 2020г.
+  // https://shawnhymel.com/1710/arduino-zero-samd21-raw-pwm-using-cmsis/  - отменено
 
-VER190:
-  https://shawnhymel.com/1710/arduino-zero-samd21-raw-pwm-using-cmsis/
-  // Note: Uses pin 16 as the out_pin   = 11;    // D11  PA16 ШИМ на силовой преобразователь                Ch 7 ?
-  // Note: Uses pin 14 as the pa14_pin  =  2; //4?;    // D4   PA14 Зарезервирован для вентилятора           Ch 5 ?
-
-  ===
   https://translated.turbopages.org/proxy_u/en-ru.ru.14bc2e5e-6224d5e4-354108d9-74722d776562/https/github.com/ocrdu/Arduino_SAMD21_turbo_PWM
+
+  Версия март 2020
+  Оба канала на 190кГц
+
 */
 
 #include "power/mpwm.h"
@@ -27,72 +21,40 @@ TurboPWM pwm;
   constexpr bool     pwm_invert = false;        //
   bool pwmInvert                = pwm_invert;   // 0 - активный уровень
 
+  // Новые параметры настройки
+  constexpr bool                    pwm_turbo       = false;  // turbo on/off для обоих таймеров
+  constexpr unsigned int            pwm_tccdiv_out  = 1;      // делитель для таймера 0 (1,2,4,8,16,64,256,1024)
+  constexpr unsigned int            pwm_tccdiv_cool = 1;      // делитель для таймера 2 (1,2,4,8,16,64,256,1024)
+  constexpr unsigned long long int  pwm_steps_out   = 250;    // разрешение для таймера 0 (2 to counter_size)
+  constexpr unsigned long long int  pwm_steps_cool  = 250;    // разрешение для таймера 2 (2 to counter_size)
 
-//const int pin_out = 10; // PA18
-//const int pin_cool = 11; // PA16  //7;   //
+  bool         pwmTurbo       = pwm_turbo;
+  unsigned int pwmTccdivOut   = pwm_tccdiv_out;
+  unsigned int pwmTccdivCool  = pwm_tccdiv_cool;
+  unsigned int pwmStepsOut    = pwm_steps_out;
+  unsigned int pwmStepsCool   = pwm_steps_cool;
+
 
 void initPwm()
 {
-  pwm.setClockDivider(1, true);     // Input clock is divided by 1 and sent to Generic Clock, Turbo is On
-  pwm.timer(0, 2, 250, true);       // (OUT)  Timer 0 is set to Generic Clock divided by 1, resolution is 250, normal aka fast aka single-slope PWM
-  pwm.timer(2, 2, 250, true);       // (COOL) Timer 2 is set to Generic Clock divided by 2, resolution is 250, normal aka fast aka single-slope PWM
+  pwm.setClockDivider(1, pwmTurbo);           // Input clock is divided by 1 and sent to Generic Clock, Turbo is On/Off
+  pwm.timer(0, pwm_tccdiv_out,  pwm_steps_out,  true);  // (OUT)  T0, divider, resolution (подстройка частоты), single-slope PWM
+  pwm.timer(2, pwm_tccdiv_cool, pwm_steps_cool, true);  // (COOL) T2, divider, resolution (подстройка частоты), single-slope PWM
 
 
- pwm.analogWrite(MPins::out_pin, 100);
+ pwm.analogWrite(MPins::out_pin, 900);    // test
 
- pwm.analogWrite(MPins::cool_pin, 500);
+ pwm.analogWrite(MPins::cool_pin, 500);    // test
 
 
 }
 
-void writePwm(uint16_t value)
+void writePwmOut(uint32_t value)
 {
-  // REG_TCC2_CC0 = value;                           // TCC2 CC0 - on D11 - PWM signalling
-  // while (TCC2->SYNCBUSY.bit.CC3);                 // Wait for synchronization
+  pwm.analogWrite(MPins::out_pin, value);
 }
 
-
-
-
-
-// TurboPWM pwm;
-
-//   // nu
-//   constexpr uint32_t pwm_period = 48 - 1;       // 
-//   uint32_t           pwmPeriod  = pwm_period;   // 1/Freq
-//   constexpr bool     pwm_invert = false;        //
-//   bool pwmInvert                = pwm_invert;   // 0 - активный уровень
-
-// void initPwm()
-// {
-//   // pwm.setClockDivider(1, true);     // Input clock is divided by 1 and sent to Generic Clock, Turbo is On
-//   // pwm.timer(2, 256, 40000, false);  // Timer 2 is set to Generic Clock divided by 256, resolution is 40000, phase-correct aka dual-slope PWM 
-//   // pwm.timer(1, 1, 250, true);       // Timer 1 is set to Generic Clock divided by 1, resolution is 250, normal aka fast aka single-slope PWM
-
-//   // pwm.analogWrite(MPins::out_pin, 400);
-//   // pwm.analogWrite(MPins::pa15_cool, 700);
-
-//  //pwm.analogWrite(MPins::out_pin, 400);
-//   //SerialUSB.print("PWM frequency: "); SerialUSB.print(pwm.frequency(1)); SerialUSB.println("Hz");
-//   //SerialUSB.println("Duty cycle: 100/1000\n");
-//   //delay(2000);
-
-//   // pwm.setClockDivider(200, false); // Main clock divided by 200 => 240KHz
-//   // pwm.timer(2, 4, 60000, false);   // Use timer 2 for pin 13, divide clock by 4, resolution 60000, dual-slope PWM
-//   // pwm.analogWrite(13, 500);        // PWM frequency is now 0.5Hz, dutycycle is 500 / 1000 * 100% = 50%
-
-//   pwm.setClockDivider(1, false);     // Input clock is divided by 1 and sent to Generic Clock, Turbo is On
-//   pwm.timer(0, 4, 40000, false);  // Timer 2 is set to Generic Clock divided by 256, resolution is 40000, phase-correct aka dual-slope PWM 
-//   //pwm.timer(1, 1, 250, true);       // Timer 1 is set to Generic Clock divided by 1, resolution is 250, normal aka fast aka single-slope PWM
-
-//   //pwm.analogWrite(MPins::out_pin, 300);
-//   pwm.analogWrite(11, 300);
-
-
-// }
-
-// void writePwm(uint16_t value)
-// {
-//   // REG_TCC2_CC0 = value;                           // TCC2 CC0 - on D11 - PWM signalling
-//   // while (TCC2->SYNCBUSY.bit.CC3);                 // Wait for synchronization
-// }
+void writePwmCool(uint32_t value)
+{
+  pwm.analogWrite(MPins::cool_pin, value);
+}

@@ -176,7 +176,8 @@ void doPid( int16_t fbU, int16_t fbI )
       swPinOff();
       switchStatus          = false;            // отключить от нагрузки
 
-      writePwm( 0x0000 );
+//      writePwm( 0x0000 );
+      writePwmOut( 0x0000 );
       powerStatus           = false;            // преобразователь выключен
 
       currentControlStatus  = false;            // регулирование по току отключено
@@ -202,7 +203,8 @@ void doPid( int16_t fbU, int16_t fbI )
         voltageControlStatus  = true;           // регулирование по напряжению включено
 
         outU = MyPid.step( setpoint[U], fbU );  // коррекция 
-        writePwm( outU );
+//        writePwm( outU );
+        writePwmOut( outU );
         powerStatus           = true;           // преобразователь включен
 
         currentControlStatus  = false;          // регулирование по току отключено
@@ -252,7 +254,8 @@ void doPid( int16_t fbU, int16_t fbI )
         currentControlStatus  = true;           // регулирование по току включено
 
         outI = MyPid.step( setpoint[I], fbI );
-        writePwm( outI );
+//        writePwm( outI );
+        writePwmOut( outI );
         powerStatus           = true;           // преобразователь включен
         
         voltageControlStatus  = false;          // регулирование по напряжению выключено
@@ -297,7 +300,8 @@ void doPid( int16_t fbU, int16_t fbI )
       swPinOn();
       switchStatus          = true;   // батарея подключена (не факт))
 
-      writePwm( 0x0000 );
+//      writePwm( 0x0000 );
+      writePwmOut( 0x0000 );
       powerStatus           = false;  // преобразователь выключен
 
       currentControlStatus  = false;  // регулирование по току выключено
@@ -305,7 +309,8 @@ void doPid( int16_t fbU, int16_t fbI )
       chargeStatus          = false;  // заряд выключен
 
       outD = MyPidD.step( setpoint[I], fbI );  // коррекция ( откорректировать полярности )
-      writePwm( outD );
+//      writePwm( outD );
+      writePwmOut( outD );
 
       dischargeStatus       = true;   // разряд включен с регулированием по току
       pauseStatus           = false;  // пауза отключена
@@ -745,7 +750,8 @@ void doSwPin()
       swPinOff();
       switchStatus          = false;  // коммутатор отключен
 
-      writePwm( 0x0000 );
+//      writePwm( 0x0000 );
+      writePwmOut( 0x0000 );
       powerStatus           = false;  // преобразователь выключен
       chargeStatus          = false;
       
@@ -777,7 +783,8 @@ void setPower()
     switchStatus          = true;   // коммутатор включен
 
     uint16_t val = get16(0);
-    writePwm( val );           //     
+//    writePwm( val );           //     
+    writePwmOut( val );           //     
 
     if( val )  powerStatus = true;   // преобразователь включен
       else     powerStatus = false;  // преобразователь выключен
