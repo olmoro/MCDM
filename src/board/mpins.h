@@ -18,7 +18,7 @@
 * additional analog inputs: A6-A11 #374 
 *
 * Версия от 05 марта 2022г. 
-* pcb: micD21.v51
+* pcb: micD21.v51 с исправлениями (PA15, PA16, PA18)
 */
 
 #include "stdint.h"
@@ -53,15 +53,15 @@ constexpr uint8_t pow_plus_mux      =    8;    // D2   additional analog as PA08
 constexpr uint8_t pow_minus_pin     =   50;    // D3   additional analog as PA09
 constexpr uint8_t pow_minus_mux     =    9;    // D3   additional analog as PA09
 
-// D0/D1 PA11/PA10 - SERCOM/UART (Serial1, обмен с ESP32)                                         Logic Analyzer Inputs
+// D0/D1 PA11/PA10 - SERCOM/UART (Serial1, обмен с ESP32)                                         Logic Analyzer Inputs v.51
 constexpr uint8_t uart_rx           =    0;    // D0   PA11/UART-RX                                       Ch 0
 constexpr uint8_t uart_tx           =    1;    // D1   PA10/UART-TX                                       Ch 1
 constexpr uint8_t sw_pin            =   13;    // D13  PA17 Управление силовыми ключами (нагрузкой)       Ch 2
                                                //      /reset                                             Ch 3
 constexpr uint8_t test1             =    2;    // D4   PA14 Тестовый вывод для осциллографирования        Ch 4
-constexpr uint8_t pa15_cool         =    5;    // D5   PA15 ШИМ на вентилятор                             Ch 5
+constexpr uint8_t cool_pin          =   11;    // D11  PA16 ШИМ на вентилятор                             Ch 5
 constexpr uint8_t test2             =   12;    // D12  PA19 Тестовый вывод для осциллографирования        Ch 6
-constexpr uint8_t out_pin           =   11;    // D11  PA16 ШИМ на силовой преобразователь                Ch 7
+constexpr uint8_t out_pin           =   10;    // D10  PA18 ШИМ на силовой преобразователь                Ch 7
 
 // PB10, PB11, PA12, PA13 - не используются (нет на SAMD21 MINI)
 // PB03, PA27 - только на SMD21 MINI

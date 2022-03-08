@@ -30,15 +30,8 @@ void swPinOn()
   // Выключение силовых ключей
 void swPinOff()
 {
-  // #ifdef REMONT
-  //   digitalWrite( MPins::sw15_pin, HIGH );
-  // #endif
   digitalWrite( MPins::sw_pin, HIGH );
 }
-
-
-//void p15PinOn()  { digitalWrite( MPins::pa15_pin, LOW  ); }  // Включение тестового вывода
-//void p15PinOff() { digitalWrite( MPins::pa15_pin, HIGH ); }  // Отключение  тестового вывода
 
 void test1On()  { digitalWrite( MPins::test1, LOW  ); }  // Включение тестового вывода
 void test1Off() { digitalWrite( MPins::test1, HIGH ); }  // Отключение  тестового вывода
@@ -50,21 +43,19 @@ void test2Off() { digitalWrite( MPins::test2, HIGH ); }  // Отключение
   // Инициализация дискретных портов
 void portsInit()
 {
-  //pinMode( MPins::pa15_pin, OUTPUT);
-  pinMode( MPins::test1, OUTPUT);  
-  pinMode( MPins::test2, OUTPUT);
-  pinMode( MPins::sw_pin,  OUTPUT);
-  // #ifdef REMONT
-  //   pinMode( MPins::sw15_pin, OUTPUT );
-  // #endif
-  
+//  pinMode( MPins::out_pin, OUTPUT);
+//  pinMode( MPins::cool_pin, OUTPUT);
+
+  pinMode( MPins::test1,  OUTPUT);  
+  pinMode( MPins::test2,  OUTPUT);
+  pinMode( MPins::sw_pin, OUTPUT);
+   
   #ifdef WEMOS    // using pcb SAMD21 MINI
     pinMode( MPins::led_rx, OUTPUT);  // led_rx   = 25   no   PB03/LED1 (LED_BUILTIN, LED_RX)
     pinMode( MPins::led_tx, OUTPUT);  // led_tx   = 26   no   PA27/LED2 (LED_TX)
   #endif
 
   swPinOff();               // Силовые ключи нагрузки отключены
-  //p15PinOff();
   test1Off();
   test2On();               //
   dacInit();                // Set reference

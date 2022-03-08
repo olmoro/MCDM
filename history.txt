@@ -42,3 +42,8 @@ TCC1/WO[1]: PA07, PA11, PA31   TCC1/WO[3]: PA09, PA25
 TCC2/WO[0]: PA00, PA12, PA16
 TCC2/WO[1]: PA01, PA13, PA17
 
+20:26 07.03.2022
+Для совместимости с SAMD21turboPWM.h
+изменена схема подключения cool_pin и out_pin
+TCC0/WO[2]: PA18(out)
+TCC2/WO[0]: PA16(cool)

@@ -1,14 +1,14 @@
 /*
-    https://manualzz.com/doc/11587480/using-atsamd21-sercom-for-more-spi--i2c-and-serial-ports
-    Using ATSAMD21 SERCOM for more SPI, I2C and Serial ports
+  https://manualzz.com/doc/11587480/using-atsamd21-sercom-for-more-spi--i2c-and-serial-ports
+  Using ATSAMD21 SERCOM for more SPI, I2C and Serial ports
 
-    View detail for Atmel AT11628: SAM D21 SERCOM I2C Configuration
+  View detail for Atmel AT11628: SAM D21 SERCOM I2C Configuration
 
-    Вариант с UART
-    25 ноября 2020г  - 28 март 2021                                           дек 2021  фев 2022
-    Platform: Atmel SAM 4.5.1 > 26.11.2020 5.0.1 > 11.12.2020 5.0.2 -> 5.2.0 -> 7.0.0 -> 7.1.0
-    VS: 1.62.3 -> 1.63.0
-    pcb: eltrD21.v3.1       v40.1
+  Вариант с UART
+  05 март 2022
+  Platform: 7.1.0
+  VS: 1.65.0
+  pcb: micD21.v51
 */
 
 #include "board/mpins.h"
@@ -25,12 +25,8 @@
 
 void setup() 
 {
-  SerialUSB.begin(115200);
-  //while(!SerialUSB);   //delay(1);
-  delay(1);
-
   // инициализация UART порта обмена с ESP32 ( D0:PA11/UART-RX, D1:PA10/UART-TX )
-  Serial1.begin(115200);            // это не порт монитора - тот SerialUSB
+  Serial1.begin(115200);            // 
   while(!Serial1);
 
   portsInit();
@@ -44,15 +40,12 @@ void setup()
 
   //  writePwm(0x0800);         // test
 
-SerialUSB.print("PWM frequency moro: ");  SerialUSB.println("Hz");
 }
 
 void loop() 
 {
-//SerialUSB.print("*");  delay(1000); // TEST USB
-
     // Измерения и регулирование
-  //doMeasure();   // считать, преобразовать, задать следующее и запустить
+    // считать, преобразовать, задать следующее и запустить
   measure();
     // Обслуживание интерфейса
   if( Serial1.available() )

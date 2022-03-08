@@ -17,8 +17,8 @@
 #include "adc/adc.h"      // DAC
 #include "wake/wake.h"
 //#include "eeprom/drvData.h"
-//#include "power/power_pwm.h"
-#include "power/mpwm.h"
+  //#include "power/power_pwm.h"
+  #include "power/mpwm.h"
 #include "power/power_reg.h"
 #include "commands/commands.h"
 #include "power/mpid.h"
