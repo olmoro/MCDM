@@ -15,11 +15,11 @@
 
 TurboPWM pwm;
 
-  // nu - исторические, до замены
-  constexpr uint32_t pwm_period = 48 - 1;       // 
-  uint32_t           pwmPeriod  = pwm_period;   // 1/Freq
-  constexpr bool     pwm_invert = false;        //
-  bool pwmInvert                = pwm_invert;   // 0 - активный уровень
+  // // nu - исторические, до замены
+  // constexpr uint32_t pwm_period = 48 - 1;       // 
+  // uint32_t           pwmPeriod  = pwm_period;   // 1/Freq
+  // constexpr bool     pwm_invert = false;        //
+  // bool pwmInvert                = pwm_invert;   // 0 - активный уровень
 
   // Новые параметры настройки
   constexpr bool                    pwm_turbo       = false;  // turbo on/off для обоих таймеров
@@ -37,7 +37,7 @@ TurboPWM pwm;
 
 void initPwm()
 {
-  pwm.setClockDivider(1, pwmTurbo);           // Input clock is divided by 1 and sent to Generic Clock, Turbo is On/Off
+  pwm.setClockDivider(1, pwm_turbo);           // Input clock is divided by 1 and sent to Generic Clock, Turbo is On/Off
   pwm.timer(0, pwm_tccdiv_out,  pwm_steps_out,  true);  // (OUT)  T0, divider, resolution (подстройка частоты), single-slope PWM
   pwm.timer(2, pwm_tccdiv_cool, pwm_steps_cool, true);  // (COOL) T2, divider, resolution (подстройка частоты), single-slope PWM
 
@@ -49,6 +49,19 @@ void initPwm()
 
 }
 
+void goPwmOut()
+{
+  pwm.setClockDivider(1, pwmTurbo);           // Input clock is divided by 1 and sent to Generic Clock, Turbo is On/Off
+  pwm.timer(0, pwmTccdivOut, pwmStepsOut,  true);  // (OUT)  T0, divider, resolution (подстройка частоты), single-slope PWM
+  pwm.analogWrite(MPins::out_pin, pwmStepsOut);    // test
+}
+
+void goPwmCool()
+{
+
+}
+
+
 void writePwmOut(uint32_t value)
 {
   pwm.analogWrite(MPins::out_pin, value);
@@ -58,3 +71,13 @@ void writePwmCool(uint32_t value)
 {
   pwm.analogWrite(MPins::cool_pin, value);
 }
+
+int  enable(unsigned int timerNumber)
+{
+  return pwm.enable(timerNumber, true);
+}
+
+// int  frequency(unsigned int timerNumber)
+// {
+//   return (unsigned int)pwm.frequency(timerNumber) * 1000; 
+// }

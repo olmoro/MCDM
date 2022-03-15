@@ -25,8 +25,12 @@
 #include "stdint.h"
 
     // Переменные настройки PWM
-extern uint16_t pwmPeriod;          // Freq
-extern bool pwmInvert;              // активный уровень
+extern bool         pwmTurbo;               // Режим Турбо on/off
+extern unsigned int pwmTccdivOut;
+extern unsigned int pwmTccdivCool;
+extern unsigned int pwmStepsOut;
+extern unsigned int pwmStepsCool;
+
 
     // Переменные протокола Wake 
 extern uint8_t  rxNbt;              // принятое количество байт в пакете
@@ -639,24 +643,22 @@ void doPidTest()
     #endif
     }
     txReplay( 1, 0 );               // только подтверждение
+  
   }
   else txReplay(1, err_tx);         // Ошибка протокола     
 }
 
-  // 0x47 Конфигурирование pwm-регулятора
-void doPwmConfigure()
+  // 0x47 Конфигурирование pwm-регулятора Out (C_47_pwmConf.wak)
+void doPwmOut()
 {
   uint8_t err = 0x00;
 
-  if( rxNbt == 3 )
+  if( rxNbt == 4 )
   {
-    pwmInvert = (bool)get08(0);   // Выбор полярности PWM (v55: для отключения при сбросе - 0x00)
-    pwmPeriod = get16(1);         // Выбор частоты (через период)
-    initPwm();
-
-    #ifdef DEBUG_PWM
-      SerialUSB.print(" F, kHz "); SerialUSB.println( 24000/pwmPeriod );
-    #endif
+    pwmTurbo      = (bool)get08(0);          // t - False for 48MHz clock, true for 96MHz clock
+    pwmTccdivOut  = (unsigned int)get08(1);  // d - задать делитель
+    pwmStepsOut   = get16(2);                // s - задать steps (частоту)
+    goPwmOut();
 
     txReplay( 1, err );  
   }
@@ -701,7 +703,22 @@ void doPidSetMaxSum()
   else txReplay(1, err_tx);       // Ошибка протокола
 }
 
+  // 0x4A Конфигурирование pwm-регулятора Cool (C_4A_pwmConfCool.wak)
+void doPwmCool()
+{
+  uint8_t err = 0x00;
 
+  if( rxNbt == 4 )
+  {
+    pwmTurbo      = (bool)get08(0);          // t - False for 48MHz clock, true for 96MHz clock
+    pwmTccdivCool  = (unsigned int)get08(1);  // d - задать делитель
+    pwmStepsCool   = get16(2);                // s - задать steps (частоту)
+    goPwmCool();
+
+    txReplay( 1, err );  
+  }
+  else txReplay(1, err_tx);
+}
 
   // 0x5B задать параметры компенсации перенапряжения - отменено
 void doSurgeCompensation()

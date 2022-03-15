@@ -83,9 +83,10 @@ const uint8_t cmd_pid_output_range          = 0x42; // set min, max
 const uint8_t cmd_pid_reconfigure           = 0x43; // set kp, ki, kd,min, max w/o clear
 const uint8_t cmd_pid_clear                 = 0x44; // clear
 const uint8_t cmd_pid_test                  = 0x46; // mode, setpoint, sw
-const uint8_t cmd_pwm_configure             = 0x47; // max, n, invert - подбор полярности PWM. Как раритет
+const uint8_t cmd_pwm_configure_out             = 0x47; // 
 const uint8_t cmd_pid_get_configure         = 0x48; // mode, kP, kI, kD, min, max - возвращает параметры текущего режима регулирования
 const uint8_t cmd_pid_set_max_sum           = 0x49; // Задает максимальный интеграл при вычислении шага рег
+const uint8_t cmd_pwm_configure_cool             = 0x4A; // 
 
   // АЦП - настройки
 const uint8_t cmd_adc_read_probes           = 0x50; // Read all probes
@@ -195,9 +196,10 @@ void doCommand()
       case cmd_pid_reconfigure:           doPidReconfigure();         break;  // 0x43     *
       case cmd_pid_clear:                 doPidClear();               break;  // 0x44   57
       case cmd_pid_test:                  doPidTest();                break;  // 0x46     *
-      case cmd_pwm_configure:             doPwmConfigure();           break;  // 0x47     *
+      case cmd_pwm_configure_out:             doPwmOut();           break;  // 0x47     *
       case cmd_pid_get_configure:         doPidGetConfigure();        break;  // 0x48     *
       case cmd_pid_set_max_sum:           doPidSetMaxSum();           break;  // 0x49    
+      case cmd_pwm_configure_cool:             doPwmCool();           break;  // 0x4A     *
 
         // Команды работы с АЦП
       case cmd_adc_read_probes:           doReadProbes();             break;  // 0x50   57

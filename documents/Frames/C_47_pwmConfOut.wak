@@ -1,14 +1,14 @@
 [Protocol]
 Address 1=0
 Command 1=47
-Command Name 1=set_PWM 6kHz
-Data Frame 1=00 0FA0
+Command Name 1=set_PWM t,d,s
+Data Frame 1=00 01 0101
 Frame 1 Enable=1
 Address 2=0
 Command 2=63
 Command Name 2=doPower_xx%
 Data Frame 2=01
-Frame 2 Enable=1
+Frame 2 Enable=0
 Address 3=0
 Command 3=10
 Command Name 3=ui

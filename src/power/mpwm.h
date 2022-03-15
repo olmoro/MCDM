@@ -9,7 +9,11 @@
 #include "stdint.h"
 
 void initPwm();
+void goPwmOut();
+void goPwmCool();
 void writePwmOut(uint32_t value);
 void writePwmCool(uint32_t value);
+int  enable(unsigned int timerNumber);
+//int  frequency(unsigned int timerNumber);
 
 #endif  //!_MPWM_H_
