@@ -1,8 +1,8 @@
 [Protocol]
 Address 1=0
-Command 1=47
+Command 1=4A
 Command Name 1=set_PWM t,d,s
-Data Frame 1=00 01 0101
+Data Frame 1=00 01 00FA
 Frame 1 Enable=1
 Address 2=0
 Command 2=63

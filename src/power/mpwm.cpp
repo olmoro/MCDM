@@ -44,7 +44,7 @@ void initPwm()
 
  pwm.analogWrite(MPins::out_pin, 900);    // test
 
- pwm.analogWrite(MPins::cool_pin, 500);    // test
+ pwm.analogWrite(MPins::cool_pin, 750);    // test
 
 
 }
