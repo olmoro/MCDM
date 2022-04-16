@@ -42,8 +42,8 @@ constexpr uint16_t period = 2000;  //5;    // Период запуска ПИД
 
 // Ожидаемый коэффициент преобразования в милливольты        
 //constexpr int16_t factor_default_u = int16_t(((R77+R78)/R78) * (AREF/ADCMAXU) * SHL10U);  // 0x2D4F
-// Фактическое значение для платы V57(2) с учетом погрешностей комплектующих
-constexpr int16_t factor_default_u = 0x2DA0;    //0x2D1A;
+// Фактическое значение для платы V51a1 с учетом погрешностей комплектующих
+constexpr int16_t factor_default_u = 0x2DE0;    //   2022.04.16
 
 int16_t factorU = factor_default_u;
 
@@ -71,11 +71,12 @@ uint8_t smoothI = smooth_default_i;
   // приборные смещения
 constexpr int16_t offset_default_u = 0x0000;
 int16_t offsetU = offset_default_u;
-constexpr int16_t offset_default_i = 0x000B;
+constexpr int16_t offset_default_i = -135;  //   2022.04.16
 int16_t offsetI = offset_default_i;
 
   // Начальное смещение ADC
-constexpr int16_t adc_offset_default = 10;  // -30 57(1), 02 57 (2) 
+//constexpr int16_t adc_offset_default = 10;  // -30 57(1), 02 57 (2) 
+constexpr int16_t adc_offset_default = 8;  //   2022.04.16
 int16_t adcOffset = adc_offset_default;
 
   // Данные АЦП без фильтрации с компенсацией смещения

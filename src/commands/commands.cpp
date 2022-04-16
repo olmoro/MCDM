@@ -16,7 +16,7 @@
 static constexpr char Info[] = {"D21 Rev2020.10.23\n\0"};   //
 
   // state1
-bool switchStatus          = false;  // коммутатор выключен ( sw_pin PA14 )
+bool switchStatus          = false;  // коммутатор выключен ( sw_pin PA14 ) // ???
 bool powerStatus           = false;  // преобразователь выключен
 bool currentControlStatus  = false;  // регулирование по току отключено
 bool voltageControlStatus  = false;  // регулирование по напряжению отключено

@@ -42,9 +42,9 @@ void initPwm()
   pwm.timer(2, pwm_tccdiv_cool, pwm_steps_cool, true);  // (COOL) T2, divider, resolution (подстройка частоты), single-slope PWM
 
 
- pwm.analogWrite(MPins::out_pin, 900);    // test
+  pwm.analogWrite(MPins::out_pin, 500);    // test
 
- pwm.analogWrite(MPins::cool_pin, 750);    // test
+  pwm.analogWrite(MPins::cool_pin, 750);    // test
 
 
 }
