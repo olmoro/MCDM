@@ -126,6 +126,7 @@ void initMeasure()
   factorI = SetFactorDefaultI();
   offsetU = SetOffsetDefaultU();
   offsetI = SetOffsetDefaultI();
+
 }
 
   // Инициализация и преобразование по входу датчика напряжения с учетом смещения АЦП

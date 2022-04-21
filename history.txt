@@ -47,3 +47,10 @@ TCC2/WO[1]: PA01, PA13, PA17
 изменена схема подключения cool_pin и out_pin
 TCC0/WO[2]: PA18(out)
 TCC2/WO[0]: PA16(cool)
+
+13:26 21.04.2022
+Заменить эти файлы на одноименные из "documents/Variant"
+C:\Users\olmor\.platformio\packages\framework-arduino-samd\variants\arduino_zero\variant.cpp
+C:\Users\olmor\.platformio\packages\framework-arduino-samd\variants\arduino_zero\variant.h
+C:\Users\olmor\.platformio\packages\framework-arduino-samd\cores\arduino\wiring_analog.c
+

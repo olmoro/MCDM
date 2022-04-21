@@ -10,6 +10,7 @@
 
 #include "power/mpwm.h"
 #include "board/mpins.h"
+#include "board/mboard.h"
 #include "SAMD21turboPWM.h"
 #include <Arduino.h>
 
@@ -46,6 +47,7 @@ void initPwm()
 
   pwm.analogWrite(MPins::cool_pin, 750);    // test
 
+  swPinOn();                 // Включение нагрузки test
 
 }
 
