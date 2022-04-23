@@ -21,9 +21,6 @@ extern bool pidStatus;             // управление регуляторо�
   // Включение силовых ключей
 void swPinOn()
 {
-  // #ifdef REMONT
-  //   digitalWrite( MPins::sw15_pin, LOW );
-  // #endif
   digitalWrite( MPins::sw_pin, LOW );
 }
 
@@ -43,9 +40,6 @@ void test2Off() { digitalWrite( MPins::test2, HIGH ); }  // Отключение
   // Инициализация дискретных портов
 void portsInit()
 {
-//  pinMode( MPins::out_pin, OUTPUT);
-//  pinMode( MPins::cool_pin, OUTPUT);
-
   pinMode( MPins::test1,  OUTPUT);  
   pinMode( MPins::test2,  OUTPUT);
   pinMode( MPins::sw_pin, OUTPUT);

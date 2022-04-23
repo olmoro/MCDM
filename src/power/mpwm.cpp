@@ -12,6 +12,7 @@
 #include "board/mpins.h"
 #include "board/mboard.h"
 #include "SAMD21turboPWM.h"
+#include "adc/adc.h"    // DAC
 #include <Arduino.h>
 
 TurboPWM pwm;
@@ -43,12 +44,13 @@ void initPwm()
   pwm.timer(2, pwm_tccdiv_cool, pwm_steps_cool, true);  // (COOL) T2, divider, resolution (подстройка частоты), single-slope PWM
 
 
-  pwm.analogWrite(MPins::out_pin, 500);    // test
+  //pwm.analogWrite(MPins::out_pin, 1000);    // test
 
-  pwm.analogWrite(MPins::cool_pin, 750);    // test
+  pwm.analogWrite(MPins::cool_pin, 250);    // test
 
   swPinOn();                 // Включение нагрузки test
 
+  dacWrite10bit( 0x0280 );  // test
 }
 
 void goPwmOut()
