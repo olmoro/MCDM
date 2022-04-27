@@ -50,8 +50,9 @@ void initPwm()
 
   swPinOn();                 // Включение нагрузки test
 
-  dacWrite10bit( 0x0280 );  // test
+  dacWrite10bit( 0x0200 );  // test 12.4v: 0x0280 -> -1.8A
 }
+
 
 void goPwmOut()
 {
