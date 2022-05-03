@@ -54,3 +54,7 @@ C:\Users\olmor\.platformio\packages\framework-arduino-samd\variants\arduino_zero
 C:\Users\olmor\.platformio\packages\framework-arduino-samd\variants\arduino_zero\variant.h
 C:\Users\olmor\.platformio\packages\framework-arduino-samd\cores\arduino\wiring_analog.c
 
+
+9:29 03.05.2022
+Заказано изготовление mcdm_v53
+

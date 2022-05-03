@@ -1,0 +1,119 @@
+Partlist
+
+Exported from mcdm.v53.sch at 03.05.2022 9:25
+
+EAGLE Version 7.3.0 Copyright (c) 1988-2015 CadSoft
+
+Assembly variant: 
+
+Part     Value          Device              Package       Library              Sheet
+
++5V                     WIREPAD1,6/0,8      1,6/0,8       wirepad              2
++18V                    WIREPAD1,6/0,8      1,6/0,8       wirepad              1
+AGND     AGND           WIREPAD4,16O1,6     4,16O1,6      wirepad              2
+C1       1000µF 35v     CPOL-EUE5-10.5      E5-10,5       rcl_moro             1
+C2       100n           C-EUC0805           C0805         rcl_moro             1
+C3       1000µF 35v     CPOL-EUE5-10.5      E5-10,5       rcl_moro             1
+C4       4.7µF          C-EUC0603           C0603         rcl_moro             1
+C5       4.7µF          C-EUC0603           C0603         rcl_moro             1
+C6       100n           C-EUC0805           C0805         rcl_moro             1
+C7       100n           C-EUC0603           C0603         rcl_moro             1
+C8       1mkF           C-EUC0603           C0603         rcl_moro             1
+C9       100n           C-EUC0603           C0603         rcl_moro             1
+C11      4.7nF 1KV      C-EU102-064X133     C102-064X133  rcl_moro             1
+C12      470µF 35v      CPOL-EUE5-10.5      E5-10,5       rcl_moro             1
+C13      na             CPOL-EUE5-10.5      E5-10,5       rcl_moro             1
+C14      470µF 35v      CPOL-EUE5-10.5      E5-10,5       rcl_moro             1
+C15      1mkF           C-EUC0805           C0805         rcl_moro             1
+C16      1mkF           C-EUC0805           C0805         rcl_moro             1
+C17      1mkF           C-EUC0805           C0805         rcl_moro             1
+C18      100nF X7R      C-EUC0603           C0603         rcl_moro             1
+C19      1µF            C-EUC0603           C0603         rcl_moro             1
+C21      100n           C-EUC0603           C0603         rcl_moro             1
+C22      1mkF           C-EUC0603           C0603         rcl_moro             1
+C23      100n           C-EUC0603           C0603         rcl_moro             1
+C24      220uF 25v      CPOL-EUE5-8.5       E5-8,5        rcl_moro             1
+C30      4.7µF          C-EUC0805           C0805         rcl_moro             2
+C31      100nF X7R      C-EUC0603           C0603         rcl_moro             2
+C32      470n           C-EUC0603           C0603         rcl_moro             2
+C33      3.3µF          C-EUC0805           C0805         rcl_moro             2
+C34      470nF          C-EUC0603           C0603         rcl_moro             2
+C35      470nF          C-EUC0603           C0603         rcl_moro             2
+COOLER   WF-3 (WF-2)    WF-3                WF-3          moro2                1
+DAC                     WIREPAD1,6/0,8      1,6/0,8       wirepad              2
+DVT1     PDTA123ET      MUN2113T1           SC59-BEC      transistor-pnp       1
+GND      GND            WIREPAD4,16O1,6     4,16O1,6      wirepad              2
+IC1      MIC4420M       MIC4420M            SO-08         transistor-power     1
+IC2      MIC4420M       MIC4420M            SO-08         transistor-power     1
+IC3      78L12F         78L12F              SOT89         linear               1
+IC4      LMV321(MCP601) LM321MF             SOT23-5       linear               1
+L1       L32MM          L32MM               L22MM         wx-d21               1
+L2       560uH          BS11                BS11          inductor-neosid-moro 1
+MI                      WIREPAD4,16O1,6     4,16O1,6      wirepad              1
+OUT                     WIREPAD1,6/0,8      1,6/0,8       wirepad              2
+O_ON                    WIREPAD1,6/0,8      1,6/0,8       wirepad              2
+PL                      WIREPAD4,16O1,6     4,16O1,6      wirepad              1
+PL1                     WIREPAD2,54/0,8     2,54/0,8      wirepad              1
+PL2                     WIREPAD2,54/0,8     2,54/0,8      wirepad              1
+R1       5R1            R-EU_R0805          R0805         rcl_moro             1
+R2       1R             R-EU_R0805          R0805         rcl_moro             1
+R3       39 Om 5%       R-0515/20           0515/20       Q921                 1
+R4       2.2k           R-EU_R0603          R0603         rcl_moro             1
+R5       330            R-EU_R0603          R0603         rcl_moro             1
+R6       680            R-EU_R0603          R0603         rcl_moro             1
+R7       R04            R-EU_R2512          R2512         rcl_moro             1
+R8       R04            R-EU_R2512          R2512         rcl_moro             1
+R9       100k           R-EU_R0603          R0603         rcl_moro             1
+R10      1R0            R-EU_R2512          R2512         rcl_moro             1
+R11      1R0            R-EU_R2512          R2512         rcl_moro             1
+R12      1R0            R-EU_R2512          R2512         rcl_moro             1
+R13      1R0            R-EU_R2512          R2512         rcl_moro             1
+R14      na             R-EU_R0603          R0603         rcl_moro             1
+R15      5k1            R-EU_R0603          R0603         rcl_moro             1
+R16      5k1            R-EU_R0603          R0603         rcl_moro             1
+R18      5k1            R-EU_R0603          R0603         rcl_moro             1
+R20      22R            R-EU_R0603          R0603         rcl_moro             1
+R21      22R            R-EU_R0603          R0603         rcl_moro             1
+R22      100k           R-EU_R0603          R0603         rcl_moro             1
+R23      51             R-EU_R0603          R0603         rcl_moro             1
+R24      10k            R-EU_R0603          R0603         rcl_moro             1
+R32      680            R-EU_R0603          R0603         rcl_moro             2
+R33      39k0           R-EU_R0603          R0603         rcl_moro             2
+R34      4k70           R-EU_R0603          R0603         rcl_moro             2
+R35      22             R-EU_R0603          R0603         rcl_moro             2
+R36      22             R-EU_R0603          R0603         rcl_moro             2
+R37      4k7            R-EU_R0603          R0603         rcl_moro             2
+R38      10k0           R-EU_R0603          R0603         rcl_moro             2
+R39      30k            R-EU_R0603          R0603         rcl_moro             2
+R40      30k            R-EU_R0603          R0603         rcl_moro             2
+SV1      TB-10-2        TB-10-2             TB-10-2       wx-d21               1
+SV2                     JP1Q                JP1           jumper_moro          2
+SV4      FE05-2R        FE05-2R             FE05-2R       con-lsta_moro        2
+S_ON                    WIREPAD1,6/0,8      1,6/0,8       wirepad              2
+U1       HLK-1D1212     HLK-1D1212          HLK-1D1212    wx-d21               1
+U2       B1205S-1W      HLK-1D1212          HLK-1D1212    wx-d21               2
+UART     BH-10          ML10                ML10          con-harting-ml       2
+VD1      MBR20100F      MBR20100F           ITO220J       wx-d21               1
+VD2      4148           DIODESMA            SMADIODE      microbuilder         1
+VD3      SS16           SS16                DO214AC       diode-1              1
+VD4      BAT54S         BAT54S              SOT23         diode                2
+VD5      US1M           US1M                DO214AC       diode-1              1
+VD6      SS16           SS16                DO214AC       diode-1              1
+VD7      BAT54S         BAT54S              SOT23         diode                2
+VD8      SS16           SS16                DO214AC       diode-1              2
+VD9      SS16           SS16                DO214AC       diode-1              2
+VD10     FR601          DIODE-1_DIODE-P6-15 DIODE-1_P6-15 urc-2base            1
+VD11     BAT54S         BAT54S              SOT23         diode                2
+VR1      TL431          TL431-SOT23-3       SOT23         moro4                2
+VT2      STP16NF06FP    STP16NF06FP         TO-220FP_M    wx-d21               1
+VT3      IRF8788        IRF8788             SO-8          transistor-fet_moro  1
+VT4      IRF8788        IRF8788             SO-8          transistor-fet_moro  1
+VT5      IRLML5203      IRLML5203           MICRO3        transistor-power     1
+VT6      IRFP9540N_M    IRFP9540N_M         TO-220FP_M    wx-d21               1
+VTL1     K10104C        SFH618A-3X007       SMD4-7        optocoupler          1
+X1       MSTBA2         MSTBA2              MSTBA2        con-phoenix-508      1
+X2       BP-R           BP-R                BP-R          wx-d21               1
+X3       BP-B           BP-B                BP-B          wx-d21               1
+X4                      AK500/2-H           AK500/2-H     con-ptr500_moro      1
+X5       F14GIP         F14GIP              F14GIP        wx-d21               2
+X6       F14GIP         F14GIP              F14GIP        wx-d21               2

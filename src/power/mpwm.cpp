@@ -44,13 +44,13 @@ void initPwm()
   pwm.timer(2, pwm_tccdiv_cool, pwm_steps_cool, true);  // (COOL) T2, divider, resolution (подстройка частоты), single-slope PWM
 
 
-  //pwm.analogWrite(MPins::out_pin, 1000);    // test
+  pwm.analogWrite(MPins::out_pin, 260);    // test 260 = 12,5в при 3А
 
   pwm.analogWrite(MPins::cool_pin, 250);    // test
 
   swPinOn();                 // Включение нагрузки test
 
-  dacWrite10bit( 0x0200 );  // test 12.4v: 0x0280 -> -1.8A
+//  dacWrite10bit( 0x0200 );  // test 12.4v: 0x0280 -> -1.8A
 }
 
 
