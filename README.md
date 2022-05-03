@@ -42,7 +42,70 @@
 
 #### Формат реализованных команд управления.
 
-Имя | Код | Параметры | Ответ
---------------------------:|--------:|----------------:|-------------------:
-Текущие напряж. и ток | 0x21 | нет | 0x21 0x01 0xUUUU 0xIIII 0xSSSS
- n | 0x22 |  |
+Имя | Код | Пар. | Ответ | Примечание
+--------------------------:|--------:|--------:|----------:|------------------------:
+cmd_read_u_i | 0x10 | - | int, int, uint | Чтение текущего напряжения и тока (мВ и мА), состояния
+cmd_power_go | 0x20 | - | - | старт преобразователя с заданными максимальными U и I
+cmd_power_stop | 0x21 | - | - | отключение ( и разряда в том числе)
+cmd_set_pid | 0x22 | - | - | set all parameters (в разработке)
+cmd_get_factor_u | 0x30 | - | uint |Чтение множителя преобразования в милливольты
+cmd_set_factor_u | 0x31 | uint | - |Запись множителя преобразования в милливольты
+cmd_set_factor_default_u | 0x32 | - | - | Возврат к заводскому множителю преобразования в милливольты
+cmd_get_smooth_u | 0x33 | - | uint |  Чтение параметра сглаживания по напряжению
+cmd_set_smooth_u | 0x34 | uint | - |  Запись параметра сглаживания по напряжению
+cmd_get_offset_u | 0x35 | - | uint|  Чтение приборного смещения по напряжению
+cmd_set_offset_u | 0x36 | int | - |  Запись приборного смещения по напряжению
+cmd_get_factor_i | 0x38 | - | uint | Чтение множителя преобразования в миллиамперы
+cmd_set_factor_i | 0x39 | uint | - | Запись множителя преобразования в миллиамперы
+cmd_set_factor_default_i | 0x3A | - | - | Возврат к заводскому множителю преобразования в миллиамперы
+cmd_get_smooth_i | 0x3B | - | uint |  Чтение параметра сглаживания по току
+cmd_set_smooth_i | 0x3C | uint | - |  Запись параметра сглаживания по току
+cmd_get_offset_i | 0x3D | - | uint|  Чтение приборного смещения по току
+cmd_set_offset_i | 0x3E | int | - |  Запись приборного смещения по току
+
+
+  // ПИД-регулятор
+const uint8_t cmd_pid_configure             = 0x40; // set mode, kp, ki, kd, min, max
+const uint8_t cmd_pid_set_coefficients      = 0x41; // set kp, ki, kd
+const uint8_t cmd_pid_output_range          = 0x42; // set min, max
+const uint8_t cmd_pid_reconfigure           = 0x43; // set kp, ki, kd,min, max w/o clear
+const uint8_t cmd_pid_clear                 = 0x44; // clear
+const uint8_t cmd_pid_test                  = 0x46; // mode, setpoint, sw
+const uint8_t cmd_pwm_configure_out             = 0x47; // 
+const uint8_t cmd_pid_get_configure         = 0x48; // mode, kP, kI, kD, min, max - возвращает параметры текущего режима регулирования
+const uint8_t cmd_pid_set_max_sum           = 0x49; // Задает максимальный интеграл при вычислении шага рег
+const uint8_t cmd_pwm_configure_cool             = 0x4A; // 
+
+
+
+
+  // АЦП - настройки
+const uint8_t cmd_adc_read_probes           = 0x50; // Read all probes
+const uint8_t cmd_adc_get_offset            = 0x51; // Читать смещение АЦП
+const uint8_t cmd_adc_set_offset            = 0x52; // Запись смещения АЦП
+
+  // Команды тестовые
+const uint8_t cmd_set_switch_pin            = 0x54; // sw_pin D4 PA14
+
+const uint8_t cmd_set_power                 = 0x56; // пользоваться с осторожностью - выяснение пределов регулирования
+const uint8_t cmd_set_discharge             = 0x57; // не проверена
+const uint8_t cmd_set_voltage               = 0x58; // старая, не проверена
+const uint8_t cmd_set_current               = 0x59; // старая, не проверена 
+const uint8_t cmd_set_discurrent            = 0x5A; // старая, не проверена
+const uint8_t cmd_set_surge_compensation    = 0x5B; // параметры подавления всплеска напряжения na
+const uint8_t cmd_set_idle_load             = 0x5C; // параметры доп.нагрузки ХХ
+
+  // Команды задания порогов отключения
+const uint8_t cmd_get_win_less_u            = 0x60; // 
+const uint8_t cmd_set_win_less_u            = 0x61; // 
+const uint8_t cmd_set_win_less_default_u    = 0x62; // 
+const uint8_t cmd_get_win_up_u              = 0x63; // 
+const uint8_t cmd_set_win_up_u              = 0x64; // 
+const uint8_t cmd_set_win_up_default_u      = 0x65; // 
+
+const uint8_t cmd_get_win_less_i            = 0x68; // 
+const uint8_t cmd_set_win_less_i            = 0x69; // 
+const uint8_t cmd_set_win_less_default_i    = 0x6A; // 
+const uint8_t cmd_get_win_up_i              = 0x6B; // 
+const uint8_t cmd_set_win_up_i              = 0x6C; // 
+const uint8_t cmd_set_win_up_default_i      = 0x6D; // 
