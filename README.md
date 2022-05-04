@@ -34,13 +34,15 @@
 
 Обмен с главным контроллером производится по асинхронному каналу на частоте 115200 бод. Протокол обмена [WAKE](https://eewiki.ru/wiki/%D0%A1%D0%BF%D0%B5%D1%86%D0%B8%D1%84%D0%B8%D0%BA%D0%B0%D1%86%D0%B8%D1%8F_%D0%BF%D1%80%D0%BE%D1%82%D0%BE%D0%BA%D0%BE%D0%BB%D0%B0_WAKE) предусматривает проверку целостности пакета и подтверждение приема. Ведущим контроллером является главный контроллер, в фоновом режиме опрашивающий драйвер и получающий пакет, содержащий измерения напряжения в милливольтах и ток в миллиамперах, а также информацию о состоянии. Управляющими командами производится включение-отключение DC источника и задание напряжения и тока для ПИД-регулятора. Предусматривается достаточное количество команд настройки АЦП, приборного смещения, калибровочных коэффициентов для  преобразования в физические величины, порогов срабатывания защиты и т.д. Для управления - настройки ПИД-регулятора и ещё масса тестовых команд, надобность в которых практически отпала по ходу дела.
 
+В директории Frames представлены данные для тестирования с помощью приложения WakeUsb.
+
 #### Система охлаждения
 Силовые элементы, [датчик температуры](https://aliexpress.ru/item/33014111002.html?spm=a2g2w.productlist.0.0.108e2a96XiZTKA&sku_id=67175460751) и [вентилятор](https://aliexpress.ru/item/4001029238958.html?spm=a2g2w.productlist.0.0.49696217XrQaE6&sku_id=10000013596178639) размещены на [радиаторе](https://aliexpress.ru/item/1005003036398261.html?_ga=2.156583358.428003227.1651560775-769654542.1642920280&sku_id=12000023368395685&spm=a2g39.orderlist.0.0.50684aa6xwye5Y) размером 100x60x10 мм. Регулирование производится ПИД-регулятором.
 
 #### Печатная плата
 115*65мм двусторонняя 1oz. Схема, сборки, перечень элементов и гербер-файлы в директории Docements.
 
-#### Формат реализованных команд управления.
+#### Формат реализованных команд управления. (Не отредактировано)
 
 Имя | Код | Пар. | Ответ | Примечание
 --------------------------:|--------:|--------:|-------------:|--------------------------------:
@@ -62,50 +64,36 @@ cmd_get_smooth_i | 0x3B | - | uint |  Чтение параметра сглаж
 cmd_set_smooth_i | 0x3C | uint | - |  Запись параметра сглаживания по току
 cmd_get_offset_i | 0x3D | - | uint|  Чтение приборного смещения по току
 cmd_set_offset_i | 0x3E | int | - |  Запись приборного смещения по току
-
-
-  // ПИД-регулятор
-const uint8_t cmd_pid_configure             = 0x40; // set mode, kp, ki, kd, min, max
-const uint8_t cmd_pid_set_coefficients      = 0x41; // set kp, ki, kd
-const uint8_t cmd_pid_output_range          = 0x42; // set min, max
-const uint8_t cmd_pid_reconfigure           = 0x43; // set kp, ki, kd,min, max w/o clear
-const uint8_t cmd_pid_clear                 = 0x44; // clear
-const uint8_t cmd_pid_test                  = 0x46; // mode, setpoint, sw
-const uint8_t cmd_pwm_configure_out             = 0x47; // 
-const uint8_t cmd_pid_get_configure         = 0x48; // mode, kP, kI, kD, min, max - возвращает параметры текущего режима регулирования
-const uint8_t cmd_pid_set_max_sum           = 0x49; // Задает максимальный интеграл при вычислении шага рег
-const uint8_t cmd_pwm_configure_cool             = 0x4A; // 
-
-
-
-
-  // АЦП - настройки
-const uint8_t cmd_adc_read_probes           = 0x50; // Read all probes
-const uint8_t cmd_adc_get_offset            = 0x51; // Читать смещение АЦП
-const uint8_t cmd_adc_set_offset            = 0x52; // Запись смещения АЦП
-
-  // Команды тестовые
-const uint8_t cmd_set_switch_pin            = 0x54; // sw_pin D4 PA14
-
-const uint8_t cmd_set_power                 = 0x56; // пользоваться с осторожностью - выяснение пределов регулирования
-const uint8_t cmd_set_discharge             = 0x57; // не проверена
-const uint8_t cmd_set_voltage               = 0x58; // старая, не проверена
-const uint8_t cmd_set_current               = 0x59; // старая, не проверена 
-const uint8_t cmd_set_discurrent            = 0x5A; // старая, не проверена
-const uint8_t cmd_set_surge_compensation    = 0x5B; // параметры подавления всплеска напряжения na
-const uint8_t cmd_set_idle_load             = 0x5C; // параметры доп.нагрузки ХХ
-
-  // Команды задания порогов отключения
-const uint8_t cmd_get_win_less_u            = 0x60; // 
-const uint8_t cmd_set_win_less_u            = 0x61; // 
-const uint8_t cmd_set_win_less_default_u    = 0x62; // 
-const uint8_t cmd_get_win_up_u              = 0x63; // 
-const uint8_t cmd_set_win_up_u              = 0x64; // 
-const uint8_t cmd_set_win_up_default_u      = 0x65; // 
-
-const uint8_t cmd_get_win_less_i            = 0x68; // 
-const uint8_t cmd_set_win_less_i            = 0x69; // 
-const uint8_t cmd_set_win_less_default_i    = 0x6A; // 
-const uint8_t cmd_get_win_up_i              = 0x6B; // 
-const uint8_t cmd_set_win_up_i              = 0x6C; // 
-const uint8_t cmd_set_win_up_default_i      = 0x6D; // 
+md_pid_configure             | 0x40 | uint uint uint uint uint uint uint |   |    set mode, kp, ki, kd, min, max
+cmd_pid_set_coefficients      | 0x41 | uint uint uint | - |    set kp, ki, kd
+cmd_pid_output_range          | 0x42 | uint uint | - |    set min, max
+cmd_pid_reconfigure           | 0x43 | uint uint uint uint uint |   |    set kp, ki, kd,min, max w/o clear
+cmd_pid_clear                 | 0x44 | - | - |    clear
+cmd_pid_test                  | 0x46 | uint uint uint |   |    mode, setpoint, sw
+cmd_pwm_configure_out         | 0x47 | ? | ? |    
+cmd_pid_get_configure         | 0x48 | - | uint uint uint uint uint uint | mode, kP, kI, kD, min, max - возвращает параметры текущего режима регулирования
+cmd_pid_set_max_sum           | 0x49 | uint |   | Задает максимальный интеграл при вычислении шага рег.
+cmd_pwm_configure_cool        | 0x4A | ? |   |    
+cmd_adc_read_probes           | 0x50 |   | int,int |    Read all probes
+cmd_adc_get_offset            | 0x51 |   | int |    Читать смещение АЦП
+cmd_adc_set_offset            | 0x52 | int |   |    Запись смещения АЦП
+cmd_set_switch_pin            | 0x54 | ? |   |    sw_pin D4 PA14 ?
+cmd_set_power                 | 0x56 |   |   |    пользоваться с осторожностью - выяснение пределов регулирования
+cmd_set_discharge             | 0x57 |   |   |    не проверена
+cmd_set_voltage               | 0x58 | uint  |   |    старая, не проверена
+cmd_set_current               | 0x59 | uint  |   |    старая, не проверена 
+cmd_set_discurrent            | 0x5A | uint  |   |    старая, не проверена
+cmd_set_surge_compensation    | 0x5B | ? |   |    параметры подавления всплеска напряжения na
+cmd_set_idle_load             | 0x5C | uint |   |    параметры доп.нагрузки ХХ
+cmd_get_win_less_u            | 0x60 | - | int | Порог отключения по напряжению 
+cmd_set_win_less_u            | 0x61 | int | - | Порог отключения по напряжению 
+cmd_set_win_less_default_u    | 0x62 | int | - | Порог отключения по напряжению 
+cmd_get_win_up_u              | 0x63 | - | int | Порог отключения по напряжению 
+cmd_set_win_up_u              | 0x64 | int | - | Порог отключения по напряжению 
+cmd_set_win_up_default_u      | 0x65 | int | - | Порог отключения по напряжению 
+cmd_get_win_less_i            | 0x68 | - | int | Порог отключения по току 
+cmd_set_win_less_i            | 0x69 | int | - | Порог отключения по току 
+cmd_set_win_less_default_i    | 0x6A | int | - | Порог отключения по току 
+cmd_get_win_up_i              | 0x6B | - | int | Порог отключения по току 
+cmd_set_win_up_i              | 0x6C | int | - | Порог отключения по току  
+cmd_set_win_up_default_i      | 0x6D | int | - | Порог отключения по току 
