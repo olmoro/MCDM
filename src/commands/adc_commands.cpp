@@ -29,6 +29,9 @@ extern int16_t maCurrent;
 extern uint8_t state1;
 extern uint8_t state2;
 
+extern int16_t adcCelsius;
+
+
   // comm 0x24, 0x25, 0x26 параметры измерителей, доступные пользователю
 //extern int16_t  prbOffset[];      // приборное смещение
 //extern uint16_t prbFactor[];      // коэффициент преобразования в физическую величину
@@ -133,8 +136,17 @@ void doGetState()
   else  txReplay(1, err_tx);                  // ошибка протокола
 }
 
-
-
+// 0x15 читать температуру радиатора
+void doCelsius()
+{
+  if( rxNbt == 0 )
+  {
+    int id = 1;
+    id = replyU16( id, (uint16_t)adcCelsius );  // Без пересчета в градусы
+    txReplay( id, 0 );                        // всего байт, в нулевом - сообщение об ошибках (nu)
+  }
+  else  txReplay(1, err_tx);                  // ошибка протокола
+}
 
 
 

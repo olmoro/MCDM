@@ -54,6 +54,8 @@ void initPwm()
 }
 
 
+
+
 void goPwmOut()
 {
   pwm.setClockDivider(1, pwmTurbo);           // Input clock is divided by 1 and sent to Generic Clock, Turbo is On/Off
@@ -74,6 +76,9 @@ void writePwmOut(uint32_t value)
 
 void writePwmCool(uint32_t value)
 {
+  #ifdef MIC4420
+    value = 1000 - value;
+  #endif
   pwm.analogWrite(MPins::cool_pin, value);
 }
 

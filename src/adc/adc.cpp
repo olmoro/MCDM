@@ -82,6 +82,7 @@ int16_t adcOffset = adc_offset_default;
   // Данные АЦП без фильтрации с компенсацией смещения
 int16_t adcVoltage = 0x0000;  
 int16_t adcCurrent = 0x0000;
+int16_t adcCelsius = 0x0000;
 
   // Пересчитанные в физические величины - mV, mA
 int16_t mvVoltage   = 0x0064;     //  0.10V

@@ -32,7 +32,7 @@
 В директории Frames представлены данные для тестирования с помощью приложения WakeUsb.
 
 #### <p align="center">Система охлаждения
-Силовые элементы, [датчик температуры](https://aliexpress.ru/item/33014111002.html?spm=a2g2w.productlist.0.0.108e2a96XiZTKA&sku_id=67175460751) и [вентилятор](https://aliexpress.ru/item/4001029238958.html?spm=a2g2w.productlist.0.0.49696217XrQaE6&sku_id=10000013596178639) размещены на [радиаторе](https://aliexpress.ru/item/1005003036398261.html?_ga=2.156583358.428003227.1651560775-769654542.1642920280&sku_id=12000023368395685&spm=a2g39.orderlist.0.0.50684aa6xwye5Y) размером 100x60x10 мм. Регулирование производится ПИД-регулятором.
+Силовые элементы, [датчик температуры](https://aliexpress.ru/item/33014111002.html?spm=a2g2w.productlist.0.0.108e2a96XiZTKA&sku_id=67175460751) и [вентилятор](https://aliexpress.ru/item/4001029238958.html?spm=a2g2w.productlist.0.0.49696217XrQaE6&sku_id=10000013596178639) размещены на [радиаторе](https://aliexpress.ru/item/1005003036398261.html?_ga=2.156583358.428003227.1651560775-769654542.1642920280&sku_id=12000023368395685&spm=a2g39.orderlist.0.0.50684aa6xwye5Y) размером 100x60x10 мм. Регулирование производится ПИД-регулятором. 
 
 #### <p align="center">Печатная плата
 115*65 мм двусторонняя 1oz. Схема, сборки, перечень элементов и гербер-файлы в директории Docements.
@@ -41,11 +41,12 @@
 ##### <p align="center">(Не отредактировано)
 Имя | Код | Параметр | Ответ | Примечание
 --------------------------:|------:|-------:|-------------:|----------------------------------:
-cmd_read_u_i|0x10|-|int int uint|Чтение текущего напряжения,тока (мВ и мА) и состояния
-cmd_get_u|0x11|-|int|Чтение текущего напряжения (мВ)
-cmd_get_i|0x12|-|int|Чтение текущего тока (мА)
-cmd_get_ui|0x13|-|int int|Чтение текущего напряжения и тока (мВ и мА)
-cmd_get_state|0x14|-|uint|Чтение текущего состояния
+cmd_read_u_i|0x10|-|int int uint|Чтение напряжения,тока (мВ и мА) и состояния
+cmd_get_u|0x11|-|int|Чтение напряжения (мВ)
+cmd_get_i|0x12|-|int|Чтение тока (мА)
+cmd_get_ui|0x13|-|int int|Чтение напряжения и тока (мВ и мА)
+cmd_get_state|0x14|-|uint|Чтение состояния
+cmd_get_state|0x15|-|uint|Чтение температуры радиатора
 cmd_power_go|0x20|-|-|Старт преобразователя с заданными максимальными U и I
 cmd_power_stop|0x21|-|-|Отключение ( и разряда в том числе)
 cmd_set_pid|0x22|-|-|set all parameters (в разработке)
@@ -72,7 +73,8 @@ cmd_pid_test|0x46|uint uint uint|-|mode, setpoint, sw
 cmd_pwm_configure_out|0x47|?|?|    
 cmd_pid_get_configure|0x48|-|uint uint uint uint uint uint|mode,kP,kI,kD,min,max - возвращает параметры текущего режима регулирования
 cmd_pid_set_max_sum|0x49|uint|-|Задает максимальный интеграл при вычислении шага рег.
-cmd_pwm_configure_cool|0x4A|?|-|    
+cmd_pwm_configure_cool|0x4A|?|-| 
+cmd_set_cooler|0x4F|uint|-|Задать скорость вентилятора
 cmd_adc_read_probes|0x50|-|int,int|Read all probes
 cmd_adc_get_offset|0x51|-|int|Читать смещение АЦП
 cmd_adc_set_offset|0x52|int|-|Запись смещения АЦП

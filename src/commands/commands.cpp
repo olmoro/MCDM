@@ -37,11 +37,12 @@ bool reserve2Status        = false;  // резерв 2
 
 
   // Команды измерений
-const uint8_t cmd_read_u_i                  = 0x10; // читать текущее напряжение(мВ), ток (мА) и состояние
-const uint8_t cmd_get_u                     = 0x11; // читать текущее напряжение (мВ)
-const uint8_t cmd_get_i                     = 0x12; // читать текущий ток (мА)
-const uint8_t cmd_get_ui                    = 0x13; // читать текущее напряжение (мВ) и ток (мА)
-const uint8_t cmd_get_state                 = 0x14; // читать текущее состояние
+const uint8_t cmd_read_u_i                  = 0x10; // Чтение напряжения(мВ), тока (мА) и состояния
+const uint8_t cmd_get_u                     = 0x11; // Чтение напряжения (мВ)
+const uint8_t cmd_get_i                     = 0x12; // Чтение тока (мА)
+const uint8_t cmd_get_ui                    = 0x13; // Чтение напряжения (мВ) и тока (мА)
+const uint8_t cmd_get_state                 = 0x14; // Чтение состояния
+const uint8_t cmd_get_celsius               = 0x15; // Чтение температуры радиатора
 
   // Команды управления
 const uint8_t cmd_power_go                  = 0x20; // старт преобразователя с заданными максимальными U и I
@@ -91,10 +92,11 @@ const uint8_t cmd_pwm_configure_out             = 0x47; //
 const uint8_t cmd_pid_get_configure         = 0x48; // mode, kP, kI, kD, min, max - возвращает параметры текущего режима регулирования
 const uint8_t cmd_pid_set_max_sum           = 0x49; // Задает максимальный интеграл при вычислении шага рег
 const uint8_t cmd_pwm_configure_cool             = 0x4A; // 
+const uint8_t cmd_set_cooler                = 0x4F; // Задать скорость вентилятора
 
   // АЦП - настройки
 const uint8_t cmd_adc_read_probes           = 0x50; // Read all probes
-const uint8_t cmd_adc_get_offset            = 0x51; // Читать смещение АЦП
+const uint8_t cmd_adc_get_offset            = 0x51; // Чтение смещение АЦП
 const uint8_t cmd_adc_set_offset            = 0x52; // Запись смещения АЦП
 
   // Команды тестовые
@@ -168,10 +170,11 @@ void doCommand()
     {                                                                 //              v57#
         // Команды измерения
       case cmd_read_u_i:                  doReadUI();                 break;  // 0x10   57
-      case cmd_get_u:                     doGetU();                   break;  // 0x11 читать текущее напряжение (мВ)
-      case cmd_get_i:                     doGetI();                   break;  // 0x12 читать текущий ток (мА)
-      case cmd_get_ui:                    doGetUI();                  break;  // 0x13 читать текущее напряжение (мВ) и ток (мА)
-      case cmd_get_state:                 doGetState();               break;  // 0x14 читать текущее состояние
+      case cmd_get_u:                     doGetU();                   break;  // 0x11 Чтение напряжение (мВ)
+      case cmd_get_i:                     doGetI();                   break;  // 0x12 Чтение ток (мА)
+      case cmd_get_ui:                    doGetUI();                  break;  // 0x13 Чтение напряжение (мВ) и ток (мА)
+      case cmd_get_state:                 doGetState();               break;  // 0x14 Чтение состояние
+      case cmd_get_celsius:               doCelsius();                break;  // 0x15 Чтение температуру радиатора
 
 
         // Команды управления
@@ -209,6 +212,7 @@ void doCommand()
       case cmd_pid_get_configure:         doPidGetConfigure();        break;  // 0x48     *
       case cmd_pid_set_max_sum:           doPidSetMaxSum();           break;  // 0x49    
       case cmd_pwm_configure_cool:             doPwmCool();           break;  // 0x4A     *
+      case cmd_set_cooler:                doCooler();                 break;  // 0x4F Задать скорость вентилятора
 
         // Команды работы с АЦП
       case cmd_adc_read_probes:           doReadProbes();             break;  // 0x50   57

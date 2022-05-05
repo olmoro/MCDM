@@ -720,6 +720,19 @@ void doPwmCool()
   else txReplay(1, err_tx);
 }
 
+// 0x4F Задать скорость вентилятора
+void doCooler()                      
+{
+  if( rxNbt == 2 )
+  {
+    writePwmCool(get16(0));             // 0...1000
+
+    txReplay( 1, 0x00 );            // подтверждение
+  }
+  else  txReplay(1, err_tx);        // ошибка протокола
+}
+
+
   // 0x5B задать параметры компенсации перенапряжения - отменено
 void doSurgeCompensation()
 {

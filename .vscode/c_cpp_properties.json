@@ -74,6 +74,7 @@
                 "USB_PRODUCT=\"Arduino Zero\"",
                 "USB_MANUFACTURER=\"Arduino\"",
                 "ARDUINO_ARCH_SAMD",
+                "MIC4420=1",
                 "NOEE=1",
                 "WEMOS=1",
                 "HZ_10=1",
