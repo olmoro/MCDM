@@ -42,36 +42,36 @@
 ##### <p align="center">(Не отредактировано)
 Имя | Код | Параметр | Ответ | Примечание
 --------------------------:|------:|-------:|-------------:|----------------------------------:
-cmd_read_u_i|0x10|-|int, int, uint|Чтение текущего напряжения и тока (мВ и мА), состояния
+cmd_read_u_i|0x10|-|int int uint|Чтение текущего напряжения,тока (мВ и мА) и состояния
 cmd_get_u|0x11|-|int|Чтение текущего напряжения (мВ)
 cmd_get_i|0x12|-|int|Чтение текущего тока (мА)
 cmd_get_ui|0x13|-|int int|Чтение текущего напряжения и тока (мВ и мА)
 cmd_get_state|0x14|-|uint|Чтение текущего состояния
 cmd_power_go|0x20|-|-|Старт преобразователя с заданными максимальными U и I
-cmd_power_stop|0x21|-|-|отключение ( и разряда в том числе)
+cmd_power_stop|0x21|-|-|Отключение ( и разряда в том числе)
 cmd_set_pid|0x22|-|-|set all parameters (в разработке)
 cmd_get_factor_u|0x30|-|uint|Чтение множителя преобразования в милливольты
 cmd_set_factor_u|0x31|uint|-|Запись множителя преобразования в милливольты
 cmd_set_factor_default_u|0x32|-|-|Возврат к заводскому множителю преобразования в милливольты
 cmd_get_smooth_u|0x33|-|uint|Чтение параметра сглаживания по напряжению
-cmd_set_smooth_u|0x34|uint|-|Запись параметра сглаживания по напряжению
+cmd_set_smooth_u|0x34|uint|-|Запись параметра сглаживания по напряжению (1...3)
 cmd_get_offset_u|0x35|-|uint|Чтение приборного смещения по напряжению
 cmd_set_offset_u|0x36|int|-|Запись приборного смещения по напряжению
 cmd_get_factor_i|0x38|-|uint|Чтение множителя преобразования в миллиамперы
 cmd_set_factor_i|0x39|uint|-|Запись множителя преобразования в миллиамперы
 cmd_set_factor_default_i|0x3A|-|-|Возврат к заводскому множителю преобразования в миллиамперы
 cmd_get_smooth_i|0x3B|-|uint|Чтение параметра сглаживания по току
-cmd_set_smooth_i|0x3C|uint|-|Запись параметра сглаживания по току
+cmd_set_smooth_i|0x3C|uint|-|Запись параметра сглаживания по току (1...3)
 cmd_get_offset_i|0x3D|-|uint|Чтение приборного смещения по току
 cmd_set_offset_i|0x3E|int|-|Запись приборного смещения по току
-md_pid_configure|0x40| uint uint uint uint uint uint uint|-|set mode, kp, ki, kd, min, max
+cmd_pid_configure|0x40|uint uint uint uint uint uint|-|set mode,kp,ki,kd,min,max
 cmd_pid_set_coefficients|0x41|uint uint uint|-|set kp, ki, kd
 cmd_pid_output_range|0x42|uint uint|-|set min, max
-cmd_pid_reconfigure|0x43|uint uint uint uint uint|-|set kp, ki, kd,min, max w/o clear
+cmd_pid_reconfigure|0x43|uint uint uint uint uint|-|set kp,ki,kd,min,max w/o clear
 cmd_pid_clear|0x44|-|-|clear
 cmd_pid_test|0x46|uint uint uint|-|mode, setpoint, sw
 cmd_pwm_configure_out|0x47|?|?|    
-cmd_pid_get_configure|0x48|-|uint uint uint uint uint uint|mode, kP, kI, kD, min, max - возвращает параметры текущего режима регулирования
+cmd_pid_get_configure|0x48|-|uint uint uint uint uint uint|mode,kP,kI,kD,min,max - возвращает параметры текущего режима регулирования
 cmd_pid_set_max_sum|0x49|uint|-|Задает максимальный интеграл при вычислении шага рег.
 cmd_pwm_configure_cool|0x4A|?|-|    
 cmd_adc_read_probes|0x50|-|int,int|Read all probes
@@ -85,15 +85,15 @@ cmd_set_current|0x59|uint|-|старая, не проверена
 cmd_set_discurrent|0x5A|uint|-|старая, не проверена
 cmd_set_surge_compensation|0x5B|?|-|параметры подавления всплеска напряжения na
 cmd_set_idle_load|0x5C|uint|-|параметры доп.нагрузки ХХ
-cmd_get_win_less_u|0x60|-|int|Порог отключения по напряжению 
-cmd_set_win_less_u|0x61|int|-|Порог отключения по напряжению 
-cmd_set_win_less_default_u|0x62|int|-|Порог отключения по напряжению 
-cmd_get_win_up_u|0x63|-|int|Порог отключения по напряжению 
-cmd_set_win_up_u|0x64|int|-|Порог отключения по напряжению 
-cmd_set_win_up_default_u|0x65|int|-|Порог отключения по напряжению 
-cmd_get_win_less_i|0x68|-|int|Порог отключения по току 
-cmd_set_win_less_i|0x69|int|-|Порог отключения по току 
-cmd_set_win_less_default_i|0x6A|int|-|Порог отключения по току 
-cmd_get_win_up_i|0x6B|-|int|Порог отключения по току 
-cmd_set_win_up_i|0x6C|int|-|Порог отключения по току  
-cmd_set_win_up_default_i|0x6D|int|-|Порог отключения по току 
+cmd_get_win_less_u|0x60|-|int|Порог отключения по Umin 
+cmd_set_win_less_u|0x61|int|-|Порог отключения по Umin
+cmd_set_win_less_default_u|0x62|int|-|Порог отключения по Umin 
+cmd_get_win_up_u|0x63|-|int|Порог отключения по Umax
+cmd_set_win_up_u|0x64|int|-|Порог отключения по Umax
+cmd_set_win_up_default_u|0x65|int|-|Порог отключения по Umax 
+cmd_get_win_less_i|0x68|-|int|Порог отключения по Imin 
+cmd_set_win_less_i|0x69|int|-|Порог отключения по Imin 
+cmd_set_win_less_default_i|0x6A|int|-|Порог отключения по Imin 
+cmd_get_win_up_i|0x6B|-|int|Порог отключения по Imax 
+cmd_set_win_up_i|0x6C|int|-|Порог отключения по Imax  
+cmd_set_win_up_default_i|0x6D|int|-|Порог отключения по Imax 
