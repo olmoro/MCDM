@@ -83,6 +83,62 @@ void doReadUI()
   else  txReplay(1, err_tx);                  // ошибка протокола
 }
 
+// 0x11 читать текущее напряжение (мВ)
+void doGetU()  
+{
+  if( rxNbt == 0 )
+  {
+    int id = 1;
+    id = replyU16( id, (uint16_t)mvVoltage );
+    txReplay( id, 0 );                        // всего байт, в нулевом - сообщение об ошибках (nu)
+  }
+  else  txReplay(1, err_tx);                  // ошибка протокола
+}
+
+// 0x12 читать текущий ток (мА)
+void doGetI()
+{
+  if( rxNbt == 0 )
+  {
+    int id = 1;
+    id = replyU16( id, (uint16_t)maCurrent );
+    txReplay( id, 0 );                        // всего байт, в нулевом - сообщение об ошибках (nu)
+  }
+  else  txReplay(1, err_tx);                  // ошибка протокола
+}
+
+// 0x13 читать текущее напряжение (мВ) и ток (мА)
+void doGetUI()
+{
+  if( rxNbt == 0 )
+  {
+    int id = 1;
+    id = replyU16( id, (uint16_t)mvVoltage );
+    id = replyU16( id, (uint16_t)maCurrent );
+    txReplay( id, 0 );                        // всего байт, в нулевом - сообщение об ошибках (nu)
+  }
+  else  txReplay(1, err_tx);                  // ошибка протокола
+}
+
+// 0x14 читать текущее состояние
+void doGetState()
+{
+  if( rxNbt == 0 )
+  {
+    int id = 1;
+    id = replyU08( id, state1 );              // информация о состоянии 
+    id = replyU08( id, state2 );              // информация о состоянии 
+    txReplay( id, 0 );                        // всего байт, в нулевом - сообщение об ошибках (nu)
+  }
+  else  txReplay(1, err_tx);                  // ошибка протокола
+}
+
+
+
+
+
+
+
 
   // 0x30 Чтение калибровки измерителя напряжения
 void doGetFactorU()

@@ -1,6 +1,6 @@
 /*
   Команды, доступные по UART
-  Версия от 25 ноября 2020г.
+  Версия от 05 мая 2022г.
 */
 
 #include "commands.h"
@@ -13,7 +13,7 @@
 #include <Arduino.h>
 
 // Имя устройства
-static constexpr char Info[] = {"D21 Rev2020.10.23\n\0"};   //
+static constexpr char Info[] = {"D21 Rev2022.05.05\n\0"};   //
 
   // state1
 bool switchStatus          = false;  // коммутатор выключен ( sw_pin PA14 ) // ???
@@ -37,7 +37,11 @@ bool reserve2Status        = false;  // резерв 2
 
 
   // Команды измерений
-const uint8_t cmd_read_u_i                  = 0x10; // читать текущее напряжение и ток (мВ и мА)
+const uint8_t cmd_read_u_i                  = 0x10; // читать текущее напряжение(мВ), ток (мА) и состояние
+const uint8_t cmd_get_u                     = 0x11; // читать текущее напряжение (мВ)
+const uint8_t cmd_get_i                     = 0x12; // читать текущий ток (мА)
+const uint8_t cmd_get_ui                    = 0x13; // читать текущее напряжение (мВ) и ток (мА)
+const uint8_t cmd_get_state                 = 0x14; // читать текущее состояние
 
   // Команды управления
 const uint8_t cmd_power_go                  = 0x20; // старт преобразователя с заданными максимальными U и I
@@ -163,7 +167,12 @@ void doCommand()
     switch( cmd )
     {                                                                 //              v57#
         // Команды измерения
-      case cmd_read_u_i :                 doReadUI();                 break;  // 0x10   57
+      case cmd_read_u_i:                  doReadUI();                 break;  // 0x10   57
+      case cmd_get_u:                     doGetU();                   break;  // 0x11 читать текущее напряжение (мВ)
+      case cmd_get_i:                     doGetI();                   break;  // 0x12 читать текущий ток (мА)
+      case cmd_get_ui:                    doGetUI();                  break;  // 0x13 читать текущее напряжение (мВ) и ток (мА)
+      case cmd_get_state:                 doGetState();               break;  // 0x14 читать текущее состояние
+
 
         // Команды управления
       case cmd_power_go:                  doPowerGo();                break;  // 0x20   57
