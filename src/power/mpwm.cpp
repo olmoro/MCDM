@@ -71,6 +71,9 @@ void goPwmCool()
 
 void writePwmOut(uint32_t value)
 {
+   #ifdef MIC4420
+    value = 1000 - value;
+  #endif
   pwm.analogWrite(MPins::out_pin, value);
 }
 

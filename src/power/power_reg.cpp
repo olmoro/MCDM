@@ -703,7 +703,7 @@ void doPidSetMaxSum()
   else txReplay(1, err_tx);       // Ошибка протокола
 }
 
-  // 0x4A Конфигурирование pwm-регулятора Cool (C_4A_pwmConfCool.wak)
+// 0x4A Конфигурирование pwm-регулятора Cool (C_4A_pwmConfCool.wak)
 void doPwmCool()
 {
   uint8_t err = 0x00;
@@ -725,11 +725,10 @@ void doCooler()
 {
   if( rxNbt == 2 )
   {
-    writePwmCool(get16(0));             // 0...1000
-
+    writePwmCool(get16(0));         // 0...1000
     txReplay( 1, 0x00 );            // подтверждение
   }
-  else  txReplay(1, err_tx);        // ошибка протокола
+  else txReplay(1, err_tx);        // ошибка протокола
 }
 
 
@@ -743,7 +742,7 @@ void doSurgeCompensation()
 
     txReplay( 1, 0 );
   }
-  else  txReplay(1, err_tx);                    // ошибка протокола
+  else txReplay(1, err_tx);                    // ошибка протокола
 }
 
   // 0x5C задать параметры доп. нагрузки на ХХ
@@ -755,7 +754,7 @@ void doIdleLoad()
     idleDac      = get16(2);        // Ток в коде DAC
     txReplay( 1, 0 );
   }
-  else  txReplay(1, err_tx);                    // ошибка протокола
+  else txReplay(1, err_tx);                    // ошибка протокола
 }
 
 
