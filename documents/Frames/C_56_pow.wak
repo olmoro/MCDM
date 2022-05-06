@@ -1,9 +1,9 @@
 [Protocol]
 Address 1=0
-Command 1=63
+Command 1=56
 Command Name 1=doPower
-Data Frame 1=0220 0200
-Frame 1 Enable=1
+Data Frame 1=0007 0200
+Frame 1 Enable=0
 Address 2=0
 Command 2=63
 Command Name 2=setPower_00%
