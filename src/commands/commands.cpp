@@ -88,10 +88,10 @@ const uint8_t cmd_pid_output_range          = 0x42; // set min, max
 const uint8_t cmd_pid_reconfigure           = 0x43; // set kp, ki, kd,min, max w/o clear
 const uint8_t cmd_pid_clear                 = 0x44; // clear
 const uint8_t cmd_pid_test                  = 0x46; // mode, setpoint, sw
-const uint8_t cmd_pwm_configure_out             = 0x47; // 
+//const uint8_t cmd_pwm_configure_out             = 0x47; // 
 const uint8_t cmd_pid_get_configure         = 0x48; // mode, kP, kI, kD, min, max - возвращает параметры текущего режима регулирования
 const uint8_t cmd_pid_set_max_sum           = 0x49; // Задает максимальный интеграл при вычислении шага рег
-const uint8_t cmd_pwm_configure_cool             = 0x4A; // 
+//const uint8_t cmd_pwm_configure_cool             = 0x4A; // 
 const uint8_t cmd_set_cooler                = 0x4F; // Задать скорость вентилятора
 
   // АЦП - настройки
@@ -167,12 +167,12 @@ void doCommand()
     #endif
 
     switch( cmd )
-    {                                                                 //              v57#
+    {                                                                 //
         // Команды измерения
-      case cmd_read_u_i:                  doReadUI();                 break;  // 0x10   57
-      case cmd_get_u:                     doGetU();                   break;  // 0x11 Чтение напряжение (мВ)
-      case cmd_get_i:                     doGetI();                   break;  // 0x12 Чтение ток (мА)
-      case cmd_get_ui:                    doGetUI();                  break;  // 0x13 Чтение напряжение (мВ) и ток (мА)
+      case cmd_read_u_i:                  doReadUI();                 break;  // 0x10 OK
+      case cmd_get_u:                     doGetU();                   break;  // 0x11 OK Чтение напряжение (мВ)
+      case cmd_get_i:                     doGetI();                   break;  // 0x12 OK Чтение ток (мА)
+      case cmd_get_ui:                    doGetUI();                  break;  // 0x13 OK Чтение напряжение (мВ) и ток (мА)
       case cmd_get_state:                 doGetState();               break;  // 0x14 Чтение состояние
       case cmd_get_celsius:               doCelsius();                break;  // 0x15 Чтение температуру радиатора
 
@@ -208,10 +208,10 @@ void doCommand()
       case cmd_pid_reconfigure:           doPidReconfigure();         break;  // 0x43     *
       case cmd_pid_clear:                 doPidClear();               break;  // 0x44   57
       case cmd_pid_test:                  doPidTest();                break;  // 0x46     *
-      case cmd_pwm_configure_out:             doPwmOut();           break;  // 0x47     *
+//      case cmd_pwm_configure_out:             doPwmOut();           break;  // 0x47     *
       case cmd_pid_get_configure:         doPidGetConfigure();        break;  // 0x48     *
       case cmd_pid_set_max_sum:           doPidSetMaxSum();           break;  // 0x49    
-      case cmd_pwm_configure_cool:             doPwmCool();           break;  // 0x4A     *
+//      case cmd_pwm_configure_cool:             doPwmCool();           break;  // 0x4A     *
       case cmd_set_cooler:                doCooler();                 break;  // 0x4F Задать скорость вентилятора
 
         // Команды работы с АЦП
@@ -222,7 +222,7 @@ void doCommand()
         // Команды управления портами управления (в основном тестовые)
       case cmd_set_switch_pin:            doSwPin();                  break;  // 0x54   57
         // Команды тестовые
-      case cmd_set_power:                 setPower();                 break;  // 0x56   57
+      case cmd_set_power:                 setPower();                 break;  // 0x56   OK
       case cmd_set_discharge:             setDischg();                break;  // 0x57
       case cmd_set_voltage:               doSetVoltage();             break;  // 0x58   .
       case cmd_set_current:               doSetCurrent();             break;  // 0x59   .

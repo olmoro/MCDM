@@ -70,10 +70,8 @@ cmd_pid_output_range|0x42|uint uint|-|set min, max
 cmd_pid_reconfigure|0x43|uint uint uint uint uint|-|set kp,ki,kd,min,max w/o clear
 cmd_pid_clear|0x44|-|-|clear
 cmd_pid_test|0x46|uint uint uint|-|mode, setpoint, sw
-cmd_pwm_configure_out|0x47|?|?|    
 cmd_pid_get_configure|0x48|-|uint uint uint uint uint uint|mode,kP,kI,kD,min,max - возвращает параметры текущего режима регулирования
 cmd_pid_set_max_sum|0x49|uint|-|Задает максимальный интеграл при вычислении шага рег.
-cmd_pwm_configure_cool|0x4A|?|-| 
 cmd_set_cooler|0x4F|uint|-|Задать скорость вентилятора
 cmd_adc_read_probes|0x50|-|int,int|Read all probes
 cmd_adc_get_offset|0x51|-|int|Читать смещение АЦП

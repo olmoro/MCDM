@@ -2,16 +2,16 @@
 Address 1=0
 Command 1=56
 Command Name 1=doPower
-Data Frame 1=0007 0200
+Data Frame 1=00AA 0000
 Frame 1 Enable=0
 Address 2=0
-Command 2=63
-Command Name 2=setPower_00%
-Data Frame 2=0000 0000
+Command 2=56
+Command Name 2=doPower
+Data Frame 2=00AB 0000
 Frame 2 Enable=0
 Address 3=0
-Command 3=10
-Command Name 3=read_U_I
+Command 3=13
+Command Name 3=getUI
 Data Frame 3=
 Frame 3 Enable=0
 

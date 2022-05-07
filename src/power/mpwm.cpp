@@ -3,7 +3,7 @@
 
   https://translated.turbopages.org/proxy_u/en-ru.ru.14bc2e5e-6224d5e4-354108d9-74722d776562/https/github.com/ocrdu/Arduino_SAMD21_turbo_PWM
 
-  Версия маq 2022
+  Версия май 2022
   Оба канала на 190кГц
 
 */
@@ -11,7 +11,7 @@
 #include "power/mpwm.h"
 #include "board/mpins.h"
 #include "board/mboard.h"
-#include "SAMD21turboPWM.h" /* const unsigned int _maxDutyCycle = 500;   // исправлено 20220506 1000 */
+#include "SAMD21turboPWM.h" /* const unsigned int _maxDutyCycle = 0x01FF;   // исправлено 20220507, было 1000 */
 #include "adc/adc.h"    // DAC
 #include <Arduino.h>
 
@@ -24,11 +24,11 @@ TurboPWM pwm;
   // bool pwmInvert                = pwm_invert;   // 0 - активный уровень
 
   // Новые параметры настройки
-  constexpr bool                    pwm_turbo       = true;   //false;  // turbo on/off для обоих таймеров
+  constexpr bool                    pwm_turbo       = true;   // turbo on/off для обоих таймеров
   constexpr unsigned int            pwm_tccdiv_out  = 1;      // делитель для таймера 0 (1,2,4,8,16,64,256,1024)
   constexpr unsigned int            pwm_tccdiv_cool = 1;      // делитель для таймера 2 (1,2,4,8,16,64,256,1024)
-  constexpr unsigned long long int  pwm_steps_out   = 500;    //250;    // разрешение для таймера 0 (2 to counter_size)
-  constexpr unsigned long long int  pwm_steps_cool  = 500;    //250;    // разрешение для таймера 2 (2 to counter_size)
+  constexpr unsigned long long int  pwm_steps_out   = 0x01FF; // разрешение для таймера 0 (2 to counter_size)
+  constexpr unsigned long long int  pwm_steps_cool  = 0x01FF; // разрешение для таймера 2 (2 to counter_size)
 
   bool         pwmTurbo       = pwm_turbo;
   unsigned int pwmTccdivOut   = pwm_tccdiv_out;
@@ -44,23 +44,20 @@ void initPwm()
   pwm.timer(2, pwm_tccdiv_cool, pwm_steps_cool, true);  // (COOL) T2, divider, resolution (подстройка частоты), single-slope PWM
 
 
-  pwm.analogWrite(MPins::out_pin, 125);    // test                125 = 12,5в при 3А
+  pwm.analogWrite(MPins::out_pin, 0x0100);    // test                125 = 12,5в при 3А
 
-  pwm.analogWrite(MPins::cool_pin, 125);    // test
+  pwm.analogWrite(MPins::cool_pin, 0x0100);    // test
 
   swPinOn();                 // Включение нагрузки test
 
 //  dacWrite10bit( 0x0200 );  // test 12.4v: 0x0280 -> -1.8A
 }
 
-
-
-
 void goPwmOut()
 {
-  pwm.setClockDivider(1, pwmTurbo);           // Input clock is divided by 1 and sent to Generic Clock, Turbo is On/Off
-  pwm.timer(0, pwmTccdivOut, pwmStepsOut,  true);  // (OUT)  T0, divider, resolution (подстройка частоты), single-slope PWM
-  pwm.analogWrite(MPins::out_pin, pwmStepsOut);    // test
+  pwm.setClockDivider(1, pwmTurbo);               // Input clock is divided by 1 and sent to Generic Clock, Turbo is On/Off
+  pwm.timer(0, pwmTccdivOut, pwmStepsOut,  true); // (OUT)  T0, divider, resolution (подстройка частоты), single-slope PWM
+  pwm.analogWrite(MPins::out_pin, pwmStepsOut);   // test
 }
 
 void goPwmCool()
@@ -72,7 +69,7 @@ void goPwmCool()
 void writePwmOut(uint32_t value)
 {
    #ifdef MIC4420
-    value = 500 - value;
+    value = 0x01FF - value;                       // Заменяет инвертирование в настройках вывода
   #endif
   pwm.analogWrite(MPins::out_pin, value);
 }
@@ -80,7 +77,7 @@ void writePwmOut(uint32_t value)
 void writePwmCool(uint32_t value)
 {
   #ifdef MIC4420
-    value = 500 - value;
+    value = 0x01FF - value;
   #endif
   pwm.analogWrite(MPins::cool_pin, value);
 }
@@ -89,8 +86,3 @@ int  enable(unsigned int timerNumber)
 {
   return pwm.enable(timerNumber, true);
 }
-
-// int  frequency(unsigned int timerNumber)
-// {
-//   return (unsigned int)pwm.frequency(timerNumber) * 1000; 
-// }

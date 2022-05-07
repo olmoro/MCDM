@@ -4,12 +4,11 @@
   https://github.com/mike-matera/FastPID/tree/master/examples/VoltageRegulator
   FastPID: A fast 32-bit fixed-point PID controller for Arduino
 
-  v55 - Релейный режим. Преобразователь включается на вычисленное время посредством PWM.
-  При частоте 6кГц...
-
+  ??? Релейный режим. Преобразователь включается на вычисленное время посредством PWM.
+  
   Подбор коэффициентов ПИД-регулятора
   
-  версия от 23 октября 2020г.
+  версия от 07 мая 2022г.
 */
 
 #include <Arduino.h>
@@ -24,12 +23,12 @@
 #include "power/mpid.h"
 #include "stdint.h"
 
-    // Переменные настройки PWM
-extern bool         pwmTurbo;               // Режим Турбо on/off
-extern unsigned int pwmTccdivOut;
-extern unsigned int pwmTccdivCool;
-extern unsigned int pwmStepsOut;
-extern unsigned int pwmStepsCool;
+//     // Переменные настройки PWM
+// extern bool         pwmTurbo;               // Режим Турбо on/off
+// extern unsigned int pwmTccdivOut;
+// extern unsigned int pwmTccdivCool;
+// extern unsigned int pwmStepsOut;
+// extern unsigned int pwmStepsCool;
 
 
     // Переменные протокола Wake 
@@ -92,8 +91,8 @@ constexpr uint16_t kd_def   =  (0.01f * hz ) * MPid::param_mult;   // 0.01 0x001
 
 // Ограничения на output приборные, вводятся setOutputRange(min,max),
 // будут в инициализации? 
-constexpr int16_t min_pwm   = 0x0220;   // Не 0x0000 - с учетом частотных характеристик оптопары.
-constexpr int16_t max_pwm   = 0x1000;   // Freq = 5.865 kHz (без вариантов 12бит - см. power_pwm.cpp)
+constexpr int16_t min_pwm   = 0x0000;   // май 2020
+constexpr int16_t max_pwm   = 0x01FF;   // 
 constexpr int16_t min_dac   = 0x0020;
 constexpr int16_t max_dac   = 0x03FF;   //
 
@@ -648,22 +647,22 @@ void doPidTest()
   else txReplay(1, err_tx);         // Ошибка протокола     
 }
 
-  // 0x47 Конфигурирование pwm-регулятора Out (C_47_pwmConf.wak)
-void doPwmOut()
-{
-  uint8_t err = 0x00;
+//   // 0x47 Конфигурирование pwm-регулятора Out (C_47_pwmConf.wak)
+// void doPwmOut()
+// {
+//   uint8_t err = 0x00;
 
-  if( rxNbt == 4 )
-  {
-    pwmTurbo      = (bool)get08(0);          // t - False for 48MHz clock, true for 96MHz clock
-    pwmTccdivOut  = (unsigned int)get08(1);  // d - задать делитель
-    pwmStepsOut   = get16(2);                // s - задать steps (частоту)
-    goPwmOut();
+//   if( rxNbt == 4 )
+//   {
+//     pwmTurbo      = (bool)get08(0);          // t - False for 48MHz clock, true for 96MHz clock
+//     pwmTccdivOut  = (unsigned int)get08(1);  // d - задать делитель
+//     pwmStepsOut   = get16(2);                // s - задать steps (частоту)
+//     goPwmOut();
 
-    txReplay( 1, err );  
-  }
-  else txReplay(1, err_tx);
-}
+//     txReplay( 1, err );  
+//   }
+//   else txReplay(1, err_tx);
+// }
 
 // 0x48 Возвращает параметры текущего режима регулирования
 void doPidGetConfigure()
@@ -703,22 +702,22 @@ void doPidSetMaxSum()
   else txReplay(1, err_tx);       // Ошибка протокола
 }
 
-// 0x4A Конфигурирование pwm-регулятора Cool (C_4A_pwmConfCool.wak)
-void doPwmCool()
-{
-  uint8_t err = 0x00;
+// // 0x4A Конфигурирование pwm-регулятора Cool (C_4A_pwmConfCool.wak)
+// void doPwmCool()
+// {
+//   uint8_t err = 0x00;
 
-  if( rxNbt == 4 )
-  {
-    pwmTurbo      = (bool)get08(0);          // t - False for 48MHz clock, true for 96MHz clock
-    pwmTccdivCool  = (unsigned int)get08(1);  // d - задать делитель
-    pwmStepsCool   = get16(2);                // s - задать steps (частоту)
-    goPwmCool();
+//   if( rxNbt == 4 )
+//   {
+//     pwmTurbo      = (bool)get08(0);          // t - False for 48MHz clock, true for 96MHz clock
+//     pwmTccdivCool  = (unsigned int)get08(1);  // d - задать делитель
+//     pwmStepsCool   = get16(2);                // s - задать steps (частоту)
+//     goPwmCool();
 
-    txReplay( 1, err );  
-  }
-  else txReplay(1, err_tx);
-}
+//     txReplay( 1, err );  
+//   }
+//   else txReplay(1, err_tx);
+// }
 
 // 0x4F Задать скорость вентилятора
 void doCooler()                      
