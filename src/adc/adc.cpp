@@ -25,7 +25,8 @@
 #include "merrors.h"
 #include "stdint.h"
 
-constexpr uint16_t period = 2000;  //5;    // Период запуска ПИД-регулятора 200Hz, мс 1500µs = 670Hz 2000µs = 500Hz
+constexpr uint16_t measure_period = 2000;    // Период запуска измерителя в микросекундах
+constexpr uint16_t pid_period = 100000UL / measure_period;    // Период запуска pid-регулятора в тактах измерителя
 //uint32_t ts;                      // таймер отсчета времени одного слота
 
 #ifdef DEBUG_ADC_TIME
@@ -189,11 +190,12 @@ int16_t getCurrent(int16_t avg)
 void measure()
 {
   static uint32_t ts = 0;                      // таймер отсчета времени
+  static uint16_t pp = 0;            // счетчик отсчета периода запуска пид-регулятора
 
 //  if( millis() - ts >= period )
-  if( micros() - ts >= period )
+  if( micros() - ts >= measure_period )
   { 
-    ts += period; 
+    ts += measure_period;
 
     #ifdef TEST_MEASURE
       test1On();     // Метка для осциллографа
@@ -213,13 +215,18 @@ void measure()
       test1Off();     // Метка для осциллографа
     #endif
 
-    #ifdef TEST_PID
-      test2Off();    // Метка для осциллографа
-    #endif
-    doPid( mvVoltage, maCurrent );    // fbU, fbI
-    #ifdef TEST_PID
-      test2On();     // Метка для осциллографа
-    #endif
+    pp++;
+    if( pp >= pid_period )
+    {
+      pp = 0;
+      #ifdef TEST_PID
+        test2Off();    // Метка для осциллографа
+      #endif
+        doPid( mvVoltage, maCurrent );    // fbU, fbI
+      #ifdef TEST_PID
+        test2On();     // Метка для осциллографа
+      #endif
+    }
   }
 }
   
