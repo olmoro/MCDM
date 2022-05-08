@@ -91,7 +91,7 @@ constexpr uint16_t kd_def   =  (0.01f * hz ) * MPid::param_mult;   // 0.01 0x001
 
 // Ограничения на output приборные, вводятся setOutputRange(min,max),
 // будут в инициализации? 
-constexpr int16_t min_pwm   = 0x0000;   // май 2020
+constexpr int16_t min_pwm   = 0x0000;   // май 2022
 constexpr int16_t max_pwm   = 0x01FF;   // 
 constexpr int16_t min_dac   = 0x0020;
 constexpr int16_t max_dac   = 0x03FF;   //
