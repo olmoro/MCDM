@@ -36,6 +36,7 @@ TurboPWM pwm;
   unsigned int pwmStepsOut    = pwm_steps_out;
   unsigned int pwmStepsCool   = pwm_steps_cool;
 
+  extern bool  powerStatus;
 
 void initPwm()
 {
@@ -44,9 +45,10 @@ void initPwm()
   pwm.timer(2, pwm_tccdiv_cool, pwm_steps_cool, true);  // (COOL) T2, divider, resolution (подстройка частоты), single-slope PWM
 
 
-  pwm.analogWrite(MPins::out_pin, 0x0100);    // test                125 = 12,5в при 3А
+  //pwm.analogWrite(MPins::out_pin, 0x01FF - 0x000F);    // test 
+  writePwmOut( 0x01F4 );       // test        125 = 12,5в при 3А
 
-  pwm.analogWrite(MPins::cool_pin, 0x0100);    // test
+  pwm.analogWrite(MPins::cool_pin, 0x00B0);    // test
 
   swPinOn();                 // Включение нагрузки test
 
@@ -68,7 +70,16 @@ void goPwmCool()
 
 void writePwmOut(uint32_t value)
 {
-   #ifdef MIC4420
+  if( value == 0 )
+  {
+    powerStatus = false;
+  }
+  else
+  {
+    powerStatus = true;
+  }
+
+  #ifdef MIC4420
     value = 0x01FF - value;                       // Заменяет инвертирование в настройках вывода
   #endif
   pwm.analogWrite(MPins::out_pin, value);

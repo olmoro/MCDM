@@ -32,6 +32,6 @@ void dacWrite10bit(const uint16_t value);
 constexpr int16_t win_less_default_u  =  -200;   //
 constexpr int16_t win_up_default_u    = 18000;   //
 constexpr int16_t win_less_default_i  = -1500;   //
-constexpr int16_t win_up_default_i    =  5000;   //
+constexpr int16_t win_up_default_i    =  6000;   //
 
 #endif  //!_ADC_H_

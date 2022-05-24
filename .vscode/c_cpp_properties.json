@@ -81,6 +81,7 @@
                 "VER190=1",
                 "TEST_MEASURE=1",
                 "TEST_PID=1",
+                "DEBUG_POWER=0",
                 ""
             ],
             "cStandard": "c11",

@@ -91,8 +91,8 @@ constexpr uint16_t kd_def   =  (0.01f * hz ) * MPid::param_mult;   // 0.01 0x001
 
 // Ограничения на output приборные, вводятся setOutputRange(min,max),
 // будут в инициализации? 
-constexpr int16_t min_pwm   = 0x0000;   // май 2022
-constexpr int16_t max_pwm   = 0x01FF;   // 
+constexpr int16_t min_pwm   = 0x0008;   // май 2022
+constexpr int16_t max_pwm   = 0x01F4;   // 
 constexpr int16_t min_dac   = 0x0020;
 constexpr int16_t max_dac   = 0x03FF;   //
 
@@ -173,7 +173,7 @@ void doPid( int16_t fbU, int16_t fbI )
     case OFF:
       // Выход из регулирования с отключением всего
       #ifdef DEBUG_POWER
-        SerialUSB.println(".OFF");
+//        SerialUSB.println(".OFF");
       #endif
 
       swPinOff();
@@ -181,7 +181,7 @@ void doPid( int16_t fbU, int16_t fbI )
 
 //      writePwm( 0x0000 );
       writePwmOut( 0x0000 );
-      powerStatus           = false;            // преобразователь выключен
+//      powerStatus           = false;            // преобразователь выключен
 
       currentControlStatus  = false;            // регулирование по току отключено
       voltageControlStatus  = false;            // регулирование по напряжению отключено
@@ -208,7 +208,7 @@ void doPid( int16_t fbU, int16_t fbI )
         outU = MyPid.step( setpoint[U], fbU );  // коррекция 
 //        writePwm( outU );
         writePwmOut( outU );
-        powerStatus           = true;           // преобразователь включен
+        //powerStatus           = true;           // преобразователь включен
 
         currentControlStatus  = false;          // регулирование по току отключено
         chargeStatus          = true;           // заряд включен       дублируется powerStatus ???
@@ -259,7 +259,7 @@ void doPid( int16_t fbU, int16_t fbI )
         outI = MyPid.step( setpoint[I], fbI );
 //        writePwm( outI );
         writePwmOut( outI );
-        powerStatus           = true;           // преобразователь включен
+//        powerStatus           = true;           // преобразователь включен
         
         voltageControlStatus  = false;          // регулирование по напряжению выключено
         chargeStatus          = true;           // заряд включен
@@ -305,7 +305,7 @@ void doPid( int16_t fbU, int16_t fbI )
 
 //      writePwm( 0x0000 );
       writePwmOut( 0x0000 );
-      powerStatus           = false;  // преобразователь выключен
+//      powerStatus           = false;  // преобразователь выключен
 
       currentControlStatus  = false;  // регулирование по току выключено
       voltageControlStatus  = false;  // регулирование по напряжению выключено
@@ -780,7 +780,7 @@ void doSwPin()
 
 //      writePwm( 0x0000 );
       writePwmOut( 0x0000 );
-      powerStatus           = false;  // преобразователь выключен
+//      powerStatus           = false;  // преобразователь выключен
       chargeStatus          = false;
       
       dacWrite10bit( 0x0000 );
@@ -867,7 +867,7 @@ void setDischg()
     }
 
     #ifdef DEBUG_POWER
-      SerialUSB.println( proc );
+//      SerialUSB.println( proc );
     #endif
 
     txReplay( 1, err );         // Подтверждение
@@ -893,7 +893,7 @@ void doSetVoltage()
 
         setpoint[U] = sp;       // милливольты
 
-      SerialUSB.print("x65_U ");  SerialUSB.println(setpoint[U]);
+//      SerialUSB.print("x65_U ");  SerialUSB.println(setpoint[U]);
 
 
         // Задать условия, установить напряжение 
@@ -911,7 +911,7 @@ void doSetVoltage()
 
         //initPid();  // ****
 
-        SerialUSB.print("kP[U]... ");  SerialUSB.println(kP[U]);
+//        SerialUSB.print("kP[U]... ");  SerialUSB.println(kP[U]);
 
           MyPid.configure( kP[U], kI[U], kD[U], minOut[U], maxOut[U] );
           //writePwm( sp );           // запустить это тест на 20 ... 100мс
@@ -928,7 +928,7 @@ void doSetVoltage()
 
         setpoint[I] = sp;       // миллиамперы
 
-      SerialUSB.print("x65_I ");  SerialUSB.println(setpoint[I]);
+//      SerialUSB.print("x65_I ");  SerialUSB.println(setpoint[I]);
 
       // ...
 
@@ -944,7 +944,7 @@ void doSetVoltage()
         powerStatus = false;                   //      !pwr_pin D4 PA14 - преобразователь выключить
 
         pidStatus = false;      // 
-      SerialUSB.print("x65_OFF ");  SerialUSB.println(setpoint[OFF]);
+//      SerialUSB.print("x65_OFF ");  SerialUSB.println(setpoint[OFF]);
 
       break;
     }
@@ -1049,8 +1049,8 @@ void doSetDiscurrent()
       dacWrite10bit( setpoint[m] ); // Задать код
 
       #ifdef DEBUG_DAC
-        SerialUSB.print("mode: ");  SerialUSB.print( m );
-        SerialUSB.print(" sp: 0x"); SerialUSB.println( setpoint[m], HEX );
+//        SerialUSB.print("mode: ");  SerialUSB.print( m );
+//        SerialUSB.print(" sp: 0x"); SerialUSB.println( setpoint[m], HEX );
       #endif
     }
     else
