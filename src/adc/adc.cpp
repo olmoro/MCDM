@@ -89,8 +89,6 @@ int16_t adcCelsius = 0x0000;
 int16_t mvVoltage   = 0x0064;     //  0.10V
 int16_t maCurrent   = 0xfc17;     // -1.00A
 
-
-
 // Параметры отключения (имитация аппаратной поддержки)
 //int16_t  prbWinLt[]   = {  -200, -1500,  0x0000,  0x0000 }; // 
 //int16_t  prbWinUt[]   = { 20000,  2000,  0x0000,  0x0000 }; // 
@@ -222,7 +220,9 @@ void measure()
       #ifdef TEST_PID
         test2Off();    // Метка для осциллографа
       #endif
-//        doPid( mvVoltage, maCurrent );    // fbU, fbI
+
+        doPid( mvVoltage, maCurrent );    // fbU, fbI
+        
       #ifdef TEST_PID
         test2On();     // Метка для осциллографа
       #endif

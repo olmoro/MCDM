@@ -101,10 +101,10 @@ constexpr int16_t max_dac   = 0x03FF;   //
 // Для разряда (режим D) используется другой экземпляр регулятора
 // Разрядность (10бит) и опорное (AVCC) DAC заданы жестко, как и частота регулирования (hz=10Hz) 
 
-enum mode { OFF = 0, U, I, D };
+enum mode { MODE_OFF = 0, MODE_U, MODE_I, MODE_D };
 
 // Массивы параметров настройки ПИД-регуляторов
-//             mode =      OFF       U        I        D
+//             mode =  MODE_OFF   MODE_U   MODE_I   MODE_D
 uint16_t kP[]       = {       0,  kp_def,  kp_def,  kp_def };  
 uint16_t kI[]       = {       0,  ki_def,  ki_def,  ki_def };
 uint16_t kD[]       = {       0,  kd_def,  kd_def,  kd_def };
@@ -124,7 +124,7 @@ int16_t idleCurrent = 250;        // Миллиамперы, меньше кот
 int16_t idleDac     = 0x240;      // Ток в коде DAC
 
 // Выбор режима регулирования (не путать с датчиками)
-uint8_t pidMode = OFF;   // OFF-U-I-D: выкл, задать напряжение, ток заряда или ток разряда
+uint8_t pidMode = MODE_OFF;   // OFF-U-I-D: выкл, задать напряжение, ток заряда или ток разряда
 
 // Сохраненные регистры регуляторов
 int16_t sLastSpU;
@@ -136,18 +136,18 @@ int64_t sSumI;
 int32_t sLastErrI;
 
 // Вариант с общим регулятором по напряжению и току
-MPid MyPid ( kP[U], kI[U], kD[U], minOut[U], maxOut[U] );  // Common Voltage and Current control
-MPid MyPidD( kP[D], kI[D], kD[D], minOut[D], maxOut[D] );  // Discurrent control
+MPid MyPid ( kP[MODE_U], kI[MODE_U], kD[MODE_U], minOut[MODE_U], maxOut[MODE_U] );  // Common Voltage and Current control
+MPid MyPidD( kP[MODE_D], kI[MODE_D], kD[MODE_D], minOut[MODE_D], maxOut[MODE_D] );  // Discurrent control
 
 
 void  initPids()
 {
-  MyPid.configure ( kP[U], kI[U], kD[U], minOut[U], maxOut[U] );
-  MyPidD.configure( kP[D], kI[D], kD[D], minOut[D], maxOut[D] );
+  MyPid.configure ( kP[MODE_U], kI[MODE_U], kD[MODE_U], minOut[MODE_U], maxOut[MODE_U] );
+  MyPidD.configure( kP[MODE_D], kI[MODE_D], kD[MODE_D], minOut[MODE_D], maxOut[MODE_D] );
   initPwm();
 } 
 
-// Запуск и выбор регулятора производится выбором pidMode: OFF, U, I, D и
+// Запуск и выбор регулятора производится выбором pidMode: MODE_OFF, MODE_U, modeI, modeD
 // powerStatus = true      - Преобразователь включить (включен)
 // pidStatus   = true      - Регулятор включить (включен)
 
@@ -162,6 +162,11 @@ void doPid( int16_t fbU, int16_t fbI )
   int16_t outI;
   int16_t outD;
 
+  setpoint[MODE_U] = 10000;    // test
+  setpoint[MODE_I] =  3000;    // test
+  pidMode     = MODE_U;
+
+
   if( pidStatus )
   {
 
@@ -170,7 +175,7 @@ void doPid( int16_t fbU, int16_t fbI )
 
     switch ( pidMode )
     {
-    case OFF:
+    case MODE_OFF:
       // Выход из регулирования с отключением всего
       #ifdef DEBUG_POWER
 //        SerialUSB.println(".OFF");
@@ -197,15 +202,15 @@ void doPid( int16_t fbU, int16_t fbI )
       pidStatus             = false;            // регулятор выключен
       break;
 
-    case U:
-      if( fbI < setpoint[I] )                   // если ток менее заданного, но не разряд)) 
-      {
+    case MODE_U:
+//       if( fbI < setpoint[MODE_I] )                   // если ток менее заданного, но не разряд)) 
+//       {
         // Режим регулирования по напряжению
         swPinOn();
         switchStatus          = true;           // коммутатор включен (дублирование?)
         voltageControlStatus  = true;           // регулирование по напряжению включено
 
-        outU = MyPid.step( setpoint[U], fbU );  // коррекция 
+        outU = MyPid.step( setpoint[MODE_U], fbU );  // коррекция 
 //        writePwm( outU );
         writePwmOut( outU );
         //powerStatus           = true;           // преобразователь включен
@@ -216,47 +221,47 @@ void doPid( int16_t fbU, int16_t fbI )
         pauseStatus           = false;          // пауза отключена
         pidStatus             = true;           // регулятор включен   дублируется powerStatus ???
 
-        #ifdef DEBUG_POWER
-          SerialUSB.print(" ChargeU: ");     
-          SerialUSB.print(" spU: ");    SerialUSB.print( setpoint[U] );     
-          SerialUSB.print(" fbU: ");    SerialUSB.print( fbU );
-          SerialUSB.print(" outU: 0x"); SerialUSB.println( outU, HEX ); 
-        #endif
+        // #ifdef DEBUG_POWER
+        //   SerialUSB.print(" ChargeU: ");     
+        //   SerialUSB.print(" spU: ");    SerialUSB.print( setpoint[U] );     
+        //   SerialUSB.print(" fbU: ");    SerialUSB.print( fbU );
+        //   SerialUSB.print(" outU: 0x"); SerialUSB.println( outU, HEX ); 
+        // #endif
       
         //surgeCompensation( -(MyPid.getLastErr()) );    // Компенсация всплеска напряжения
-        idleLoad();
-      }
-      else                                      // ток выше предела - перейти к регулированию по току
-      {
-        if( pidMode )                           // если не отключено 
-        {
-          #ifdef OSC 
-            tstPinOff();                        // Метка для осциллографа
-          #endif
-          //saveState(U);                         // Сохранить регистры регулятора
-          //restoreState(I);                      // Перейти к регулированию по току
-          MyPid.setCoefficients( kP[I], kI[I], kD[I] );
-                //MyPid.replaceConfig( kP[I], kI[I], kD[I], minOut[I], maxOut[I]);
-                //MyPid.configure( kP[I], kI[I], kD[I], minOut[I], maxOut[I]);
-                //outI = MyPid.step( setpoint[I], fbI );
-    //MyPid.clear();
-          pidMode = I;
-          #ifdef OSC 
-            tstPinOn();                         // Метка для осциллографа
-          #endif
-        }
-      }
+//        idleLoad();
+//       }
+//       else                                      // ток выше предела - перейти к регулированию по току
+//       {
+    //     if( pidMode )                           // если не отключено 
+    //     {
+    //       #ifdef OSC 
+    //         tstPinOff();                        // Метка для осциллографа
+    //       #endif
+    //       //saveState(U);                         // Сохранить регистры регулятора
+    //       //restoreState(MODE_I);                      // Перейти к регулированию по току
+    //       MyPid.setCoefficients( kP[MODE_I], kI[MODE_I], kD[MODE_I] );
+    //             //MyPid.replaceConfig( kP[MODE_I], kI[MODE_I], kD[MODE_I], minOut[MODE_I], maxOut[MODE_I]);
+    //             //MyPid.configure( kP[MODE_I], kI[MODE_I], kD[MODE_I], minOut[MODE_I], maxOut[MODE_I]);
+    //             //outI = MyPid.step( setpoint[MODE_I], fbI );
+    // //MyPid.clear();
+    //       pidMode = I;
+    //       #ifdef OSC 
+    //         tstPinOn();                         // Метка для осциллографа
+    //       #endif
+    //     }
+//      }
       break;
 
-    case I:
-      if( fbI >= setpoint[I] )                  // если то более или равен заданному, иначе перейти...
+    case MODE_I:
+      if( fbI >= setpoint[MODE_I] )                  // если то более или равен заданному, иначе перейти...
       {
         // Режим регулирования по току
         swPinOn();
         switchStatus          = true;           // коммутатор включен (дублирование?)
         currentControlStatus  = true;           // регулирование по току включено
 
-        outI = MyPid.step( setpoint[I], fbI );
+        outI = MyPid.step( setpoint[MODE_I], fbI );
 //        writePwm( outI );
         writePwmOut( outI );
 //        powerStatus           = true;           // преобразователь включен
@@ -269,7 +274,7 @@ void doPid( int16_t fbU, int16_t fbI )
 
         #ifdef DEBUG_POWER
           SerialUSB.print(" ChargeI: ");     
-          SerialUSB.print(" spI: ");    SerialUSB.print( setpoint[I] );     
+          SerialUSB.print(" spI: ");    SerialUSB.print( setpoint[MODE_I] );     
           SerialUSB.print(" fbI: ");    SerialUSB.print( fbI );
           SerialUSB.print(" outI: 0x"); SerialUSB.println( outI, HEX ); 
         #endif 
@@ -285,12 +290,12 @@ void doPid( int16_t fbU, int16_t fbI )
           #endif
           //saveState(I);
           //restoreState(U);
-          MyPid.setCoefficients( kP[U], kI[U], kD[U] );
+          MyPid.setCoefficients( kP[MODE_U], kI[MODE_U], kD[MODE_U] );
                 //MyPid.replaceConfig( kP[U], kI[U], kD[U], minOut[U], maxOut[U]);
                 //MyPid.configure( kP[U], kI[U], kD[U], minOut[U], maxOut[U]);
                 //outU = MyPid.step( setpoint[U], fbU );
       //MyPid.clear();
-          pidMode = U;
+          pidMode = MODE_U;
           #ifdef OSC 
             tstPinOn();                         // Метка для осциллографа
           #endif
@@ -298,7 +303,7 @@ void doPid( int16_t fbU, int16_t fbI )
       }
       break;
 
-    case D:
+    case MODE_D:
       // Регулирование тока разряда                             !!! ( НЕ ПРОВЕРЕНО ) !!!
       swPinOn();
       switchStatus          = true;   // батарея подключена (не факт))
@@ -311,7 +316,7 @@ void doPid( int16_t fbU, int16_t fbI )
       voltageControlStatus  = false;  // регулирование по напряжению выключено
       chargeStatus          = false;  // заряд выключен
 
-      outD = MyPidD.step( setpoint[I], fbI );  // коррекция ( откорректировать полярности )
+      outD = MyPidD.step( setpoint[MODE_I], fbI );  // коррекция ( откорректировать полярности )
 //      writePwm( outD );
       writePwmOut( outD );
 
@@ -321,7 +326,7 @@ void doPid( int16_t fbU, int16_t fbI )
 
       #ifdef DEBUG_POWER
         SerialUSB.print(" Discharge: ");     
-        SerialUSB.print(" spD: ");    SerialUSB.print( setpoint[D] );     
+        SerialUSB.print(" spD: ");    SerialUSB.print( setpoint[MODE_D] );     
         SerialUSB.print(" fbI: ");    SerialUSB.print( fbI );
         SerialUSB.print(" outD: 0x"); SerialUSB.println( outD, HEX ); 
       #endif  
@@ -341,13 +346,13 @@ void saveState( int mode )
 {  
   switch (mode)
   {
-    case U:
+    case MODE_U:
       sLastSpU  = MyPid.getLastSp();
 //      sSumU     = MyPid.getSum();
       sLastErrU = MyPid.getLastErr();
       break;
 
-    case I: 
+    case MODE_I: 
       sLastSpI  = MyPid.getLastSp();
 //      sSumI     = MyPid.getSum();
       sLastErrI = MyPid.getLastErr();
@@ -361,13 +366,13 @@ void restoreState( int mode )
 {
   switch (mode)
   {
-    case U:
+    case MODE_U:
       MyPid.setLastSp( sLastSpU );
 //      MyPid.setSum( sSumU );            // По невыясненным причинам выполняется некорректно
       MyPid.setLastErr( sLastErrU );
       break;
 
-    case I: 
+    case MODE_I: 
       MyPid.setLastSp( sLastSpI );
 //      MyPid.setSum( sSumI );
       MyPid.setLastErr( sLastErrI );
@@ -435,7 +440,7 @@ void doPowerGo()
 //swPinOn();                                                              // TEST      
     setpoint[1] = get16(0);   // U
     setpoint[2] = get16(2);   // I
-    pidMode = 1;              // U - начать с установки напряжения
+    pidMode = MODE_U;              // U - начать с установки напряжения
     pidStatus = true;         // Разрешить регулирование
 //swPinOff();                                                              // TEST      
     txReplay( 1, 0 );   // всего байт, в нулевом - сообщение об ошибках
@@ -487,8 +492,8 @@ void doPidConfigure()
 
     switch ( m )
     {
-    case U: case I: MyPid.configure( kP[m], kI[m], kD[m], minOut[m], maxOut[m] );      break;
-    case D:        MyPidD.configure( kP[m], kI[m], kD[m], minOut[m], maxOut[m] );      break;
+    case MODE_U: case MODE_I: MyPid.configure( kP[m], kI[m], kD[m], minOut[m], maxOut[m] );      break;
+    case MODE_D:        MyPidD.configure( kP[m], kI[m], kD[m], minOut[m], maxOut[m] );      break;
     default:       break;
     }
     
@@ -517,8 +522,8 @@ void doPidSetCoefficients()
 
     switch ( m )
     {
-    case U: case I: MyPid.setCoefficients( kP[m], kI[m], kD[m] );      break;
-    case D:        MyPidD.setCoefficients( kP[m], kI[m], kD[m] );      break;
+    case MODE_U: case MODE_I: MyPid.setCoefficients( kP[m], kI[m], kD[m] );      break;
+    case MODE_D:        MyPidD.setCoefficients( kP[m], kI[m], kD[m] );      break;
     default:       break;
     }
 
@@ -539,15 +544,15 @@ void doPidOutputRange()
 {
   if( rxNbt == 5 )
   {
-    uint8_t m = rxDat[0] & 0x03;   // Выбор режима ( OFF, U, I, D )
+    uint8_t m = rxDat[0] & 0x03;   // Выбор режима ( MODE_OFF, U, I, D )
     pidMode = m;
     minOut[m] = get16(1);
     maxOut[m] = get16(3);
 
     switch ( m )
     {
-    case U: case I: MyPid.setOutputRange( minOut[m], maxOut[m] );      break;
-    case D:        MyPidD.setOutputRange( minOut[m], maxOut[m] );      break;
+    case MODE_U: case MODE_I: MyPid.setOutputRange( minOut[m], maxOut[m] );      break;
+    case MODE_D:        MyPidD.setOutputRange( minOut[m], maxOut[m] );      break;
     default:       break;
     }
     
@@ -561,7 +566,7 @@ void doPidReconfigure()
 {
   if( rxNbt == 10 )
   {
-    uint8_t m = rxDat[0] & 0x03;   // Выбор режима ( OFF, U, I, D )
+    uint8_t m = rxDat[0] & 0x03;   // Выбор режима ( MODE_OFF, U, I, D )
     pidMode = m;
     kP[m] = get16(1);
     kI[m] = get16(3);
@@ -572,8 +577,8 @@ void doPidReconfigure()
     //replaceConfigure( m, kP[m], kI[m], kD[m], minOut[m], maxOut[m] );
     switch ( m )
     {
-    case U: case I: MyPid.replaceConfig( kP[m], kI[m], kD[m], minOut[m], maxOut[m] );      break;
-    case D:        MyPidD.replaceConfig( kP[m], kI[m], kD[m], minOut[m], maxOut[m] );      break;
+    case MODE_U: case MODE_I: MyPid.replaceConfig( kP[m], kI[m], kD[m], minOut[m], maxOut[m] );      break;
+    case MODE_D:        MyPidD.replaceConfig( kP[m], kI[m], kD[m], minOut[m], maxOut[m] );      break;
     default:       break;
     }
     
@@ -594,12 +599,12 @@ void doPidClear()
 {
   if( rxNbt == 1 )
   {
-    uint8_t m = rxDat[0] & 0x03;   // Выбор режима ( OFF, U, I, D )
+    uint8_t m = rxDat[0] & 0x03;   // Выбор режима ( MODE_OFF, U, I, D )
 
     switch ( m )
     {
-    case U: case I: MyPid.clear();      break;
-    case D:        MyPidD.clear();      break;
+    case MODE_U: case MODE_I: MyPid.clear();      break;
+    case MODE_D:        MyPidD.clear();      break;
     default:       break;
     }
 
@@ -610,7 +615,7 @@ void doPidClear()
 
   // 0x46 Тестовая. Тест пид-регулятора
   // Задает ПИД-регулятору режим регулирования U,I или D и задает уровень.
-  // В режиме OFF ПИД-регулятор отключен, но схема скоммутирована как для регулирования 
+  // В режиме MODE_OFF ПИД-регулятор отключен, но схема скоммутирована как для регулирования 
   // по напряжению. Уровень предназначен для подачи непосредственно на PWM с осторожностью. 
 void doPidTest()
 {
@@ -624,7 +629,7 @@ void doPidTest()
     {
       // включать как регулятор напряжения
       setpoint[1] = get16(1);  
-      configMode(U);
+      configMode(MODE_U);
       pidStatus = false;            // PID-регулятор выключен
     }
     else
@@ -773,7 +778,7 @@ void doSwPin()
       // При отключении нагрузки снять питание
       // и отключить цепь разряда
 
-      pidMode = OFF;      // При включенном регуляторе отключение автоматическое, ниже - дублирование
+      pidMode = MODE_OFF;      // При включенном регуляторе отключение автоматическое, ниже - дублирование
 
       swPinOff();
       switchStatus          = false;  // коммутатор отключен
@@ -804,7 +809,7 @@ void setPower()
 {
   if( rxNbt == 4 )
   {
-    pidMode = OFF;      // При включенном регуляторе всё отключится
+    pidMode = MODE_OFF;      // При включенном регуляторе всё отключится
     pidStatus = false;
 
     swPinOn();
@@ -880,18 +885,18 @@ void doSetVoltage()
 {
   if( rxNbt == 3 )
   {
-    uint8_t _mode = rxDat[0] & 0x03;    // OFF-U-I-D - выкл или задать напряжение, ток заряда или ток разряда
+    uint8_t _mode = rxDat[0] & 0x03;    // MODE_OFF-U-I-D - выкл или задать напряжение, ток заряда или ток разряда
     int16_t sp    = (int16_t)get16(1);  // Заданная величина в mV или mA
 
     switch (_mode)
     {
-      case U :
+      case MODE_U :
       {
         if(sp < volt_min) sp = volt_min;           // Если за пределом - задать минимум
         if(sp > volt_max) sp = volt_max;           // Если за пределом - задать максимум
 
 
-        setpoint[U] = sp;       // милливольты
+        setpoint[MODE_U] = sp;       // милливольты
 
 //      SerialUSB.print("x65_U ");  SerialUSB.println(setpoint[U]);
 
@@ -913,12 +918,12 @@ void doSetVoltage()
 
 //        SerialUSB.print("kP[U]... ");  SerialUSB.println(kP[U]);
 
-          MyPid.configure( kP[U], kI[U], kD[U], minOut[U], maxOut[U] );
+          MyPid.configure( kP[MODE_U], kI[MODE_U], kD[MODE_U], minOut[MODE_U], maxOut[MODE_U] );
           //writePwm( sp );           // запустить это тест на 20 ... 100мс
       }
       break;
 
-      case I :
+      case MODE_I:
       {
         int16_t sp = (int16_t)get16(0);        // Заданное напряжение в милливольтах
 
@@ -926,9 +931,9 @@ void doSetVoltage()
         if(sp > curr_ch_max) sp = curr_ch_max;           // Если за пределом - задать максимум
 
 
-        setpoint[I] = sp;       // миллиамперы
+        setpoint[MODE_I] = sp;       // миллиамперы
 
-//      SerialUSB.print("x65_I ");  SerialUSB.println(setpoint[I]);
+//      SerialUSB.print("x65_I ");  SerialUSB.println(setpoint[MODE_I]);
 
       // ...
 
@@ -1008,7 +1013,7 @@ void doSetCurrent()
 
     if(_pidStatus)
     {
-      setpoint[I] = _value;
+      setpoint[MODE_I] = _value;
       // запустить
     }
     else
@@ -1033,13 +1038,13 @@ void doSetDiscurrent()
 {
   if( rxNbt == 3 )
   {
-    uint8_t   m = rxDat[0] & 0x03;  // OFF - задать код, иначе ток разряда в миллиамперах
+    uint8_t   m = rxDat[0] & 0x03;  // MODE_OFF - задать код, иначе ток разряда в миллиамперах
     pidMode = m;                    // выбор канала регулирования
 
     if( m == 0 )
     {
       // Задается код
-      pidMode = m = D;              // выбор канала регулирования 
+      pidMode = m = MODE_D;              // выбор канала регулирования 
       configMode(m);
       pidStatus = false;            // PID-регулятор выключен
       setpoint[m] = get16(1); 
@@ -1056,7 +1061,7 @@ void doSetDiscurrent()
     else
     {
       // Задается ток в миллиамперах
-      pidMode = m = D;              // выбор канала регулирования
+      pidMode = m = MODE_D;              // выбор канала регулирования
       configMode(m);
       pidStatus = true;             // PID-регулятор включен
       setpoint[m] = get16(1);       // Вводится абсолютное значение

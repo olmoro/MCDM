@@ -36,7 +36,14 @@ TurboPWM pwm;
   unsigned int pwmStepsOut    = pwm_steps_out;
   unsigned int pwmStepsCool   = pwm_steps_cool;
 
+
+  extern int16_t setpoint[];
+  extern uint8_t pidMode;   // OFF-U-I-D: выкл, задать напряжение, ток заряда или ток разряда
   extern bool  powerStatus;
+  extern bool  pidStatus;
+
+
+
 
 void initPwm()
 {
@@ -51,6 +58,15 @@ void initPwm()
   pwm.analogWrite(MPins::cool_pin, 0x00B0);    // test
 
   swPinOn();                 // Включение нагрузки test
+
+    // test
+    //setpoint[1] = 12000;   // U
+    //
+    setpoint[2] =  1000;   // I
+    pidMode = 1;           // U - начать с установки напряжения
+    pidStatus = true;      // Разрешить регулирование
+
+
 
 //  dacWrite10bit( 0x0200 );  // test 12.4v: 0x0280 -> -1.8A
 }
