@@ -53,7 +53,7 @@ void initPwm()
 
 
   //pwm.analogWrite(MPins::out_pin, 0x01FF - 0x000F);    // test 
-  writePwmOut( 0x01F4 );       // test        125 = 12,5в при 3А
+  //writePwmOut( 0x01F4 );       // test        125 = 12,5в при 3А
 
   pwm.analogWrite(MPins::cool_pin, 0x00B0);    // test
 
@@ -62,26 +62,26 @@ void initPwm()
     // test
     //setpoint[1] = 12000;   // U
     //
-    setpoint[2] =  1000;   // I
-    pidMode = 1;           // U - начать с установки напряжения
-    pidStatus = true;      // Разрешить регулирование
+    // setpoint[2] =  1000;   // I
+    // pidMode = 1;           // U - начать с установки напряжения
+    // pidStatus = true;      // Разрешить регулирование
 
 
 
 //  dacWrite10bit( 0x0200 );  // test 12.4v: 0x0280 -> -1.8A
 }
 
-void goPwmOut()
-{
-  pwm.setClockDivider(1, pwmTurbo);               // Input clock is divided by 1 and sent to Generic Clock, Turbo is On/Off
-  pwm.timer(0, pwmTccdivOut, pwmStepsOut,  true); // (OUT)  T0, divider, resolution (подстройка частоты), single-slope PWM
-  pwm.analogWrite(MPins::out_pin, pwmStepsOut);   // test
-}
+// void goPwmOut()
+// {
+//   pwm.setClockDivider(1, pwmTurbo);               // Input clock is divided by 1 and sent to Generic Clock, Turbo is On/Off
+//   pwm.timer(0, pwmTccdivOut, pwmStepsOut,  true); // (OUT)  T0, divider, resolution (подстройка частоты), single-slope PWM
+//   pwm.analogWrite(MPins::out_pin, pwmStepsOut);   // test
+// }
 
-void goPwmCool()
-{
+// void goPwmCool()
+// {
 
-}
+// }
 
 
 void writePwmOut(uint32_t value)

@@ -1,6 +1,6 @@
 /*
 
-  Версия от 25 ноября 2020г.
+  Версия от 27 мая 2022г.
 */
 
 #ifndef _ADC_H_
@@ -29,9 +29,9 @@ void dacInit();
 void dacWrite10bit(const uint16_t value);
 
 // Пороги отключения: мВ, мА  (имитация аппаратной поддержки)
-constexpr int16_t win_less_default_u  =  -200;   //
-constexpr int16_t win_up_default_u    = 18000;   //
-constexpr int16_t win_less_default_i  = -1500;   //
-constexpr int16_t win_up_default_i    =  6000;   //
+constexpr int16_t win_less_default_u  =  -200;   // при переплюсовке
+constexpr int16_t win_up_default_u    = 18000;   // исполняется конструктивно
+constexpr int16_t win_less_default_i  = -1500;   // максимальный ток разряда
+constexpr int16_t win_up_default_i    =  6000;   // максимальный ток заряда
 
 #endif  //!_ADC_H_

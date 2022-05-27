@@ -1,7 +1,7 @@
 /*
-  Версия от 25 ноября 2020г.
+  Версия от 27 мая 2022г.
   Измерители тока и напряжения дифференциальные.
-  Датчики опрашиваются с частотой 500Hz.
+  Датчики опрашиваются с частотой 500Hz. В перспективе 1кГц.
   По обоим датчикам максимально общие настройки. 
   Сглаживание - скользящее среднее, коэффициенты задаются.
   Три уровня сглаживания - для защиты, регулирования и отображения (не реализовано).
@@ -13,7 +13,6 @@
   enum gains      { GAIN_1X = 0x00, GAIN_2X, GAIN_4X, GAIN_8X, GAIN_16X, GAIN_DIV2 };
   enum references { INTREF  = 0x00, INTVCC0,INTVCC1, AREFA, AREFB };    
   Internal Bandgap Reference, 1/1.48 VDDANA, 1/2 VDDANA, External Reference A, External Reference B
-
 */
 
 #include <Arduino.h>
@@ -25,13 +24,22 @@
 #include "merrors.h"
 #include "stdint.h"
 
-constexpr uint16_t measure_period = 2000;    // Период запуска измерителя в микросекундах
-constexpr uint16_t pid_period = 100000UL / measure_period;    // Период запуска pid-регулятора в тактах измерителя
-//uint32_t ts;                      // таймер отсчета времени одного слота
+constexpr uint16_t measure_period = 2000;                   // Период запуска измерителя в микросекундах
+constexpr uint16_t pid_period = 100000UL / measure_period;  // Период запуска pid-регулятора в тактах измерителя
+//uint32_t ts;                                              // таймер отсчета времени одного слота nu
 
 #ifdef DEBUG_ADC_TIME
-  unsigned long oldTime;          // Таймер проверки периода запуска ПИД-регулятора
+  unsigned long oldTime;                                    // Таймер проверки периода запуска ПИД-регулятора
 #endif
+
+  // Начальное смещение ADC установленного субмодуля SAMD21 MINI
+#ifdef COM4
+  constexpr int16_t adc_offset_default = 2;   //  2022.05.27 (COM4) - восстановленный SAMD21 MINI
+#endif
+#ifdef COM7
+  constexpr int16_t adc_offset_default = 10;  //  2022.04.6 (COM7)
+#endif
+int16_t adcOffset = adc_offset_default;
 
 // Данные аппаратной поддержки измерителя напряжения:
   constexpr float R77     =    39.0;   // кОм (верхнее плечо входного делителя напряжения)
@@ -43,64 +51,66 @@ constexpr uint16_t pid_period = 100000UL / measure_period;    // Период з
 
 // Ожидаемый коэффициент преобразования в милливольты        
 //constexpr int16_t factor_default_u = int16_t(((R77+R78)/R78) * (AREF/ADCMAXU) * SHL10U);  // 0x2D4F
-// Фактическое значение для платы V51a1 с учетом погрешностей комплектующих
-constexpr int16_t factor_default_u = 0x2DE0;    //   2022.04.16
-
+// Фактическое значение для платы V53 с учетом погрешностей комплектующих
+#ifdef COM4
+  constexpr int16_t factor_default_u = 0x2D7D;    //  2022.05.27 (калибровано на 4,47в )
+#endif
+#ifdef COM7
+  constexpr int16_t factor_default_u = 0x2DE0;    //  2022.04.16
+#endif
 int16_t factorU = factor_default_u;
 
-constexpr uint16_t smooth_default_u = 3;   // параметр сглаживания для измерителя напряжения
+constexpr uint16_t smooth_default_u = 3;          // параметр сглаживания для измерителя напряжения
 uint8_t smoothU = smooth_default_u;
 
 // Данные аппаратной поддержки измерителя тока:
-  constexpr float KSHUNT  =  1000.0/20.0;   // mA/mV (1A/20mV) параметр шунта
-  constexpr float INTREF  =  1000.0;        // mV  (внутренний источник опорного напряжения)
-  constexpr float GAINI   =     2.0;        // усиление
-  constexpr float ADCMAXI =  2048.0;        // (для дифференциального режима)
-  constexpr float SHL4I  =     16.0;        // множитель для целочисленных вычислений 2^4
+  constexpr float KSHUNT  =  1000.0/20.0;         // mA/mV (1A/20mV) параметр шунта (два по R04 в параллель )
+  constexpr float INTREF  =  1000.0;              // mV  (внутренний источник опорного напряжения)
+  constexpr float GAINI   =     2.0;              // усиление
+  constexpr float ADCMAXI =  2048.0;              // (для дифференциального режима)
+  constexpr float SHL4I  =     16.0;              // множитель для целочисленных вычислений 2^4
 
 // Ожидаемый коэффициент преобразования в миллиамперы        
 //constexpr int16_t factor_default_i = int16_t((INTREF * GAINI/ADCMAXI) * KSHUNT * SHL4I);  // 0x030D
 
-// Фактическое значение для платы V57(2) с учетом погрешностей комплектующих
-constexpr uint16_t factor_default_i = 0x030C;
-
+// Фактическое значение для платы V53 с учетом погрешностей комплектующих
+#ifdef COM4
+  constexpr uint16_t factor_default_i = 0x030C;   //  2022.05.27 ( неуточненное значение )
+#endif
+#ifdef COM7
+  constexpr uint16_t factor_default_i = 0x030C;
+#endif
 uint16_t factorI = factor_default_i;
 
-constexpr uint8_t smooth_default_i = 3;   // параметр сглаживания для измерителя тока
+constexpr uint8_t smooth_default_i = 3;           // параметр сглаживания для измерителя тока
 uint8_t smoothI = smooth_default_i;
 
   // приборные смещения
-constexpr int16_t offset_default_u = 0x0000;
+#ifdef COM4
+  constexpr int16_t offset_default_u = 0x0000;    //  ( неуточненное значение )
+  constexpr int16_t offset_default_i = -135;      //  ( неуточненное значение )
+#endif
+#ifdef COM7
+  constexpr int16_t offset_default_u = 0x0000;
+  constexpr int16_t offset_default_i = -135;      //  2022.04.16
+#endif
 int16_t offsetU = offset_default_u;
-constexpr int16_t offset_default_i = -135;  //   2022.04.16
 int16_t offsetI = offset_default_i;
-
-  // Начальное смещение ADC
-//constexpr int16_t adc_offset_default = 10;  // -30 57(1), 02 57 (2) 
-constexpr int16_t adc_offset_default = 8;  //   2022.04.16
-int16_t adcOffset = adc_offset_default;
 
   // Данные АЦП без фильтрации с компенсацией смещения
 int16_t adcVoltage = 0x0000;  
 int16_t adcCurrent = 0x0000;
 int16_t adcCelsius = 0x0000;
 
-  // Пересчитанные в физические величины - mV, mA
-int16_t mvVoltage   = 0x0064;     //  0.10V
-int16_t maCurrent   = 0xfc17;     // -1.00A
-
-// Параметры отключения (имитация аппаратной поддержки)
-//int16_t  prbWinLt[]   = {  -200, -1500,  0x0000,  0x0000 }; // 
-//int16_t  prbWinUt[]   = { 20000,  2000,  0x0000,  0x0000 }; // 
+  // Пересчитанные в физические величины - mV, mA (как пример)
+int16_t mvVoltage  = 0x0064;                      //  0.10V
+int16_t maCurrent  = 0xfc17;                      // -1.00A
 
   // Пороги отключения: мВ, мА  (имитация аппаратной поддержки)
-//constexpr int16_t win_less_default_u = -200;    //
 int16_t winLtU = win_less_default_u;
 int16_t winUpU = win_up_default_u;
 int16_t winLtI = win_less_default_i;
 int16_t winUpI = win_up_default_i;
-
-
 
 // Максимальное значение ADC после автоматической обработки
 // при выборе 16-битного разрешения (adcBits=0x01)
@@ -113,11 +123,11 @@ int16_t winUpI = win_up_default_i;
 void initMeasure()
 {
   // sets the ADC clock relative to the peripheral clock. pg 864
-      analogPrescaler(2);   //25...30µs                       //     (uint8_t val) 0 - /4 ... 7 - /512 (0.43ms, default)
+  analogPrescaler(2);   //25...30µs                       //     (uint8_t val) 0 - /4 ... 7 - /512 (0.43ms, default)
 
   analogGain( 0x00 );
-  analogReadConfig( 0x00, 0x00, 0x00 ); // uint8_t bits, uint8_t samples, uint8_t divider
-  analogReferenceCompensation(0);   // автокомпенсация начального смещения выключена
+  analogReadConfig( 0x00, 0x00, 0x00 );                   // uint8_t bits, uint8_t samples, uint8_t divider
+  analogReferenceCompensation(0);                         // автокомпенсация начального смещения выключена
 
   smoothU = SetSmoothDefaultU();
   smoothI = SetSmoothDefaultI();
@@ -126,7 +136,6 @@ void initMeasure()
   factorI = SetFactorDefaultI();
   offsetU = SetOffsetDefaultU();
   offsetI = SetOffsetDefaultI();
-
 }
 
   // Инициализация и преобразование по входу датчика напряжения с учетом смещения АЦП
@@ -135,7 +144,7 @@ int16_t adcU()
   analogGain( 0x00 );           // +5us
   analogReference2( 0x03 );    // выбор опорного REFA
   // если analogReferenceCompensation(1) то без -adcOffset
-  adcVoltage = analogDifferentialRaw( MPins::bat_plus_mux, MPins::bat_minus_mux ) - adcOffset;    // 4, 5
+  adcVoltage = analogDifferentialRaw( MPins::bat_plus_mux, MPins::bat_minus_mux ) - adcOffset;    // Входы 4, 5
   return adcVoltage;
 }
   // Инициализация и преобразование по входу датчика тока с учетом смещения АЦП
@@ -144,7 +153,7 @@ int16_t adcI()
   analogGain( 0x01 );
   analogReference2( 0x00 );    // выбор опорного INTREF 
   // если analogReferenceCompensation(1) то без -adcOffset
-  adcCurrent = analogDifferentialRaw( MPins::shunt_plus_mux, MPins::shunt_minus_mux ) - adcOffset;    // 6, 7
+  adcCurrent = analogDifferentialRaw( MPins::shunt_plus_mux, MPins::shunt_minus_mux ) - adcOffset;  // Входы 6, 7
   return adcCurrent;
 }
 
@@ -187,8 +196,8 @@ int16_t getCurrent(int16_t avg)
 
 void measure()
 {
-  static uint32_t ts = 0;                      // таймер отсчета времени
-  static uint16_t pp = 0;            // счетчик отсчета периода запуска пид-регулятора
+  static uint32_t ts = 0;                       // таймер отсчета времени
+  static uint16_t pp = 0;                       // счетчик отсчета периода запуска пид-регулятора
 
 //  if( millis() - ts >= period )
   if( micros() - ts >= measure_period )
@@ -199,7 +208,7 @@ void measure()
       test1On();     // Метка для осциллографа
     #endif
     mvVoltage = getVoltage( averageAdcU( smoothU ) );
-    tresholdUpU(mvVoltage);                // отключения по перенапряжению (взять быстрое)
+    tresholdUpU(mvVoltage);                     // отключения по перенапряжению (взять быстрое)
     #ifdef TEST_MEASURE
       test1Off();     // Метка для осциллографа
     #endif
@@ -208,7 +217,7 @@ void measure()
       test1On();     // Метка для осциллографа
     #endif
     maCurrent = getCurrent( averageAdcI( smoothI ) );
-    tresholdUpI(maCurrent);     // Перегрузка по току  (взять быстрое)
+    tresholdUpI(maCurrent);                     // Перегрузка по току  (взять надо бы побыстрее)
     #ifdef TEST_MEASURE
       test1Off();     // Метка для осциллографа
     #endif
@@ -222,7 +231,7 @@ void measure()
       #endif
 
         doPid( mvVoltage, maCurrent );    // fbU, fbI
-        
+
       #ifdef TEST_PID
         test2On();     // Метка для осциллографа
       #endif
