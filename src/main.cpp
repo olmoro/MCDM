@@ -26,8 +26,8 @@
 void setup() 
 {
   // инициализация UART порта обмена с ESP32 ( D0:PA11/UART-RX, D1:PA10/UART-TX )
-  Serial1.begin(115200);            // 
-  //Serial1.begin(230400);            // Проверено
+  //Serial1.begin(115200);            // 
+  Serial1.begin(230400);            // Проверено
   while(!Serial1);
 
   portsInit();

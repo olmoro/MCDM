@@ -24,8 +24,8 @@
 #include "merrors.h"
 #include "stdint.h"
 
-constexpr uint16_t measure_period = 2000;                   // Период запуска измерителя в микросекундах
-constexpr uint16_t pid_period = 100000UL / measure_period;  // Период запуска pid-регулятора в тактах измерителя
+constexpr uint16_t measurement_period = 1000UL;                   // Период запуска измерителя в микросекундах
+constexpr uint16_t pid_period = 100000UL / measurement_period;  // Период запуска pid-регулятора в тактах измерителя
 //uint32_t ts;                                              // таймер отсчета времени одного слота nu
 
 #ifdef DEBUG_ADC_TIME
@@ -200,9 +200,9 @@ void measure()
   static uint16_t pp = 0;                       // счетчик отсчета периода запуска пид-регулятора
 
 //  if( millis() - ts >= period )
-  if( micros() - ts >= measure_period )
+  if( micros() - ts >= measurement_period )
   { 
-    ts += measure_period;
+    ts += measurement_period;
 
     #ifdef TEST_MEASURE
       test1On();     // Метка для осциллографа

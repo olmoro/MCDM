@@ -60,3 +60,6 @@ C:\Users\olmor\.platformio\packages\framework-arduino-samd\cores\arduino\wiring_
 
 19:29 22.05.2022
 маркировка R33, R34 переставлена. Откорректировано в v53a.
+
+19:50 28.05.2022
+Увеличена скорость обмена до 230400

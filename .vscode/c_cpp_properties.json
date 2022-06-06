@@ -63,7 +63,7 @@
                 ]
             },
             "defines": [
-                "PLATFORMIO=60001",
+                "PLATFORMIO=60002",
                 "ARDUINO_SAMD_ZERO",
                 "__SAMD21G18A__",
                 "ARDUINO=10805",
@@ -78,7 +78,7 @@
                 "NOEE=1",
                 "WEMOS=1",
                 "HZ_10=1",
-                "COM4=1",
+                "COM7=1",
                 "VER190=1",
                 "TEST_MEASURE=1",
                 "TEST_PID=1",
