@@ -42,7 +42,25 @@ TurboPWM pwm;
   extern bool  powerStatus;
   extern bool  pidStatus;
 
+  extern uint8_t state1;  // state1 - состояния и управление, true - включено(включить):
+  extern bool switchStatus;           // коммутатор нагрузки ( sw_pin PA15 )
+  extern bool powerStatus;            // управление преобразователем
+  extern bool currentControlStatus;   // регулирование по току
+  extern bool voltageControlStatus;   // регулирование по напряжению
+  extern bool chargeStatus;           // заряд
+  extern bool dischargeStatus;        // разряд (тот же вывод, !chargeStatus )
+  extern bool pauseStatus;            // пауза
+  extern bool pidStatus;              // управление регулятором
 
+  extern uint8_t state2;  // state2
+  // extern bool overHeatingStatus;     // перегрев
+  // extern bool overloadStatus;        // перегрузка
+  // extern bool powerLimitationStatus; // ограничение мощности
+  // extern bool reversePolarityStatus; // обратная полярность
+  // extern bool shortCircuitStatus;    // короткое замыкание
+  // extern bool calibrationStatus;     // калибровка
+  // extern bool upgradeStatus;         // обновление
+  // extern bool reserve2Status;        // резерв 2
 
 
 void initPwm()
@@ -113,3 +131,19 @@ int  enable(unsigned int timerNumber)
 {
   return pwm.enable(timerNumber, true);
 }
+
+//
+void writeDacOut(uint32_t value)
+{
+  if( value == 0 )
+  {
+    dischargeStatus = false;
+  }
+  else
+  {
+    dischargeStatus = true;
+  }
+
+  dacWrite10bit(value);
+}
+

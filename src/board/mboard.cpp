@@ -22,12 +22,14 @@ extern bool pidStatus;             // управление регуляторо�
 void swPinOn()
 {
   digitalWrite( MPins::sw_pin, LOW );
+  switchStatus = true;
 }
 
   // Выключение силовых ключей
 void swPinOff()
 {
   digitalWrite( MPins::sw_pin, HIGH );
+  switchStatus = false;
 }
 
 void test1On()  { digitalWrite( MPins::test1, LOW  ); }  // Включение тестового вывода

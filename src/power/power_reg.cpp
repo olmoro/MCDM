@@ -461,11 +461,14 @@ void doPowerStop()
 {
   if( rxNbt == 0 )
   {
-    pidMode = 0;
-    txReplay(1, 0);
+    pidMode = MODE_OFF;       // При включенном регуляторе отключение автоматическое, ниже - дублирование
+    swPinOff();               // Коммутатор отключен      (switchStatus = false;)
+    writePwmOut( 0x0000 );    // Преобразователь выключен (powerStatus = false;)
+    dacWrite10bit( 0x0000 );  // Разрядная цепь отключена (dischargeStatus = false;)
+ 
+    txReplay(1, 0);           // Команда исполнена (0x00)
   }
-
-  else txReplay(1, err_tx);
+  else txReplay(1, err_tx);   // Сообщение об ошибке приема команды (0x01)
 }
 
   // 0x22 пока не реализована
