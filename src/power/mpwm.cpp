@@ -50,7 +50,7 @@ TurboPWM pwm;
   extern bool chargeStatus;           // заряд
   extern bool dischargeStatus;        // разряд (тот же вывод, !chargeStatus )
   extern bool pauseStatus;            // пауза
-  extern bool pidStatus;              // управление регулятором
+  extern bool pidStatus;              // pid-управление регулятором
 
   extern uint8_t state2;  // state2
   // extern bool overHeatingStatus;     // перегрев

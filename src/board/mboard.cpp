@@ -16,7 +16,7 @@ extern bool voltageControlStatus;  // регулирование по напря
 extern bool chargeStatus;         // заряд               (  )
 extern bool dischargeStatus;      // разряд (тот же вывод, !chargeStatus )
 // extern bool pauseStatus;           // пауза
-extern bool pidStatus;             // управление регулятором
+extern bool pidStatus;             // pid-управление регулятором
 
   // Включение силовых ключей
 void swPinOn()
