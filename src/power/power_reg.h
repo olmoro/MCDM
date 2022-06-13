@@ -10,7 +10,6 @@
 void portsInit();
 void initPids();                       // 
 
-//void doPid();
 void doPid( int16_t fbU, int16_t fbI );
 
 //void doPidU();
@@ -22,7 +21,7 @@ void restoreState( int mode );
 //void surgeCompensation( int16_t u );  // Компенсация всплеска напряжения
 void idleLoad();
 void powerFailure(uint8_t err);       // В том числе и аварийное отключение
-
+void powerStop();
 
   // Команды управления процессами
 void doPowerGo();                     // 0x20 Старт преобразователя с заданными максимальными U и I

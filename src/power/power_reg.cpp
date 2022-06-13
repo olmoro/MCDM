@@ -152,7 +152,6 @@ void  initPids()
 // powerStatus = true      - Преобразователь включить (включен)
 // pidStatus   = true      - Регулятор включить (включен)
 
-//void doPid()
 void doPid( int16_t fbU, int16_t fbI )
 {
   //unsigned long before = micros();  // Раскомментировать 3 строки для вывода времени исполнения
@@ -167,7 +166,7 @@ void doPid( int16_t fbU, int16_t fbI )
   setpoint[MODE_I] =  2000;    // test
   pidMode          = MODE_U;
 
-swPinOn();
+//swPinOn();
 
   //outU = MyPid.step( setpoint[MODE_U], fbU );  // коррекция 
   //writePwmOut( MyPid.step( setpoint[MODE_U], fbU ) );
@@ -175,15 +174,14 @@ swPinOn();
 writePwmOut( 0x0100 ); 
 
 
-//   if( pidStatus )
-//   {
+  if( pidStatus )
+  {
+    swPinOn();             // При работающем ПИД-регуляторе коммутатор включен ПОСТОЯННО
+//     switchStatus          = true;
 
-//     swPinOn();
-//     switchStatus          = true;             // При работающем ПИД-регуляторе коммутатор включен ПОСТОЯННО
-
-//     switch ( pidMode )
-//     {
-//     case MODE_OFF:
+    switch ( pidMode )
+    {
+    case MODE_OFF:
 //       // Выход из регулирования с отключением всего
 //       #ifdef DEBUG_POWER
 // //        SerialUSB.println(".OFF");
@@ -208,9 +206,9 @@ writePwmOut( 0x0100 );
 //       // Выход из режима регулирования
 //       idleLoad();
 //       pidStatus             = false;            // регулятор выключен
-//       break;
+      break;
 
-//     case MODE_U:
+    case MODE_U:
 // //       if( fbI < setpoint[MODE_I] )                   // если ток менее заданного, но не разряд)) 
 // //       {
 //         // Режим регулирования по напряжению
@@ -259,9 +257,9 @@ writePwmOut( 0x0100 );
 //     //       #endif
 //     //     }
 // //      }
-//       break;
+      break;
 
-//     case MODE_I:
+    case MODE_I:
 //       if( fbI >= setpoint[MODE_I] )                  // если то более или равен заданному, иначе перейти...
 //       {
 //         // Режим регулирования по току
@@ -309,9 +307,9 @@ writePwmOut( 0x0100 );
 //           #endif
 //         }
 //       }
-//       break;
+      break;
 
-//     case MODE_D:
+    case MODE_D:
 //       // Регулирование тока разряда                             !!! ( НЕ ПРОВЕРЕНО ) !!!
 //       swPinOn();
 //       switchStatus          = true;   // батарея подключена (не факт))
@@ -338,15 +336,14 @@ writePwmOut( 0x0100 );
 //         SerialUSB.print(" fbI: ");    SerialUSB.print( fbI );
 //         SerialUSB.print(" outD: 0x"); SerialUSB.println( outD, HEX ); 
 //       #endif  
-//       break;
+      break;
 
-//     default:
-//       break;
-//     }
-
+    default:
+      break;
+    }
 //     //unsigned long after = micros();
 //     //SerialUSB.print("runtime,us: "); SerialUSB.println((uint16_t)(after - before));
-//   }
+  }
 } //!doPid()
 
 // Сохранение и восстановление регистров регулятора для корректного перехода
@@ -435,6 +432,14 @@ void powerFailure(uint8_t err)
   errorCode = err;
 }
 
+// Перевод в безопасное состояние
+void powerStop()
+{
+  pidMode = MODE_OFF;       // При включенном регуляторе отключение автоматическое, ниже - дублирование
+  swPinOff();               // Коммутатор отключен      (switchStatus = false;)
+  writePwmOut( 0x0000 );    // Преобразователь выключен (powerStatus = false;)
+  dacWrite10bit( 0x0000 );  // Разрядная цепь отключена (dischargeStatus = false;) }
+}
 
 // ======================= Команды управления процессами ======================
 
@@ -445,15 +450,14 @@ void doPowerGo()
 {
   if( rxNbt == 5 )
   {
-//swPinOn();                                                              // TEST      
-    setpoint[1] = get16(0);   // U
-    setpoint[2] = get16(2);   // I
-    pidMode = MODE_U;              // U - начать с установки напряжения
-    pidStatus = true;         // Разрешить регулирование
-//swPinOff();                                                              // TEST      
-    txReplay( 1, 0 );   // всего байт, в нулевом - сообщение об ошибках
+    setpoint[MODE_U] = get16(0);  // U
+    setpoint[MODE_I] = get16(2);  // I
+    pidMode = MODE_U;             // U - начать с установки напряжения
+    pidStatus = true;             // Разрешить регулирование
+    swPinOn();                    // Коммутатор включен      (switchStatus = true;)
+    txReplay( 1, 0 );             // Команда исполнена (0x00)
   }
-  else txReplay(1, err_tx);
+  else txReplay(1, err_tx);       // Сообщение об ошибке приема команды (0x01)
 }
 
 // 0x21 Стоп заряд или разряд
@@ -461,11 +465,7 @@ void doPowerStop()
 {
   if( rxNbt == 0 )
   {
-    pidMode = MODE_OFF;       // При включенном регуляторе отключение автоматическое, ниже - дублирование
-    swPinOff();               // Коммутатор отключен      (switchStatus = false;)
-    writePwmOut( 0x0000 );    // Преобразователь выключен (powerStatus = false;)
-    dacWrite10bit( 0x0000 );  // Разрядная цепь отключена (dischargeStatus = false;)
- 
+    powerStop();              // Перевод в безопасное состояние
     txReplay(1, 0);           // Команда исполнена (0x00)
   }
   else txReplay(1, err_tx);   // Сообщение об ошибке приема команды (0x01)
