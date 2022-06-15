@@ -25,7 +25,8 @@
 #include "stdint.h"
 
 constexpr uint16_t measurement_period = 1000UL;                   // Период запуска измерителя в микросекундах
-constexpr uint16_t pid_period = 100000UL / measurement_period;  // Период запуска pid-регулятора в тактах измерителя
+//constexpr uint16_t pid_period = 100000UL / measurement_period;  // Период запуска pid-регулятора в тактах измерителя
+constexpr uint16_t pid_period = 10000UL / measurement_period;  // Период запуска pid-регулятора в тактах измерителя
 //uint32_t ts;                                              // таймер отсчета времени одного слота nu
 
 #ifdef DEBUG_ADC_TIME
@@ -230,7 +231,8 @@ void measure()
         test2Off();    // Метка для осциллографа
       #endif
 
-        doPid( mvVoltage, maCurrent );    // fbU, fbI
+        //doPid( mvVoltage, maCurrent );    // fbU, fbI
+        doPid( mvVoltage, 2200 );    // fbU, fbI     test
 
       #ifdef TEST_PID
         test2On();     // Метка для осциллографа
