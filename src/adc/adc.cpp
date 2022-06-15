@@ -1,7 +1,7 @@
 /*
-  Версия от 27 мая 2022г.
+  Версия от 15 июня 2022г.
   Измерители тока и напряжения дифференциальные.
-  Датчики опрашиваются с частотой 500Hz. В перспективе 1кГц.
+  Датчики опрашиваются с частотой 1кГц.
   По обоим датчикам максимально общие настройки. 
   Сглаживание - скользящее среднее, коэффициенты задаются.
   Три уровня сглаживания - для защиты, регулирования и отображения (не реализовано).
@@ -24,10 +24,9 @@
 #include "merrors.h"
 #include "stdint.h"
 
-constexpr uint16_t measurement_period = 1000UL;                   // Период запуска измерителя в микросекундах
-//constexpr uint16_t pid_period = 100000UL / measurement_period;  // Период запуска pid-регулятора в тактах измерителя
-constexpr uint16_t pid_period = 10000UL / measurement_period;  // Период запуска pid-регулятора в тактах измерителя
-//uint32_t ts;                                              // таймер отсчета времени одного слота nu
+constexpr uint16_t measurement_period = 1000UL;                   // Период запуска измерителя в микросекундах (1kHz)
+//constexpr uint16_t pid_period = 100000UL / measurement_period;  // Период запуска pid-регулятора в тактах измерителя (10Hz)
+constexpr uint16_t pid_period = 10000UL / measurement_period;  // Период запуска pid-регулятора в тактах измерителя (100Hz)
 
 #ifdef DEBUG_ADC_TIME
   unsigned long oldTime;                                    // Таймер проверки периода запуска ПИД-регулятора
@@ -200,7 +199,6 @@ void measure()
   static uint32_t ts = 0;                       // таймер отсчета времени
   static uint16_t pp = 0;                       // счетчик отсчета периода запуска пид-регулятора
 
-//  if( millis() - ts >= period )
   if( micros() - ts >= measurement_period )
   { 
     ts += measurement_period;
@@ -232,7 +230,8 @@ void measure()
       #endif
 
         //doPid( mvVoltage, maCurrent );    // fbU, fbI
-        doPid( mvVoltage, 2200 );    // fbU, fbI     test
+        //doPid( mvVoltage, 2200 );    // fbU, fbI     test MODE_U
+        doPid( 15000, maCurrent );    // fbU, fbI     test MODE_I
 
       #ifdef TEST_PID
         test2On();     // Метка для осциллографа

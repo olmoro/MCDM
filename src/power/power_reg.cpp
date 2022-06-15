@@ -162,9 +162,14 @@ void doPid( int16_t fbU, int16_t fbI )
   int16_t outI = 0x0040;      // test
   int16_t outD = 0x0200;      // test 12.4v: 0x0280 -> -1.8A
 
-  setpoint[MODE_U] = 10000;    // test
-  setpoint[MODE_I] =  2000;    // test
-  pidMode          = MODE_U;
+  // setpoint[MODE_U] = 10000;    // test 10v
+  // setpoint[MODE_I] =  2000;    // test
+  // pidMode          = MODE_U;
+
+  setpoint[MODE_U] = 16000;    // test
+  setpoint[MODE_I] =  1510;    // test 1.51A 
+  pidMode          = MODE_I;
+
 
   //swPinOn();
 
@@ -234,15 +239,15 @@ void doPid( int16_t fbU, int16_t fbI )
     break; //case MODE_U
 
   case MODE_I:
-    if( fbI >= setpoint[MODE_I] )                  // если то более или равен заданному, иначе перейти...
-    {
+    // if( fbI >= setpoint[MODE_I] )                  // если то более или равен заданному, иначе перейти...
+    // {
       // Режим pid-регулирования по току
       swPinOn();           // коммутатор включен
       currentControlStatus = true;      // регулирование по току включено
       voltageControlStatus = false;     // регулирование по напряжению выключено
       chargeStatus         = true;      // заряд включен
 
-        // outI = MyPid.step( setpoint[MODE_I], fbI );
+      outI = MyPid.step( setpoint[MODE_I], fbI );
       writePwmOut( outI );
             powerStatus = true;          // преобразователь включен
                 
@@ -251,28 +256,28 @@ void doPid( int16_t fbU, int16_t fbI )
       pidStatus            = true;       // регулятор включен
 
         //         idleLoad(); 
-    }
-    else
-    {
-      // иначе перейти к регулированию по напряжению
-      if( pidMode )                           // если не отключено 
-      {
-        //           #ifdef OSC 
-        //             tstPinOff();                        // Метка для осциллографа
-        //           #endif
-        //           //saveState(I);
-        //           //restoreState(U);
-        //           MyPid.setCoefficients( kP[MODE_U], kI[MODE_U], kD[MODE_U] );
-        //                 //MyPid.replaceConfig( kP[U], kI[U], kD[U], minOut[U], maxOut[U]);
-        //                 //MyPid.configure( kP[U], kI[U], kD[U], minOut[U], maxOut[U]);
-        //                 //outU = MyPid.step( setpoint[U], fbU );
-        //       //MyPid.clear();
-        pidMode = MODE_U;
-        //           #ifdef OSC 
-        //             tstPinOn();                         // Метка для осциллографа
-        //           #endif
-      }
-    }
+    // }
+    // else
+    // {
+    //   // иначе перейти к регулированию по напряжению
+    //   if( pidMode )                           // если не отключено 
+    //   {
+    //     //           #ifdef OSC 
+    //     //             tstPinOff();                        // Метка для осциллографа
+    //     //           #endif
+    //     //           //saveState(I);
+    //     //           //restoreState(U);
+    //     //           MyPid.setCoefficients( kP[MODE_U], kI[MODE_U], kD[MODE_U] );
+    //     //                 //MyPid.replaceConfig( kP[U], kI[U], kD[U], minOut[U], maxOut[U]);
+    //     //                 //MyPid.configure( kP[U], kI[U], kD[U], minOut[U], maxOut[U]);
+    //     //                 //outU = MyPid.step( setpoint[U], fbU );
+    //     //       //MyPid.clear();
+    //     pidMode = MODE_U;
+    //     //           #ifdef OSC 
+    //     //             tstPinOn();                         // Метка для осциллографа
+    //     //           #endif
+    //   }
+    // }
     break;  //case MODE_I
 
   case MODE_D:
