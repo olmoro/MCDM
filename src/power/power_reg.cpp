@@ -8,7 +8,7 @@
   
   Подбор коэффициентов ПИД-регулятора
   
-  версия от 07 мая 2022г.
+  версия от 17 июня 2022г.
 */
 
 #include <Arduino.h>
@@ -16,8 +16,7 @@
 #include "adc/adc.h"      // DAC
 #include "wake/wake.h"
 //#include "eeprom/drvData.h"
-  //#include "power/power_pwm.h"
-  #include "power/mpwm.h"
+#include "power/mpwm.h"
 #include "power/power_reg.h"
 #include "commands/commands.h"
 #include "power/mpid.h"
@@ -60,15 +59,9 @@ extern uint8_t state2;  // state2
 
 uint8_t errorCode = 0x00;
 
-  // Данные АЦП nu?
-extern uint16_t adcVoltage;
-extern uint16_t adcCurrent;
   // Пересчитанные в физические величины - mV, mA
 extern int16_t mvVoltage;
 extern int16_t maCurrent;
-
-  // Опорное напряжение ADC в милливольтах
-constexpr int16_t avcc = 3300;
 
   // Приборные диапазоны задания напряжения и токов ??? согласовать 
   // с параметрами отключения (adc.cpp L80)?
@@ -76,18 +69,17 @@ constexpr int16_t avcc = 3300;
 constexpr int16_t volt_min       =  2000;  //  2.0 в
 constexpr int16_t volt_max       = 16200;  // 16.2 в
 constexpr int16_t curr_ch_min    =    50;  //  0.05 А
-constexpr int16_t curr_ch_max    = 12000;  // 12.0 А
+constexpr int16_t curr_ch_max    =  6000;  //  6.0 А
 constexpr int16_t curr_disch_min =    50;  //  0.05 А
 constexpr int16_t curr_disch_max =  3000;  //  3.0 А
 constexpr float   hz             = 10.0f;  //  всегда 10
 
 // Дефолтные параметры регулирования для всех режимов 
-// Это тестовые значения - задавать через целочисленные значения,
-// используя согласованный множитель
-//constexpr uint16_t kp_def   =   0.1f         * MPid::param_mult;   // 0.1  0x0019
-constexpr uint16_t kp_def   =   0.9f         * MPid::param_mult;   // 0.1  0x0019
-constexpr uint16_t ki_def   =  (0.5f  / hz ) * MPid::param_mult;   // 0.5  0x000C
-constexpr uint16_t kd_def   =  (0.01f * hz ) * MPid::param_mult;   // 0.01 0x0019
+// Это тестовые значения - задавать через целочисленные значения, используя согласованный множитель
+// Вычисленные по методу Циглера-Никольса ( K=0.8  T=1 ).
+constexpr uint16_t kp_def   =   0.05f           * MPid::param_mult;   // 0x000D
+constexpr uint16_t ki_def   =  ( 0.1f   / hz )  * MPid::param_mult;   // 0x0003
+constexpr uint16_t kd_def   =  ( 0.001f * hz )  * MPid::param_mult;   // 0x0003
 // bits и sign заданы жестко в отличие от прототипа.
 
 // Ограничения на output приборные, вводятся setOutputRange(min,max),
@@ -162,12 +154,12 @@ void doPid( int16_t fbU, int16_t fbI )
   int16_t outI = 0x0040;      // test
   int16_t outD = 0x0200;      // test 12.4v: 0x0280 -> -1.8A
 
-  // setpoint[MODE_U] = 10000;    // test 10v
-  // setpoint[MODE_I] =  2000;    // test
+  // setpoint[MODE_U] = 12000;    // test 10v
+  // setpoint[MODE_I] =  800;    // test
   // pidMode          = MODE_U;
 
   setpoint[MODE_U] = 16000;    // test
-  setpoint[MODE_I] =  1510;    // test 1.51A 
+  setpoint[MODE_I] =   610;    // test 0.61A 
   pidMode          = MODE_I;
 
 

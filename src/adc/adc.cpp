@@ -25,8 +25,8 @@
 #include "stdint.h"
 
 constexpr uint16_t measurement_period = 1000UL;                   // Период запуска измерителя в микросекундах (1kHz)
-//constexpr uint16_t pid_period = 100000UL / measurement_period;  // Период запуска pid-регулятора в тактах измерителя (10Hz)
-constexpr uint16_t pid_period = 10000UL / measurement_period;  // Период запуска pid-регулятора в тактах измерителя (100Hz)
+constexpr uint16_t pid_period = 100000UL / measurement_period;  // Период запуска pid-регулятора в тактах измерителя (10Hz)
+//constexpr uint16_t pid_period = 10000UL / measurement_period;  // Период запуска pid-регулятора в тактах измерителя (100Hz)
 
 #ifdef DEBUG_ADC_TIME
   unsigned long oldTime;                                    // Таймер проверки периода запуска ПИД-регулятора
@@ -230,8 +230,8 @@ void measure()
       #endif
 
         //doPid( mvVoltage, maCurrent );    // fbU, fbI
-        //doPid( mvVoltage, 2200 );    // fbU, fbI     test MODE_U
-        doPid( 15000, maCurrent );    // fbU, fbI     test MODE_I
+        //doPid( mvVoltage, 800 );    // fbU, fbI     test MODE_U
+        doPid( 16000, maCurrent );    // fbU, fbI     test MODE_I
 
       #ifdef TEST_PID
         test2On();     // Метка для осциллографа

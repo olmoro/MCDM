@@ -132,10 +132,10 @@ public:
   // Константы - должны быть синхронизированы с ведущим контроллером
   // для корректного преобразования (предвычисления) параметров.
 
-  static constexpr int32_t  integ_max   = 0x007FFFFF;   //0x007FFFFF
-  static constexpr int32_t  integ_min   = 0xFF800000;   //0xFF800000
-  static constexpr int16_t  deriv_max   = 0x7FFF;
-  static constexpr int16_t  deriv_min   = 0x8000;
+  static constexpr int32_t  integ_max   = INT32_MAX;         //0x007FFFFF;   //0x007FFFFF
+  static constexpr int32_t  integ_min   = INT32_MIN;         //0xFF800000;   //0xFF800000
+  static constexpr int16_t  deriv_max   = INT16_MAX;                  //0x7FFF;
+  static constexpr int16_t  deriv_min   = INT16_MIN;                  //0x8000;
 
   #ifdef HZ_10
     static constexpr uint8_t  param_shift = 8;
