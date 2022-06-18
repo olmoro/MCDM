@@ -138,7 +138,7 @@ public:
   static constexpr int16_t  deriv_min   = INT16_MIN;                  //0x8000;
 
   #ifdef HZ_10
-    static constexpr uint8_t  param_shift = 8;
+    static constexpr uint8_t  param_shift =  8;
     static constexpr uint8_t  param_bits  = 16;
     static constexpr uint16_t param_max   = (((0x1ULL << param_bits)-1) >> param_shift);              // 0xFF
     static constexpr uint16_t param_mult  = (((0x1ULL << param_bits)) >> (param_bits - param_shift)); // 0x100
