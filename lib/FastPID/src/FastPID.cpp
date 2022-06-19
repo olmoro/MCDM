@@ -61,14 +61,14 @@ bool FastPID::configure(float kp, float ki, float kd, float hz, int bits, bool s
   return ! _cfg_err; 
 }
 
-bool FastPID::replaceConfig(float kp, float ki, float kd, float hz, int bits, bool sign) 
-{
-  //clear();
-  _cfg_err = false;
-  setCoefficients(kp, ki, kd, hz);
-  setOutputConfig(bits, sign);
-  return ! _cfg_err; 
-}
+// bool FastPID::replaceConfig(float kp, float ki, float kd, float hz, int bits, bool sign) 
+// {
+//   //clear();
+//   _cfg_err = false;
+//   setCoefficients(kp, ki, kd, hz);
+//   setOutputConfig(bits, sign);
+//   return ! _cfg_err; 
+// }
 
 uint32_t FastPID::floatToParam(float in) {
   if (in > PARAM_MAX || in < 0) {

@@ -26,7 +26,7 @@ public:
   }
 
   //FastPID(float kp, float ki, float kd, float hz, int bits=16, bool sign=false)
-  FastPID(float kp, float ki, float kd, float hz, int bits=9, bool sign=false)
+  FastPID(float kp, float ki, float kd, float hz, int bits=10, bool sign=false)  // 202206
   {
     configure(kp, ki, kd, hz, bits, sign);
   }
@@ -38,8 +38,8 @@ public:
   bool setOutputRange(int16_t min, int16_t max);
   void clear();
   //bool configure(float kp, float ki, float kd, float hz, int bits=16, bool sign=false);
-  bool configure(float kp, float ki, float kd, float hz, int bits=9, bool sign=false);
-  bool replaceConfig(float kp, float ki, float kd, float hz, int bits, bool sign);    // moro 
+  bool configure(float kp, float ki, float kd, float hz, int bits=10, bool sign=false);
+//  bool replaceConfig(float kp, float ki, float kd, float hz, int bits, bool sign);    // moro 
 
   int16_t step(int16_t sp, int16_t fb);
 

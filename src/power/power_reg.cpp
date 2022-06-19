@@ -22,15 +22,7 @@
 #include "power/mpid.h"
 #include "stdint.h"
 
-//     // Переменные настройки PWM
-// extern bool         pwmTurbo;               // Режим Турбо on/off
-// extern unsigned int pwmTccdivOut;
-// extern unsigned int pwmTccdivCool;
-// extern unsigned int pwmStepsOut;
-// extern unsigned int pwmStepsCool;
-
-
-    // Переменные протокола Wake 
+  // Переменные протокола Wake 
 extern uint8_t  rxNbt;              // принятое количество байт в пакете
 extern uint8_t  rxDat[frame];       // массив принятых данных
 extern uint8_t  command;            // код команды на выполнение
@@ -74,12 +66,12 @@ constexpr int16_t curr_disch_min =    50;  //  0.05 А
 constexpr int16_t curr_disch_max =  3000;  //  3.0 А
 constexpr float   hz             = 10.0f;  //  всегда 10
 
-// Дефолтные параметры регулирования для всех режимов 
+// Дефолтные параметры регулирования для всех режимов (v53)
 // Это тестовые значения - задавать через целочисленные значения, используя согласованный множитель
-// Вычисленные по методу Циглера-Никольса ( K=0.8  T=1 ).
-constexpr uint16_t kp_def   =   0.05f           * MPid::param_mult;   // 0x000D
-constexpr uint16_t ki_def   =  ( 0.1f   / hz )  * MPid::param_mult;   // 0x0003
-constexpr uint16_t kd_def   =  ( 0.001f * hz )  * MPid::param_mult;   // 0x0003
+// Вычисленные по методу Циглера-Никольса ( K=0.8  T=1 ) с уточнением.
+constexpr uint16_t kp_def   =    0.50f         * MPid::param_mult;   // 0x0080
+constexpr uint16_t ki_def   =  ( 1.60f / hz )  * MPid::param_mult;   // 0x0029
+constexpr uint16_t kd_def   =  ( 0.01f * hz )  * MPid::param_mult;   // 0x001A
 // bits и sign заданы жестко в отличие от прототипа.
 
 // Ограничения на output приборные, вводятся setOutputRange(min,max),
@@ -130,7 +122,7 @@ int32_t sLastErrI;
 
 // Вариант с общим регулятором по напряжению и току
 MPid MyPid ( kP[MODE_U], kI[MODE_U], kD[MODE_U], minOut[MODE_U], maxOut[MODE_U] );  // Common Voltage and Current control
-MPid MyPidD( kP[MODE_D], kI[MODE_D], kD[MODE_D], minOut[MODE_D], maxOut[MODE_D] );  // Discurrent control
+MPid MyPidD( kP[MODE_D], kI[MODE_D], kD[MODE_D], minOut[MODE_D], maxOut[MODE_D] );  // Discharge current control
 
 
 void  initPids()
