@@ -225,17 +225,17 @@ void measure()
     if( pp >= pid_period )
     {
       pp = 0;
-      #ifdef TEST_PID
-        test2Off();    // Метка для осциллографа
-      #endif
+      // #ifdef TEST_PID
+      //   test2Off();    // Метка для осциллографа
+      // #endif
 
-        //doPid( mvVoltage, maCurrent );    // fbU, fbI
+        doPid( mvVoltage, maCurrent );    // fbU, fbI
         //doPid( mvVoltage, 800 );    // fbU, fbI     test MODE_U
-        doPid( 16000, maCurrent );    // fbU, fbI     test MODE_I
+        //doPid( 16000, maCurrent );    // fbU, fbI     test MODE_I
 
-      #ifdef TEST_PID
-        test2On();     // Метка для осциллографа
-      #endif
+      // #ifdef TEST_PID
+      //   test2On();     // Метка для осциллографа
+      // #endif
     }
   }
 }

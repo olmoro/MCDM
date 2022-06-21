@@ -16,22 +16,39 @@
 /*
   A fixed point PID controller with a 32-bit internal calculation pipeline.
 */
-class FastPID 
+class FastPid 
 {
 
 public:
-  FastPID() 
+
+  // Константы - должны быть синхронизированы с ведущим контроллером
+  // для корректного преобразования (предвычисления) параметров.
+
+  static constexpr int32_t  integ_max   = (INT32_MAX);         //0x007FFFFF;   //0x007FFFFF
+  static constexpr int32_t  integ_min   = (INT32_MIN);         //0xFF800000;   //0xFF800000
+  static constexpr int16_t  deriv_max   = (INT16_MAX);                  //0x7FFF;
+  static constexpr int16_t  deriv_min   = (INT16_MIN);                  //0x8000;
+
+  static constexpr uint8_t  param_shift =  8;
+  static constexpr uint8_t  param_bits  = 16;
+  static constexpr uint16_t param_max   = (((0x1ULL << param_bits)-1) >> param_shift);              // 0xFF
+  static constexpr uint16_t param_mult  = (((0x1ULL << param_bits)) >> (param_bits - param_shift)); // 0x100
+  static constexpr uint16_t hz = 10;
+
+
+
+  FastPid() 
   {
     clear();
   }
 
-  //FastPID(float kp, float ki, float kd, float hz, int bits=16, bool sign=false)
-  FastPID(float kp, float ki, float kd, float hz, int bits=10, bool sign=false)  // 202206
+  //FastPid(float kp, float ki, float kd, float hz, int bits=16, bool sign=false)
+  FastPid(float kp, float ki, float kd, float hz, int bits=10, bool sign=false)  // 202206
   {
     configure(kp, ki, kd, hz, bits, sign);
   }
 
-  ~FastPID();
+  ~FastPid();
 
   bool setCoefficients(float kp, float ki, float kd, float hz);
   bool setOutputConfig(int bits, bool sign);

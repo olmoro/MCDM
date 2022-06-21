@@ -2,10 +2,10 @@
 
 #include <Arduino.h>
 
-FastPID::~FastPID() {
+FastPid::~FastPid() {
 }
 
-void FastPID::clear() 
+void FastPid::clear() 
 {
   _last_sp = 0; 
   _last_out = 0;
@@ -13,14 +13,14 @@ void FastPID::clear()
   _last_err = 0;
 }
 
-bool FastPID::setCoefficients(float kp, float ki, float kd, float hz) {
+bool FastPid::setCoefficients(float kp, float ki, float kd, float hz) {
   _p = floatToParam(kp);
   _i = floatToParam(ki / hz);
   _d = floatToParam(kd * hz);
   return ! _cfg_err;
 }
 
-bool FastPID::setOutputConfig(int bits, bool sign) {
+bool FastPid::setOutputConfig(int bits, bool sign) {
   // Set output bits
   if (bits > 16 || bits < 1) {
     setCfgErr();
@@ -42,7 +42,7 @@ bool FastPID::setOutputConfig(int bits, bool sign) {
   return ! _cfg_err;
 }
 
-bool FastPID::setOutputRange(int16_t min, int16_t max)
+bool FastPid::setOutputRange(int16_t min, int16_t max)
 {
   if (min >= max) {
     setCfgErr();
@@ -53,7 +53,7 @@ bool FastPID::setOutputRange(int16_t min, int16_t max)
   return ! _cfg_err;
 }
 
-bool FastPID::configure(float kp, float ki, float kd, float hz, int bits, bool sign) {
+bool FastPid::configure(float kp, float ki, float kd, float hz, int bits, bool sign) {
   clear();
   _cfg_err = false;
   setCoefficients(kp, ki, kd, hz);
@@ -61,7 +61,7 @@ bool FastPID::configure(float kp, float ki, float kd, float hz, int bits, bool s
   return ! _cfg_err; 
 }
 
-// bool FastPID::replaceConfig(float kp, float ki, float kd, float hz, int bits, bool sign) 
+// bool FastPid::replaceConfig(float kp, float ki, float kd, float hz, int bits, bool sign) 
 // {
 //   //clear();
 //   _cfg_err = false;
@@ -70,7 +70,7 @@ bool FastPID::configure(float kp, float ki, float kd, float hz, int bits, bool s
 //   return ! _cfg_err; 
 // }
 
-uint32_t FastPID::floatToParam(float in) {
+uint32_t FastPid::floatToParam(float in) {
   if (in > PARAM_MAX || in < 0) {
     _cfg_err = true;
     return 0;
@@ -86,7 +86,7 @@ uint32_t FastPID::floatToParam(float in) {
   return param;
 }
 
-int16_t FastPID::step(int16_t sp, int16_t fb) {
+int16_t FastPid::step(int16_t sp, int16_t fb) {
 
   // int16 + int16 = int17
   int32_t err = int32_t(sp) - int32_t(fb);
@@ -148,7 +148,7 @@ int16_t FastPID::step(int16_t sp, int16_t fb) {
   return rval;
 }
 
-void FastPID::setCfgErr() {
+void FastPid::setCfgErr() {
   _cfg_err = true;
   _p = _i = _d = 0;
 }

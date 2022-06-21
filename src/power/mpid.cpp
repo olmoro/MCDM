@@ -2,7 +2,7 @@
   Прототип: A fixed point PID controller with a 32-bit internal calculation pipeline.
   From:  https://github.com/mike-matera/FastPID/tree/master/examples/VoltageRegulator
   
-  Отмерены проверки вводимых параметров, что возложено на ведущий контроллер.
+  Отмерены проверки вводимых параметров, что возложено на ведущий контроллер. Спорное решение...
   Версия от 23 октября 2020г.
   20210512 - исправлено clear()
 */

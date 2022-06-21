@@ -107,6 +107,8 @@ Kd = ( Kn * T ) / 8
 к тому, что для каждой системы необходим свой собственный подход при настройке и использовании 
 ПИД-регулятора.
 
+int bits = 9;
+bool sign = false;
 */
 
 #include <stdint.h>
@@ -132,25 +134,19 @@ public:
   // Константы - должны быть синхронизированы с ведущим контроллером
   // для корректного преобразования (предвычисления) параметров.
 
-  static constexpr int32_t  integ_max   = INT32_MAX;         //0x007FFFFF;   //0x007FFFFF
-  static constexpr int32_t  integ_min   = INT32_MIN;         //0xFF800000;   //0xFF800000
-  static constexpr int16_t  deriv_max   = INT16_MAX;                  //0x7FFF;
-  static constexpr int16_t  deriv_min   = INT16_MIN;                  //0x8000;
+  static constexpr int32_t  integ_max   = (INT32_MAX);         // 0x7FFFFFFF
+  static constexpr int32_t  integ_min   = (INT32_MIN);         // 0x80000000
+  static constexpr int16_t  deriv_max   = (INT16_MAX);         // 0x7FFF
+  static constexpr int16_t  deriv_min   = (INT16_MIN);         // 0x8000
 
-  #ifdef HZ_10
-    static constexpr uint8_t  param_shift =  8;
-    static constexpr uint8_t  param_bits  = 16;
-    static constexpr uint16_t param_max   = (((0x1ULL << param_bits)-1) >> param_shift);              // 0xFF
-    static constexpr uint16_t param_mult  = (((0x1ULL << param_bits)) >> (param_bits - param_shift)); // 0x100
-    static constexpr uint16_t hz = 10;
-  #endif
-  #ifdef HZ_250
-    static constexpr uint8_t param_shift =  4; //8;
-    static constexpr uint8_t param_bits  = 16;
-    static constexpr uint16_t param_max  = (((0x1 << param_bits)-1) >> param_shift); 
-    static constexpr uint16_t param_mult = (((0x1 << param_bits)) >> (param_bits - param_shift));
-    static constexpr uint16_t hz = 250;
-  #endif
+//  #ifdef HZ_10
+  static constexpr uint8_t  param_shift =  8;
+  static constexpr uint8_t  param_bits  = 16;
+  static constexpr uint16_t param_max   = (((0x1ULL << param_bits)-1) >> param_shift);              // 0x00FF
+  static constexpr uint16_t param_mult  = (((0x1ULL << param_bits)) >> (param_bits - param_shift)); // 0x0100
+  static constexpr uint16_t hz = 10;
+//  #endif
+
 
 
   void setCoefficients(uint16_t kp, uint16_t ki, uint16_t kd);

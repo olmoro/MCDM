@@ -1,0 +1,221 @@
+// 23.04.2021
+
+void doPid( int16_t fbU, int16_t fbI )
+{
+  //unsigned long before = micros();  // Раскомментировать 3 строки для вывода времени исполнения
+
+  //int16_t fbU = mvVoltage;  // feedback U
+  //int16_t fbI = maCurrent;
+  int16_t outU;
+  int16_t outI;
+  int16_t outD;
+
+  if( pidStatus )
+  {
+
+    swPinOn();
+    switchStatus          = true;             // При работающем ПИД-регуляторе коммутатор включен ПОСТОЯННО
+
+    switch ( pidMode )
+    {
+    case OFF:
+      // Выход из регулирования с отключением всего
+      #ifdef DEBUG_POWER
+        SerialUSB.println(".OFF");
+      #endif
+
+      swPinOff();
+      switchStatus          = false;            // отключить от нагрузки
+
+      writePwm( 0x0000 );
+      powerStatus           = false;            // преобразователь выключен
+
+      currentControlStatus  = false;            // регулирование по току отключено
+      voltageControlStatus  = false;            // регулирование по напряжению отключено
+      chargeStatus          = false;            // заряд отключен
+
+      dacWrite10bit( surgeCurrent );            // разрядить выходной фильтр 
+      dischargeStatus       = false;            // разряд отключен
+
+      pauseStatus           = false;            // пауза отключена
+
+      // Выход из режима регулирования
+      idleLoad();
+      pidStatus             = false;            // регулятор выключен
+      break;
+
+    case U:
+      if( fbI < setpoint[I] )                   // если ток менее заданного, но не разряд)) 
+      {
+        // Режим регулирования по напряжению
+        swPinOn();
+        switchStatus          = true;           // коммутатор включен (дублирование?)
+        voltageControlStatus  = true;           // регулирование по напряжению включено
+
+        outU = MyPid.step( setpoint[U], fbU );  // коррекция 
+        writePwm( outU );
+        powerStatus           = true;           // преобразователь включен
+
+        currentControlStatus  = false;          // регулирование по току отключено
+        chargeStatus          = true;           // заряд включен       дублируется powerStatus ???
+        dischargeStatus       = false;          // разряд отключен
+        pauseStatus           = false;          // пауза отключена
+        pidStatus             = true;           // регулятор включен   дублируется powerStatus ???
+
+        #ifdef DEBUG_POWER
+          SerialUSB.print(" ChargeU: ");     
+          SerialUSB.print(" spU: ");    SerialUSB.print( setpoint[U] );     
+          SerialUSB.print(" fbU: ");    SerialUSB.print( fbU );
+          SerialUSB.print(" outU: 0x"); SerialUSB.println( outU, HEX ); 
+        #endif
+      
+        //surgeCompensation( -(MyPid.getLastErr()) );    // Компенсация всплеска напряжения
+        idleLoad();
+      }
+      else                                      // ток выше предела - перейти к регулированию по току
+      {
+        if( pidMode )                           // если не отключено 
+        {
+          #ifdef OSC 
+            tstPinOff();                        // Метка для осциллографа
+          #endif
+          //saveState(U);                         // Сохранить регистры регулятора
+          //restoreState(I);                      // Перейти к регулированию по току
+          MyPid.setCoefficients( kP[I], kI[I], kD[I] );
+                //MyPid.replaceConfig( kP[I], kI[I], kD[I], minOut[I], maxOut[I]);
+                //MyPid.configure( kP[I], kI[I], kD[I], minOut[I], maxOut[I]);
+                //outI = MyPid.step( setpoint[I], fbI );
+    //MyPid.clear();
+          pidMode = I;
+          #ifdef OSC 
+            tstPinOn();                         // Метка для осциллографа
+          #endif
+        }
+      }
+      break;
+
+    case I:
+      if( fbI >= setpoint[I] )                  // если то более или равен заданному, иначе перейти...
+      {
+        // Режим регулирования по току
+        swPinOn();
+        switchStatus          = true;           // коммутатор включен (дублирование?)
+        currentControlStatus  = true;           // регулирование по току включено
+
+        outI = MyPid.step( setpoint[I], fbI );
+        writePwm( outI );
+        powerStatus           = true;           // преобразователь включен
+        
+        voltageControlStatus  = false;          // регулирование по напряжению выключено
+        chargeStatus          = true;           // заряд включен
+        dischargeStatus       = false;          // разряд отключен
+        pauseStatus           = false;          // пауза отключена
+        pidStatus             = true;           // регулятор включен
+
+        #ifdef DEBUG_POWER
+          SerialUSB.print(" ChargeI: ");     
+          SerialUSB.print(" spI: ");    SerialUSB.print( setpoint[I] );     
+          SerialUSB.print(" fbI: ");    SerialUSB.print( fbI );
+          SerialUSB.print(" outI: 0x"); SerialUSB.println( outI, HEX ); 
+        #endif 
+
+        idleLoad(); 
+      }
+      else                                      // ... перейти к регулированию по напряжению
+      {
+        if( pidMode )                           // если не отключено 
+        {
+          #ifdef OSC 
+            tstPinOff();                        // Метка для осциллографа
+          #endif
+          //saveState(I);
+          //restoreState(U);
+          MyPid.setCoefficients( kP[U], kI[U], kD[U] );
+                //MyPid.replaceConfig( kP[U], kI[U], kD[U], minOut[U], maxOut[U]);
+                //MyPid.configure( kP[U], kI[U], kD[U], minOut[U], maxOut[U]);
+                //outU = MyPid.step( setpoint[U], fbU );
+      //MyPid.clear();
+          pidMode = U;
+          #ifdef OSC 
+            tstPinOn();                         // Метка для осциллографа
+          #endif
+        }
+      }
+      break;
+
+    case D:
+      // Регулирование тока разряда                             !!! ( НЕ ПРОВЕРЕНО ) !!!
+      swPinOn();
+      switchStatus          = true;   // батарея подключена (не факт))
+
+      writePwm( 0x0000 );
+      powerStatus           = false;  // преобразователь выключен
+
+      currentControlStatus  = false;  // регулирование по току выключено
+      voltageControlStatus  = false;  // регулирование по напряжению выключено
+      chargeStatus          = false;  // заряд выключен
+
+      outD = MyPidD.step( setpoint[I], fbI );  // коррекция ( откорректировать полярности )
+      writePwm( outD );
+
+      dischargeStatus       = true;   // разряд включен с регулированием по току
+      pauseStatus           = false;  // пауза отключена
+      pidStatus             = true;   // регулятор включен
+
+      #ifdef DEBUG_POWER
+        SerialUSB.print(" Discharge: ");     
+        SerialUSB.print(" spD: ");    SerialUSB.print( setpoint[D] );     
+        SerialUSB.print(" fbI: ");    SerialUSB.print( fbI );
+        SerialUSB.print(" outD: 0x"); SerialUSB.println( outD, HEX ); 
+      #endif  
+      break;
+
+    default:
+      break;
+    }
+
+    //unsigned long after = micros();
+    //SerialUSB.print("runtime,us: "); SerialUSB.println((uint16_t)(after - before));
+  }
+} //!doPid()
+
+// Сохранение и восстановление регистров регулятора для корректного перехода
+void saveState( int mode )
+{  
+  switch (mode)
+  {
+    case U:
+      sLastSpU  = MyPid.getLastSp();
+//      sSumU     = MyPid.getSum();
+      sLastErrU = MyPid.getLastErr();
+      break;
+
+    case I: 
+      sLastSpI  = MyPid.getLastSp();
+//      sSumI     = MyPid.getSum();
+      sLastErrI = MyPid.getLastErr();
+      break;
+
+    default: break;
+  }
+}
+
+void restoreState( int mode )
+{
+  switch (mode)
+  {
+    case U:
+      MyPid.setLastSp( sLastSpU );
+//      MyPid.setSum( sSumU );            // По невыясненным причинам выполняется некорректно
+      MyPid.setLastErr( sLastErrU );
+      break;
+
+    case I: 
+      MyPid.setLastSp( sLastSpI );
+//      MyPid.setSum( sSumI );
+      MyPid.setLastErr( sLastErrI );
+      break;
+
+    default: break;
+  }
+}
