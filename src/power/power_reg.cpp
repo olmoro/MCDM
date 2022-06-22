@@ -151,7 +151,7 @@ void doPid( int16_t fbU, int16_t fbI )
   // pidMode          = MODE_U;
 
   setpoint[MODE_U] = 12000;    // test
-  setpoint[MODE_I] =   610;    // test 0.61A 
+  setpoint[MODE_I] =  2000;    // test 0.61A 
   //pidMode          = MODE_I;
   //swPinOn();
 
@@ -214,16 +214,16 @@ void doPid( int16_t fbU, int16_t fbI )
         //             //MyPid.configure( kP[MODE_I], kI[MODE_I], kD[MODE_I], minOut[MODE_I], maxOut[MODE_I]);
         pidMode = MODE_I;
         // #ifdef OSC 
-        test2On();                         // Метка для осциллографа
+        //test2On();                         // Метка для осциллографа
         // #endif
       }
     }
     break; //case MODE_U
 
   case MODE_I:
-    // Если при регулировании по току напряжение ниже заданного, то продолжать.
+    // Если при регулировании по току /////напряжение ниже заданного, то продолжать.
     // Иначе перейти к регулированию по напряжению.
-    if( fbI >= setpoint[MODE_I] )                  // если то более или равен заданному, иначе перейти...
+    if( fbI >= (setpoint[MODE_I] - 10))                  // если то более или равен заданному, иначе перейти...
     {
       // Режим pid-регулирования по току
       swPinOn();           // коммутатор включен
@@ -247,7 +247,7 @@ void doPid( int16_t fbU, int16_t fbI )
       if( pidMode )                           // если не отключено 
       {
         //           #ifdef OSC 
-        //             tstPinOff();                        // Метка для осциллографа
+        test2On();                       // Метка для осциллографа
         //           #endif
         saveState(MODE_I);
         restoreState(MODE_U);
