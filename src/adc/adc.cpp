@@ -229,7 +229,13 @@ void measure()
       //   test2Off();    // Метка для осциллографа
       // #endif
 
+      #ifdef TESTMODE
+        testModeU(mvVoltage);
+        //testModeI(maCurrent);
+        //testModeD(0x0000);
+      #else
         doPid( mvVoltage, maCurrent );    // fbU, fbI
+      #endif
         //doPid( mvVoltage, 800 );    // fbU, fbI     test MODE_U
         //doPid( 16000, maCurrent );    // fbU, fbI     test MODE_I
 

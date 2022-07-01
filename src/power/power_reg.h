@@ -11,9 +11,10 @@ void portsInit();
 void initPids();                       // 
 
 void doPid( int16_t fbU, int16_t fbI );
+void testModeU(int16_t fbU);
+void testModeI(int16_t fbI);
+void testModeD(int16_t val);
 
-//void doPidU();
-//void doPidI();
 
 void saveState( int mode );
 void restoreState( int mode );

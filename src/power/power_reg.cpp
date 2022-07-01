@@ -68,12 +68,21 @@ constexpr float   hz             = 10.0f;  //  всегда 10
 // Это тестовые значения - задавать через целочисленные значения, используя согласованный множитель
 // Вычисленные по методу Циглера-Никольса ( K=0.08  T=1 ) с уточнением путём подбора.
 // bits и sign заданы жестко в отличие от прототипа.
-constexpr uint16_t kp_u_def =   0.06f        * MPid::param_mult;   // 15.36 0x000D
-constexpr uint16_t ki_u_def = ( 0.20f / hz ) * MPid::param_mult;   //  5.12 0x0005  
-constexpr uint16_t kd_u_def = ( 0.00f * hz ) * MPid::param_mult;   //  0.00 0x0000
+// 20220701 param_shift увеличен с 8 до 12, при этом
+// param_max  = 0x000F, param_mult = 0x1000 - Не забыть внести поправку в ESP32
+// Подобранные ранее параметры регулирования сохранились
+#ifdef SHIFT08
+  constexpr uint16_t kp_u_def =   0.06f        * MPid::param_mult;   // 15.36 0x000D
+  constexpr uint16_t ki_u_def = ( 0.20f / hz ) * MPid::param_mult;   //  5.12 0x0005  
+  constexpr uint16_t kd_u_def = ( 0.00f * hz ) * MPid::param_mult;   //  0.00 0x0000
+#else
+  constexpr uint16_t kp_u_def =   0.06f        * MPid::param_mult;   // 245 0x00F5
+  constexpr uint16_t ki_u_def = ( 0.20f / hz ) * MPid::param_mult;   //  81 0x0051  
+  constexpr uint16_t kd_u_def = ( 0.00f * hz ) * MPid::param_mult;   //  00 0x0000
+#endif
 
 constexpr uint16_t kp_i_def =   0.02f        * MPid::param_mult;   // 10.24 0x000A
-constexpr uint16_t ki_i_def = ( 0.00f / hz ) * MPid::param_mult;   //  3.59 0x0003  
+constexpr uint16_t ki_i_def = ( 0.05f / hz ) * MPid::param_mult;   //  3.59 0x0003  
 constexpr uint16_t kd_i_def = ( 0.00f * hz ) * MPid::param_mult;   //  0.00 0x0000
 
 constexpr uint16_t kp_d_def =   0.06f        * MPid::param_mult;   // 15.36 0x000D
@@ -131,7 +140,7 @@ MPid MyPid ( kP[MODE_U], kI[MODE_U], kD[MODE_U], minOut[MODE_U], maxOut[MODE_U] 
 MPid MyPidD( kP[MODE_D], kI[MODE_D], kD[MODE_D], minOut[MODE_D], maxOut[MODE_D] );  // Discharge current control
 
 
-void  initPids()
+void initPids()
 {
   MyPid.configure ( kP[MODE_U], kI[MODE_U], kD[MODE_U], minOut[MODE_U], maxOut[MODE_U] );
   MyPidD.configure( kP[MODE_D], kI[MODE_D], kD[MODE_D], minOut[MODE_D], maxOut[MODE_D] );
@@ -139,6 +148,37 @@ void  initPids()
 
   pidMode = MODE_U;   // Test
 } 
+
+void testModeU(int16_t fbU)
+{
+  setpoint[MODE_U] = 14210;         // test 14.21V
+
+  swPinOn();                        // подключение к силовым клеммам
+  voltageControlStatus = true;      // регулирование по напряжению включено
+  currentControlStatus = false;     // регулирование по току отключено
+  dischargeStatus      = false;     // разряд отключен
+  chargeStatus         = true;      // режим заряда включен
+  pidStatus            = true;      // pid-регулятор включен
+  writePwmOut(MyPid.step(setpoint[MODE_U], fbU));
+}
+
+void testModeI(int16_t fbI)
+{
+  setpoint[MODE_I] =  1010;         // test  1.01A
+
+  swPinOn();                        // коммутатор включен
+  currentControlStatus = true;      // регулирование по току включено
+  voltageControlStatus = false;     // регулирование по напряжению выключено
+  dischargeStatus      = false;     // разряд отключен
+  chargeStatus         = true;      // режим заряда включен
+  pidStatus            = true;      // pid-регулятор включен
+  writePwmOut(MyPid.step(setpoint[MODE_I], fbI));
+}
+
+void testModeD(int16_t val)
+{}
+
+
 
 // Запуск и выбор регулятора производится выбором pidMode: MODE_OFF, MODE_U, MODE_I, MODE_D
 void doPid( int16_t fbU, int16_t fbI )
@@ -154,8 +194,10 @@ void doPid( int16_t fbU, int16_t fbI )
   // pidMode          = MODE_U;
 
   setpoint[MODE_U] = 14210;    // test 14.21V
-  setpoint[MODE_I] =  2010;    // test  2.01A 
+  setpoint[MODE_I] =  1010;    // test  2.01A 
+  //MyPid.setCoefficients( kP[MODE_I], kI[MODE_I], kD[MODE_I] );
   //pidMode          = MODE_I;
+  //if(fbI<=0) fbI = 10;
 
   switch ( pidMode )
   {
@@ -202,7 +244,7 @@ void doPid( int16_t fbU, int16_t fbI )
       if( pidMode )                     // если не отключено pid-регулирование
       {
         // #ifdef OSC 
-        test2Off();                        // Метка для осциллографа
+        test2High();                        // Метка для осциллографа
         // #endif
         saveState(MODE_U);              // Сохранить регистры регулятора
         restoreState(MODE_I);           // Перейти к регулированию по току
@@ -211,16 +253,16 @@ void doPid( int16_t fbU, int16_t fbI )
         //             //MyPid.configure( kP[MODE_I], kI[MODE_I], kD[MODE_I], minOut[MODE_I], maxOut[MODE_I]);
         pidMode = MODE_I;
         // #ifdef OSC 
-        //test2On();                         // Метка для осциллографа
+        //test2Low();                         // Метка для осциллографа
         // #endif
       }
     }
     break; //case MODE_U
 
   case MODE_I:
-    if( fbI >= ((setpoint[MODE_I])-20))
+    if( fbU <= ((setpoint[MODE_U])-20))
     {
-      // Регулировать ток, если он выше заданного.
+      // Регулировать ток, если напряжение не выше заданного.
       swPinOn();           // коммутатор включен
       currentControlStatus = true;      // регулирование по току включено
       voltageControlStatus = false;     // регулирование по напряжению выключено
@@ -241,7 +283,7 @@ void doPid( int16_t fbU, int16_t fbI )
       if( pidMode )                     // если не отключено 
       {
         //           #ifdef OSC 
-        test2On();                       // Метка для осциллографа
+        test2Low();                       // Метка для осциллографа
         //           #endif
         saveState(MODE_I);
         restoreState(MODE_U);

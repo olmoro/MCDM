@@ -35,8 +35,8 @@ void swPinOff()
 void test1On()  { digitalWrite( MPins::test1, LOW  ); }  // Включение тестового вывода
 void test1Off() { digitalWrite( MPins::test1, HIGH ); }  // Отключение  тестового вывода
 
-void test2On()  { digitalWrite( MPins::test2, LOW  ); }  // Включение тестового вывода
-void test2Off() { digitalWrite( MPins::test2, HIGH ); }  // Отключение  тестового вывода
+void test2Low()  { digitalWrite( MPins::test2, LOW  ); }  // Включение тестового вывода
+void test2High() { digitalWrite( MPins::test2, HIGH ); }  // Отключение  тестового вывода
 
 
   // Инициализация дискретных портов
@@ -53,7 +53,7 @@ void portsInit()
 
   swPinOff();               // Силовые ключи нагрузки отключены
   test1Off();
-  test2On();               //
+  test2Low();               //
   dacInit();                // Set reference
   dacWrite10bit( 0x0000 );  //
 }
