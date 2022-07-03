@@ -81,9 +81,15 @@ constexpr float   hz             = 10.0f;  //  всегда 10
   constexpr uint16_t kd_u_def = ( 0.00f * hz ) * MPid::param_mult;   //  00 0x0000
 #endif
 
-constexpr uint16_t kp_i_def =   0.02f        * MPid::param_mult;   // 10.24 0x000A
-constexpr uint16_t ki_i_def = ( 0.05f / hz ) * MPid::param_mult;   //  3.59 0x0003  
-constexpr uint16_t kd_i_def = ( 0.00f * hz ) * MPid::param_mult;   //  0.00 0x0000
+#ifdef SHIFT08
+  constexpr uint16_t kp_i_def =   0.02f        * MPid::param_mult;   // 10.24 0x000A
+  constexpr uint16_t ki_i_def = ( 0.05f / hz ) * MPid::param_mult;   //  3.59 0x0003  
+  constexpr uint16_t kd_i_def = ( 0.00f * hz ) * MPid::param_mult;   //  0.00 0x0000
+#else
+  constexpr uint16_t kp_i_def =   0.02f        * MPid::param_mult;   // 81 0x0051
+  constexpr uint16_t ki_i_def = ( 0.10f / hz ) * MPid::param_mult;   // 40 0x0028  
+  constexpr uint16_t kd_i_def = ( 0.00f * hz ) * MPid::param_mult;   // 00 0x0000
+#endif
 
 constexpr uint16_t kp_d_def =   0.06f        * MPid::param_mult;   // 15.36 0x000D
 constexpr uint16_t ki_d_def = ( 0.20f / hz ) * MPid::param_mult;   //  5.12 0x0005  
@@ -164,7 +170,9 @@ void testModeU(int16_t fbU)
 
 void testModeI(int16_t fbI)
 {
-  setpoint[MODE_I] =  1010;         // test  1.01A
+  setpoint[MODE_I] =  0210;         // test  1.01A
+  MyPid.setCoefficients( kP[MODE_I], kI[MODE_I], kD[MODE_I] );
+
 
   swPinOn();                        // коммутатор включен
   currentControlStatus = true;      // регулирование по току включено
@@ -175,8 +183,24 @@ void testModeI(int16_t fbI)
   writePwmOut(MyPid.step(setpoint[MODE_I], fbI));
 }
 
-void testModeD(int16_t val)
-{}
+void testModeD(int16_t fbI)
+{
+  setpoint[MODE_D] = 1020;         // test  1.02A
+
+  swPinOn();                        // батарея подключена (не факт)
+
+  writePwmOut( 0x0000 );            // преобразователь выключен
+
+  currentControlStatus  = false;    // регулирование по току выключено
+  voltageControlStatus  = false;    // регулирование по напряжению выключено
+  chargeStatus          = false;    // заряд выключен
+
+  dacWrite10bit(MyPidD.step( setpoint[MODE_D], -fbI ));
+
+  dischargeStatus       = true;     // разряд включен с регулированием по току
+  //       pauseStatus           = false;  // пауза отключена
+  pidStatus             = true;     // регулятор включен
+}
 
 
 
@@ -185,19 +209,12 @@ void doPid( int16_t fbU, int16_t fbI )
 {
   //unsigned long before = micros();  // Раскомментировать 3 строки для вывода времени исполнения
 
-  int16_t outU; // = 0x0100;      // test
-  int16_t outI; //= 0x0040;      // test
+  //int16_t outU; // = 0x0100;      // test
+  //int16_t outI; //= 0x0040;      // test
   int16_t outD; //= 0x0200;      // test 12.4v: 0x0280 -> -1.8A
 
-  // setpoint[MODE_U] = 12000;    // test 10v
-  // setpoint[MODE_I] =  800;    // test
-  // pidMode          = MODE_U;
-
   setpoint[MODE_U] = 14210;    // test 14.21V
-  setpoint[MODE_I] =  1010;    // test  2.01A 
-  //MyPid.setCoefficients( kP[MODE_I], kI[MODE_I], kD[MODE_I] );
-  //pidMode          = MODE_I;
-  //if(fbI<=0) fbI = 10;
+  setpoint[MODE_I] =  1310;    // test  1.31A 
 
   switch ( pidMode )
   {
@@ -220,7 +237,8 @@ void doPid( int16_t fbU, int16_t fbI )
   case MODE_U:
     // Если при регулировании по напряжению ток ниже заданного, то продолжать.
     // Иначе перейти к регулированию по току.
-   if( fbI < ((setpoint[MODE_I])-20) )        // если ток менее заданного, но не разряд)) 
+   //if( fbI < ((setpoint[MODE_I])-20) )        // если ток менее заданного, но не разряд)) 
+   if( fbI < (setpoint[MODE_I]))        // если ток менее заданного, но не разряд)) 
    {
       // Режим регулирования по напряжению подтвержден
       swPinOn();                        // подключение к силовым клеммам
@@ -229,8 +247,8 @@ void doPid( int16_t fbU, int16_t fbI )
       dischargeStatus      = false;     // разряд отключен
       chargeStatus         = true;      // режим заряда включен
       pidStatus            = true;      // pid-регулятор включен
-      outU = MyPid.step( setpoint[MODE_U], fbU );  // коррекция 
-      writePwmOut( outU );
+      //outU = MyPid.step( setpoint[MODE_U], fbU );  // коррекция 
+      writePwmOut(MyPid.step( setpoint[MODE_U], fbU));
         // powerStatus          = true;           // преобразователь включен
         // pauseStatus           = false;          // пауза отключена nu
       
@@ -260,7 +278,8 @@ void doPid( int16_t fbU, int16_t fbI )
     break; //case MODE_U
 
   case MODE_I:
-    if( fbU <= ((setpoint[MODE_U])-20))
+    //if( fbU <= ((setpoint[MODE_U])-20))
+    if(fbU <= (setpoint[MODE_U]))
     {
       // Регулировать ток, если напряжение не выше заданного.
       swPinOn();           // коммутатор включен
@@ -268,8 +287,8 @@ void doPid( int16_t fbU, int16_t fbI )
       voltageControlStatus = false;     // регулирование по напряжению выключено
       chargeStatus         = true;      // заряд включен
 
-      outI = MyPid.step( setpoint[MODE_I], fbI );
-      writePwmOut( outI );              // преобразователь включен
+      //outI = MyPid.step( setpoint[MODE_I], fbI );
+      writePwmOut(MyPid.step(setpoint[MODE_I], fbI));              // преобразователь включен
                 
       dischargeStatus     = false;      // разряд отключен
         // pauseStatus    = false;      // пауза отключена nu
@@ -299,18 +318,16 @@ void doPid( int16_t fbU, int16_t fbI )
     break;  //case MODE_I
 
   case MODE_D:
-    // Регулирование тока разряда                             !!! ( НЕ ПРОВЕРЕНО ) !!!
+    // Регулирование тока разряда
     swPinOn();   // батарея подключена (не факт))
 
-    writePwmOut( 0x0000 );
-        //powerStatus           = false;  // преобразователь выключен
+    writePwmOut( 0x0000 );          // преобразователь выключен
 
     currentControlStatus  = false;  // регулирование по току выключено
     voltageControlStatus  = false;  // регулирование по напряжению выключено
     chargeStatus          = false;  // заряд выключен
 
-      outD = MyPidD.step( setpoint[MODE_I], fbI );  // коррекция ( откорректировать полярности )
-    dacWrite10bit( outD );  // test 12.4v: 0x0280 -> -1.8A
+    dacWrite10bit(MyPidD.step(setpoint[MODE_D], -fbI));
 
     dischargeStatus       = true;   // разряд включен с регулированием по току
     //       pauseStatus           = false;  // пауза отключена

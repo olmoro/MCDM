@@ -37,7 +37,7 @@ constexpr uint16_t pid_period = 100000UL / measurement_period;  // Период 
   constexpr int16_t adc_offset_default = 2;   //  2022.05.27 (COM4) - восстановленный SAMD21 MINI
 #endif
 #ifdef COM7
-  constexpr int16_t adc_offset_default = 10;  //  2022.04.6 (COM7)
+  constexpr int16_t adc_offset_default = 0;  //  2022.07.03 (COM7)
 #endif
 int16_t adcOffset = adc_offset_default;
 
@@ -92,7 +92,7 @@ uint8_t smoothI = smooth_default_i;
 #endif
 #ifdef COM7
   constexpr int16_t offset_default_u = 0x0000;
-  constexpr int16_t offset_default_i = -135;      //  2022.04.16
+  constexpr int16_t offset_default_i = -100;      //  2022.07.03
 #endif
 int16_t offsetU = offset_default_u;
 int16_t offsetI = offset_default_i;
@@ -230,9 +230,9 @@ void measure()
       // #endif
 
       #ifdef TESTMODE
-        testModeU(mvVoltage);
+        //testModeU(mvVoltage);
         //testModeI(maCurrent);
-        //testModeD(0x0000);
+        testModeD(maCurrent);
       #else
         doPid( mvVoltage, maCurrent );    // fbU, fbI
       #endif
