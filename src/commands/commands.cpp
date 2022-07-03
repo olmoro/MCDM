@@ -13,7 +13,7 @@
 #include <Arduino.h>
 
 // Имя устройства
-static constexpr char Info[] = {"D21 Rev2022.05.05\n\0"};   //
+static constexpr char Info[] = {"MCDM Rev20220703\n\0"};   //
 
   // state1
 bool switchStatus          = false;  // коммутатор выключен ( sw_pin PA14 ) // ???

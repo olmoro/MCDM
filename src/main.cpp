@@ -5,7 +5,7 @@
   View detail for Atmel AT11628: SAM D21 SERCOM I2C Configuration
 
   Вариант с UART
-  05 июнь 2022
+  03 июль 2022  v0.1
   Platform: 7.1.0
   VS: 1.65.0  -> 1.67.0 -> 1.67.2
   pcb: micD21.v51 -> .v53

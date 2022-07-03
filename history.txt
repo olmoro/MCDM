@@ -54,12 +54,12 @@ C:\Users\olmor\.platformio\packages\framework-arduino-samd\variants\arduino_zero
 C:\Users\olmor\.platformio\packages\framework-arduino-samd\variants\arduino_zero\variant.h
 C:\Users\olmor\.platformio\packages\framework-arduino-samd\cores\arduino\wiring_analog.c
 
-
 9:29 03.05.2022
 Заказано изготовление mcdm_v53
-
 19:29 22.05.2022
 маркировка R33, R34 переставлена. Откорректировано в v53a.
-
+Добавлены резисторы защиты по 7,5кОм
 19:50 28.05.2022
 Увеличена скорость обмена до 230400
+10:29 03.07.2022
+Версия 0.1 с пид-регуляторами
