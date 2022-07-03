@@ -1,5 +1,5 @@
 /*
-  Версия от 15 июня 2022г.
+  Версия от 03 июля 2022г.
   Измерители тока и напряжения дифференциальные.
   Датчики опрашиваются с частотой 1кГц.
   По обоим датчикам максимально общие настройки. 
@@ -26,7 +26,6 @@
 
 constexpr uint16_t measurement_period = 1000UL;                   // Период запуска измерителя в микросекундах (1kHz)
 constexpr uint16_t pid_period = 100000UL / measurement_period;  // Период запуска pid-регулятора в тактах измерителя (10Hz)
-//constexpr uint16_t pid_period = 10000UL / measurement_period;  // Период запуска pid-регулятора в тактах измерителя (100Hz)
 
 #ifdef DEBUG_ADC_TIME
   unsigned long oldTime;                                    // Таймер проверки периода запуска ПИД-регулятора
@@ -91,7 +90,7 @@ uint8_t smoothI = smooth_default_i;
   constexpr int16_t offset_default_i = -135;      //  ( неуточненное значение )
 #endif
 #ifdef COM7
-  constexpr int16_t offset_default_u = 0x0000;
+  constexpr int16_t offset_default_u =    0;
   constexpr int16_t offset_default_i = -100;      //  2022.07.03
 #endif
 int16_t offsetU = offset_default_u;
@@ -236,8 +235,6 @@ void measure()
       #else
         doPid( mvVoltage, maCurrent );    // fbU, fbI
       #endif
-        //doPid( mvVoltage, 800 );    // fbU, fbI     test MODE_U
-        //doPid( 16000, maCurrent );    // fbU, fbI     test MODE_I
 
       // #ifdef TEST_PID
       //   test2On();     // Метка для осциллографа

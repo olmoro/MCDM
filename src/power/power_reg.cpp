@@ -97,7 +97,7 @@ constexpr uint16_t kd_d_def = ( 0.00f * hz ) * MPid::param_mult;   //  0.00 0x00
 
 // Ограничения на output приборные, вводятся setOutputRange(min,max),
 // будут в инициализации? 
-constexpr int16_t min_pwm   = 0x0008;   // май 2022
+constexpr int16_t min_pwm   = 0x0000;  //8;   // май 2022
 constexpr int16_t max_pwm   = 0x01F4;   // 
 constexpr int16_t min_dac   = 0x0020;
 constexpr int16_t max_dac   = 0x03FF;   //
@@ -152,7 +152,8 @@ void initPids()
   MyPidD.configure( kP[MODE_D], kI[MODE_D], kD[MODE_D], minOut[MODE_D], maxOut[MODE_D] );
   initPwm();
 
-  pidMode = MODE_U;   // Test
+  pidMode = MODE_OFF;
+  //pidMode = MODE_U;   // Test
 } 
 
 void testModeU(int16_t fbU)
@@ -209,12 +210,8 @@ void doPid( int16_t fbU, int16_t fbI )
 {
   //unsigned long before = micros();  // Раскомментировать 3 строки для вывода времени исполнения
 
-  //int16_t outU; // = 0x0100;      // test
-  //int16_t outI; //= 0x0040;      // test
-  int16_t outD; //= 0x0200;      // test 12.4v: 0x0280 -> -1.8A
-
-  setpoint[MODE_U] = 14210;    // test 14.21V
-  setpoint[MODE_I] =  1310;    // test  1.31A 
+//  setpoint[MODE_U] = 14210;    // test 14.21V
+//  setpoint[MODE_I] =  1310;    // test  1.31A 
 
   switch ( pidMode )
   {
@@ -237,7 +234,6 @@ void doPid( int16_t fbU, int16_t fbI )
   case MODE_U:
     // Если при регулировании по напряжению ток ниже заданного, то продолжать.
     // Иначе перейти к регулированию по току.
-   //if( fbI < ((setpoint[MODE_I])-20) )        // если ток менее заданного, но не разряд)) 
    if( fbI < (setpoint[MODE_I]))        // если ток менее заданного, но не разряд)) 
    {
       // Режим регулирования по напряжению подтвержден
@@ -247,7 +243,6 @@ void doPid( int16_t fbU, int16_t fbI )
       dischargeStatus      = false;     // разряд отключен
       chargeStatus         = true;      // режим заряда включен
       pidStatus            = true;      // pid-регулятор включен
-      //outU = MyPid.step( setpoint[MODE_U], fbU );  // коррекция 
       writePwmOut(MyPid.step( setpoint[MODE_U], fbU));
         // powerStatus          = true;           // преобразователь включен
         // pauseStatus           = false;          // пауза отключена nu
@@ -266,9 +261,7 @@ void doPid( int16_t fbU, int16_t fbI )
         // #endif
         saveState(MODE_U);              // Сохранить регистры регулятора
         restoreState(MODE_I);           // Перейти к регулированию по току
-          MyPid.setCoefficients( kP[MODE_I], kI[MODE_I], kD[MODE_I] );
-        //             //MyPid.replaceConfig( kP[MODE_I], kI[MODE_I], kD[MODE_I], minOut[MODE_I], maxOut[MODE_I]);
-        //             //MyPid.configure( kP[MODE_I], kI[MODE_I], kD[MODE_I], minOut[MODE_I], maxOut[MODE_I]);
+        MyPid.setCoefficients( kP[MODE_I], kI[MODE_I], kD[MODE_I] );
         pidMode = MODE_I;
         // #ifdef OSC 
         //test2Low();                         // Метка для осциллографа
@@ -278,7 +271,6 @@ void doPid( int16_t fbU, int16_t fbI )
     break; //case MODE_U
 
   case MODE_I:
-    //if( fbU <= ((setpoint[MODE_U])-20))
     if(fbU <= (setpoint[MODE_U]))
     {
       // Регулировать ток, если напряжение не выше заданного.
@@ -286,14 +278,11 @@ void doPid( int16_t fbU, int16_t fbI )
       currentControlStatus = true;      // регулирование по току включено
       voltageControlStatus = false;     // регулирование по напряжению выключено
       chargeStatus         = true;      // заряд включен
-
-      //outI = MyPid.step( setpoint[MODE_I], fbI );
-      writePwmOut(MyPid.step(setpoint[MODE_I], fbI));              // преобразователь включен
-                
+      writePwmOut(MyPid.step(setpoint[MODE_I], fbI));              // преобразователь включен          
       dischargeStatus     = false;      // разряд отключен
-        // pauseStatus    = false;      // пауза отключена nu
       pidStatus           = true;       // регулятор включен
 
+        // pauseStatus    = false;      // пауза отключена nu
         //         idleLoad(); 
     }
     else
@@ -307,8 +296,6 @@ void doPid( int16_t fbU, int16_t fbI )
         saveState(MODE_I);
         restoreState(MODE_U);
         MyPid.setCoefficients( kP[MODE_U], kI[MODE_U], kD[MODE_U] );
-        //                 //MyPid.replaceConfig( kP[MODE_U], kI[MODE_U], kD[MODE_U], minOut[MODE_U], maxOut[MODE_U]);
-        //                 //MyPid.configure( kP[MODE_U], kI[MODE_U], kD[MODE_U], minOut[MODE_U], maxOut[MODE_U]);
         pidMode = MODE_U;
         //           #ifdef OSC 
         //             tstPinOn();                         // Метка для осциллографа
@@ -326,13 +313,11 @@ void doPid( int16_t fbU, int16_t fbI )
     currentControlStatus  = false;  // регулирование по току выключено
     voltageControlStatus  = false;  // регулирование по напряжению выключено
     chargeStatus          = false;  // заряд выключен
-
     dacWrite10bit(MyPidD.step(setpoint[MODE_D], -fbI));
-
     dischargeStatus       = true;   // разряд включен с регулированием по току
-    //       pauseStatus           = false;  // пауза отключена
     pidStatus             = true;   // регулятор включен
 
+    // pauseStatus           = false;  // пауза отключена
     break;
 
   default:
@@ -479,7 +464,7 @@ void  doSetPid()
 
     txReplay( 1, _id );
   }
-    else txReplay(1, err_tx);      // Ошибка протокола
+    else txReplay(1, err_tx);       // Ошибка протокола
 } 
 
 // 0x40 Тестовая. Конфигурирование пид-регулятора
@@ -489,7 +474,8 @@ void doPidConfigure()
 
   if( rxNbt == 11 )
   {
-    uint8_t m = rxDat[0] & 0x03;   // Выбор режима ( OFF, U, I, D )
+    powerStop();                    // Перевод в безопасное состояние
+    uint8_t m = rxDat[0] & 0x03;    // Выбор режима ( OFF, U, I, D )
     pidMode = m;
     kP[m] = get16(1);
     kI[m] = get16(3);
@@ -521,6 +507,7 @@ void doPidSetCoefficients()
 {
   if( rxNbt == 7 )
   {
+        powerStop();                    // Перевод в безопасное состояние
     uint8_t m = rxDat[0] & 0x03;   // Выбор режима ( OFF, U, I, D )
     pidMode = m;
     kP[m] = get16(1);
@@ -551,6 +538,7 @@ void doPidOutputRange()
 {
   if( rxNbt == 5 )
   {
+        powerStop();                    // Перевод в безопасное состояние
     uint8_t m = rxDat[0] & 0x03;   // Выбор режима ( MODE_OFF, U, I, D )
     pidMode = m;
     minOut[m] = get16(1);
@@ -573,6 +561,7 @@ void doPidReconfigure()
 {
   if( rxNbt == 10 )
   {
+        powerStop();                    // Перевод в безопасное состояние
     uint8_t m = rxDat[0] & 0x03;   // Выбор режима ( MODE_OFF, U, I, D )
     pidMode = m;
     kP[m] = get16(1);
@@ -606,6 +595,7 @@ void doPidClear()
 {
   if( rxNbt == 1 )
   {
+        powerStop();                    // Перевод в безопасное состояние
     uint8_t m = rxDat[0] & 0x03;   // Выбор режима ( MODE_OFF, U, I, D )
 
     switch ( m )
@@ -628,6 +618,7 @@ void doPidTest()
 {
   if( rxNbt == 3 )
   {
+    //    powerStop();                    // Перевод в безопасное состояние
     uint8_t   m = rxDat[0] & 0x03;  // 0-1-2-3 - выкл или задать напряжение, ток заряда или ток разряда
 
     pidMode = m;                    // выбор канала регулирования
@@ -681,6 +672,7 @@ void doPidGetConfigure()
 {
   if( rxNbt == 0 )
   {
+        powerStop();                    // Перевод в безопасное состояние
     int id = 1;
     id = replyU08( id, pidMode );
     id = replyU16( id, kP[pidMode] );
@@ -699,6 +691,7 @@ void doPidSetMaxSum()
 {
   if( rxNbt == 12 )
   {
+    //     powerStop();                    // Перевод в безопасное состояние
     //integ_min = get64(0);       // Лучше задавать число знаков и сдвигами вычислять мин и макс
     //integ_max = get64(7);  //знак - !!!
 
@@ -736,6 +729,7 @@ void doCooler()
 {
   if( rxNbt == 2 )
   {
+        powerStop();                    // Перевод в безопасное состояние
     writePwmCool(get16(0));         // 0...1000
     txReplay( 1, 0x00 );            // подтверждение
   }
@@ -748,6 +742,7 @@ void doSurgeCompensation()
 {
   if( rxNbt == 4 )
   {
+        powerStop();                    // Перевод в безопасное состояние
     surgeVoltage = get16(0);        // Милливольты превышения
     surgeCurrent = get16(2);        // Ток в коде DAC
 
@@ -761,6 +756,7 @@ void doIdleLoad()
 {
   if( rxNbt == 4 )
   {
+    //    powerStop();                    // Перевод в безопасное состояние
     idleCurrent  = get16(0);        // Минимальный ток, при котором не нужна дополнительная нагрузка 
     idleDac      = get16(2);        // Ток в коде DAC
     txReplay( 1, 0 );

@@ -75,15 +75,7 @@ void initPwm()
 
   pwm.analogWrite(MPins::cool_pin, 0x00B0);    // test
 
-  swPinOn();                 // Включение нагрузки test
-
-    // test
-    //setpoint[1] = 12000;   // U
-    //
-    // setpoint[2] =  1000;   // I
-    // pidMode = 1;           // U - начать с установки напряжения
-    // pidStatus = true;      // Разрешить регулирование
-
+//  swPinOn();                 // Включение нагрузки test
 
 
 //  dacWrite10bit( 0x0200 );  // test 12.4v: 0x0280 -> -1.8A
