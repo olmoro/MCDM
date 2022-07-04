@@ -71,28 +71,17 @@ constexpr float   hz             = 10.0f;  //  всегда 10
 // 20220701 param_shift увеличен с 8 до 12, при этом
 // param_max  = 0x000F, param_mult = 0x1000 - Не забыть внести поправку в ESP32
 // Подобранные ранее параметры регулирования сохранились
-#ifdef SHIFT08
-  constexpr uint16_t kp_u_def =   0.06f        * MPid::param_mult;   // 15.36 0x000D
-  constexpr uint16_t ki_u_def = ( 0.20f / hz ) * MPid::param_mult;   //  5.12 0x0005  
-  constexpr uint16_t kd_u_def = ( 0.00f * hz ) * MPid::param_mult;   //  0.00 0x0000
-#else
-  constexpr uint16_t kp_u_def =   0.06f        * MPid::param_mult;   // 245 0x00F5
-  constexpr uint16_t ki_u_def = ( 0.20f / hz ) * MPid::param_mult;   //  81 0x0051  
-  constexpr uint16_t kd_u_def = ( 0.00f * hz ) * MPid::param_mult;   //  00 0x0000
-#endif
 
-#ifdef SHIFT08
-  constexpr uint16_t kp_i_def =   0.02f        * MPid::param_mult;   // 10.24 0x000A
-  constexpr uint16_t ki_i_def = ( 0.05f / hz ) * MPid::param_mult;   //  3.59 0x0003  
-  constexpr uint16_t kd_i_def = ( 0.00f * hz ) * MPid::param_mult;   //  0.00 0x0000
-#else
-  constexpr uint16_t kp_i_def =   0.02f        * MPid::param_mult;   // 81 0x0051
-  constexpr uint16_t ki_i_def = ( 0.10f / hz ) * MPid::param_mult;   // 40 0x0028  
-  constexpr uint16_t kd_i_def = ( 0.00f * hz ) * MPid::param_mult;   // 00 0x0000
-#endif
+constexpr uint16_t kp_u_def =   0.06f        * MPid::param_mult;   // 245 0x00F5
+constexpr uint16_t ki_u_def = ( 0.20f / hz ) * MPid::param_mult;   //  81 0x0051
+constexpr uint16_t kd_u_def = ( 0.00f * hz ) * MPid::param_mult;   //  00 0x0000
+
+constexpr uint16_t kp_i_def =   0.02f        * MPid::param_mult;   // 81 0x0051
+constexpr uint16_t ki_i_def = ( 0.10f / hz ) * MPid::param_mult;   // 40 0x0028
+constexpr uint16_t kd_i_def = ( 0.00f * hz ) * MPid::param_mult;   // 00 0x0000
 
 constexpr uint16_t kp_d_def =   0.06f        * MPid::param_mult;   // 15.36 0x000D
-constexpr uint16_t ki_d_def = ( 0.20f / hz ) * MPid::param_mult;   //  5.12 0x0005  
+constexpr uint16_t ki_d_def = ( 0.20f / hz ) * MPid::param_mult;   //  5.12 0x0005
 constexpr uint16_t kd_d_def = ( 0.00f * hz ) * MPid::param_mult;   //  0.00 0x0000
 
 // Ограничения на output приборные, вводятся setOutputRange(min,max),

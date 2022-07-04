@@ -139,21 +139,11 @@ public:
   static constexpr int16_t  deriv_max   = (INT16_MAX);         // 0x7FFF
   static constexpr int16_t  deriv_min   = (INT16_MIN);         // 0x8000
 
-#ifdef SHIFT08
-  static constexpr uint8_t  param_shift =  8;
-  static constexpr uint8_t  param_bits  = 16;
-  static constexpr uint16_t param_max   = (((0x1ULL << param_bits)-1) >> param_shift);              // 0x00FF
-  static constexpr uint16_t param_mult  = (((0x1ULL << param_bits)) >> (param_bits - param_shift)); // 0x0100
-  static constexpr uint16_t hz = 10;
-#endif
-
-#ifdef SHIFT12
   static constexpr uint8_t  param_shift = 12;
   static constexpr uint8_t  param_bits  = 16;
   static constexpr uint16_t param_max   = (((0x1ULL << param_bits)-1) >> param_shift);              // 0x000F
   static constexpr uint16_t param_mult  = (((0x1ULL << param_bits)) >> (param_bits - param_shift)); // 0x1000
   static constexpr uint16_t hz = 10;
-#endif
 
   void setCoefficients(uint16_t kp, uint16_t ki, uint16_t kd);
   void setOutputRange(int16_t min, int16_t max);

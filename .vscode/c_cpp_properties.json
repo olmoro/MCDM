@@ -78,7 +78,6 @@
                 "NOEE=1",
                 "WEMOS=1",
                 "HZ_10=1",
-                "SHIFT12=1",
                 "COM7=1",
                 "VER190=1",
                 "TEST_MEASURE=1",
