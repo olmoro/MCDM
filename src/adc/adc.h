@@ -18,6 +18,8 @@ void tresholdLtI(int16_t valI);     // Перегрузка по току раз
 
 void setFactoryConfiguration(uint8_t prb);
 
+int16_t  SetAdcOffsetDefault();
+
 uint8_t  SetSmoothDefaultU();
 uint8_t  SetSmoothDefaultI();
 uint16_t SetFactorDefaultU();     // коэффициент преобразования в милливольты

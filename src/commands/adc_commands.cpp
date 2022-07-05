@@ -50,6 +50,7 @@ extern uint8_t smoothI;           // параметр сглаживания д�
 
   // конструктивное смешение АЦП
 extern int16_t adcOffset;         // смещение АЦП (ед)
+//extern int16_t adcOffset
 
   // Пороги
 extern int16_t winLtU;
@@ -340,6 +341,7 @@ void doAdcGetOffset()
 {
   if( rxNbt == 0 )
   {
+    powerStop();
     int id = 1;
     id = replyU16( id, uint16_t( adcOffset ) ); 
     txReplay( id, 0x00 );            // Об ошибках параметров не сообщается
@@ -352,11 +354,15 @@ void doAdcSetOffset()
 {
   if( rxNbt == 2 )
   {
+    powerStop();
     adcOffset = int16_t( get16(0) );
     txReplay( 1, 0x00 );            // Об ошибках параметров не сообщается
   }
   else  txReplay(1, err_tx);        // ошибка протокола
 }
+
+
+
 
   // 0x60 Чтение предела напряжения снизу
 void doGetWinLtU()

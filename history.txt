@@ -63,3 +63,17 @@ C:\Users\olmor\.platformio\packages\framework-arduino-samd\cores\arduino\wiring_
 Увеличена скорость обмена до 230400
 10:29 03.07.2022
 Версия 0.1 с пид-регуляторами
+
+// param_shift увеличен с 8 до 12; param_max = 0x000F, param_mult = 0x1000
+RAM:   [=         ]  12.7% (used 4176 bytes from 32768 bytes)
+Flash: [=         ]   9.2% (used 24228 bytes from 262144 bytes)
+
+04.07.2022
+Новые модули на COM13 и COM14 (Arduino Zero 1.4.3.0) проверены
+
+05.07.2022
+Отказ от эмуляции EEPROM. Заводские и пользовательские установки
+будут храниться в памяти управляющего контроллера и загружаться
+на этапе инициализации, заменяя параметры разработчика (defaults) 
+RAM:   [=         ]   9.5% (used 3120 bytes from 32768 bytes)
+Flash: [=         ]   8.7% (used 22692 bytes from 262144 bytes)

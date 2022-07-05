@@ -96,8 +96,9 @@ const uint8_t cmd_set_cooler                = 0x4F; // Задать скорос
 
   // АЦП - настройки
 const uint8_t cmd_adc_read_probes           = 0x50; // Read all probes
-const uint8_t cmd_adc_get_offset            = 0x51; // Чтение смещение АЦП
-const uint8_t cmd_adc_set_offset            = 0x52; // Запись смещения АЦП
+const uint8_t cmd_adc_get_offset            = 0x51; // Читать смещение АЦП
+const uint8_t cmd_adc_set_offset            = 0x52; // Записать смещение АЦП
+//const uint8_t cmd_adc_fb_offset            = 0x53; // заводское смещение АЦП
 
   // Команды тестовые
 const uint8_t cmd_set_switch_pin            = 0x54; // sw_pin D4 PA14
@@ -216,8 +217,8 @@ void doCommand()
 
         // Команды работы с АЦП
       case cmd_adc_read_probes:           doReadProbes();             break;  // 0x50   57
-      case cmd_adc_get_offset:            doAdcGetOffset();           break;  // 0x51   57
-      case cmd_adc_set_offset:            doAdcSetOffset();           break;  // 0x52   57
+      case cmd_adc_get_offset:            doAdcGetOffset();           break;  // 0x51   
+      case cmd_adc_set_offset:            doAdcSetOffset();           break;  // 0x52   
 
         // Команды управления портами управления (в основном тестовые)
       case cmd_set_switch_pin:            doSwPin();                  break;  // 0x54   OK    0/1: off/on

@@ -300,6 +300,7 @@ void setFactoryConfiguration(uint8_t prb)
 {
 
 }
+int16_t  SetAdcOffsetDefault() {return adc_offset_default;}
 
 uint16_t SetFactorDefaultU() { return factor_default_u; }
 uint16_t SetFactorDefaultI() { return factor_default_i; }
