@@ -53,6 +53,8 @@ uint8_t txCmd;          // команда, передаваемая в паке�
 uint8_t txNbt;          // количество байт данных в пакете
 uint8_t txDat[frame];   // массив данных для передачи
 
+uint8_t buffN;          // заявленное количество байт данных в ответном пакете 
+uint8_t buffErr;        // заявленный код ошибки в ответном пакете
 
 void wakeInit( uint8_t addr, long time )
 {
@@ -299,6 +301,24 @@ void wakeStartWrite()
 	}
 }
 
+  // Попытка передачи ответного пакета
+void replyExe()
+{
+  if(command != cmd_nop)
+  {
+    txReplay(buffN, buffErr);
+  }
+}
+
+  //  prepReply()
+void prepReply(uint8_t n, uint8_t err)
+{
+  buffN = n;
+  buffErr = err;
+}
+
+
+
 // передача ответа на команду 
 void txReplay(uint8_t n, uint8_t err)
 {
@@ -365,12 +385,12 @@ int32_t getI32(int i)
   return par; 
 }
 
-void testReply( int rxNbt )
-{
-  for( int i = 0; i < rxNbt ; i++ )
-  {
-    txDat[i] = rxDat[i];
-  }
+// void testReply( int rxNbt )
+// {
+//   for( int i = 0; i < rxNbt ; i++ )
+//   {
+//     txDat[i] = rxDat[i];
+//   }
 
-  txReplay( rxNbt, txDat[0] );
-}
+//   txReplay( rxNbt, txDat[0] );
+// }

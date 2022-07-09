@@ -33,6 +33,8 @@ const uint8_t cmd_info = 0x03; // передать информацию об у�
 
 void wakeInit( uint8_t addr, long time );
 void wakeRead();
+void replyExe();
+void prepReply(uint8_t, uint8_t);
 void txReplay(uint8_t n, uint8_t err);          // передача ответа на команду
 
 
@@ -46,6 +48,6 @@ uint16_t get16(int id);
 
 float getF16(int i);
 int32_t getI32(int i);
-void testReply( int n );                        // тест отправить n байт из буфера приемника
+// void testReply( int n );                        // тест отправить n байт из буфера приемника
 
 #endif //!_WAKE_H_

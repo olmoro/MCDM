@@ -37,7 +37,7 @@ bool reserve2Status        = false;  // резерв 2
 
 
   // Команды измерений
-const uint8_t cmd_read_u_i                  = 0x10; // Чтение напряжения(мВ), тока (мА) и состояния
+const uint8_t cmd_get_u_i_s                 = 0x10; // Чтение напряжения(мВ), тока (мА) и состояния
 const uint8_t cmd_get_u                     = 0x11; // Чтение напряжения (мВ)
 const uint8_t cmd_get_i                     = 0x12; // Чтение тока (мА)
 const uint8_t cmd_get_ui                    = 0x13; // Чтение напряжения (мВ) и тока (мА)
@@ -170,7 +170,7 @@ void doCommand()
     switch( cmd )
     {                                                                 //
         // Команды измерения
-      case cmd_read_u_i:                  doReadUI();                 break;  // 0x10 OK
+      case cmd_get_u_i_s:                 doGetUIS();                 break;  // 0x10 OK
       case cmd_get_u:                     doGetU();                   break;  // 0x11 OK Чтение напряжение (мВ)
       case cmd_get_i:                     doGetI();                   break;  // 0x12 OK Чтение ток (мА)
       case cmd_get_ui:                    doGetUI();                  break;  // 0x13 OK Чтение напряжение (мВ) и ток (мА)
@@ -276,7 +276,7 @@ void doInfo()
   #endif
   }
   
-  txReplay( i, txDat[0] );        // Искусственный прием, об ошибках не сообщается
+  prepReply( i, txDat[0] );        // Искусственный прием, об ошибках не сообщается
 }
 
   // передать эхо
@@ -284,7 +284,7 @@ void doEcho()
 {
   for( int i = 0; i < rxNbt && i < frame; i++ )
   txDat[i] = rxDat[i];
-  txReplay( rxNbt, txDat[0] );
+  prepReply( rxNbt, txDat[0] );
   #ifdef DEBUG_WAKE
     Serial.print("команда эхо = "); Serial.print( rxNbt );
   #endif
@@ -293,7 +293,7 @@ void doEcho()
   // ошибка приема пакета
 void doErr()
 {
-  txReplay(1, err_tx);
+  prepReply(1, err_tx);
   #ifdef DEBUG_WAKE
     Serial.println("обработка ошибки");
   #endif

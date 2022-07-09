@@ -16,6 +16,7 @@
 */
 
 #include <Arduino.h>
+  #include "wake/wake.h"
 #include "atsamd21_adc.h"
 #include "adc/adc.h"
 #include "power/power_reg.h"
@@ -118,6 +119,8 @@ int16_t winUpI = win_up_default_i;
 //int16_t measureU();
 //int16_t measureI();
 
+//byte allowReply = false;
+
   // Инициализация измерений
 void initMeasure()
 {
@@ -197,8 +200,21 @@ void measure()
 {
   static uint32_t ts = 0;                       // таймер отсчета времени
   static uint16_t pp = 0;                       // счетчик отсчета периода запуска пид-регулятора
+  uint32_t ms = micros() - ts;
 
-  if( micros() - ts >= measurement_period )
+  if(ms >= measurement_period >>2)
+    {
+      //allowReply = false;
+test2Low();
+    }
+    else
+    {
+      //allowReply = true;
+      replyExe();
+test2High();
+    }
+
+  if(ms >= measurement_period)
   { 
     ts += measurement_period;
 
@@ -241,7 +257,7 @@ void measure()
       // #endif
     }
   }
-}
+} // measure()
   
 void tresholdUpU(int16_t valU)
 {

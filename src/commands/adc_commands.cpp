@@ -1,6 +1,6 @@
 /*
-
-  Версия от 25 ноября 2020г.
+  New: tryReply()
+  Версия от 09 июля 2020г.
 */
 
 #include "board/mpins.h"
@@ -73,7 +73,8 @@ extern int16_t winUpI;
 
 
 // 0x10 Чтение текущих напряжения, тока и состояний 
-void doReadUI()
+//void doReadUI()
+void doGetUIS()
 {
   if( rxNbt == 0 )
   {
@@ -82,9 +83,9 @@ void doReadUI()
     id = replyU16( id, (uint16_t)maCurrent );
     id = replyU08( id, state1 );              // информация о состоянии 
     id = replyU08( id, state2 );              // информация о состоянии 
-    txReplay( id, 0 );                        // всего байт, в нулевом - сообщение об ошибках (nu)
+    prepReply( id, 0 );                        // всего байт, в нулевом - сообщение об ошибках (nu)
   }
-  else  txReplay(1, err_tx);                  // ошибка протокола
+  else  prepReply(1, err_tx);                  // ошибка протокола
 }
 
 // 0x11 читать текущее напряжение (мВ)
@@ -94,9 +95,9 @@ void doGetU()
   {
     int id = 1;
     id = replyU16( id, (uint16_t)mvVoltage );
-    txReplay( id, 0 );                        // всего байт, в нулевом - сообщение об ошибках (nu)
+    prepReply( id, 0 );                        // всего байт, в нулевом - сообщение об ошибках (nu)
   }
-  else  txReplay(1, err_tx);                  // ошибка протокола
+  else  prepReply(1, err_tx);                  // ошибка протокола
 }
 
 // 0x12 читать текущий ток (мА)
@@ -106,9 +107,9 @@ void doGetI()
   {
     int id = 1;
     id = replyU16( id, (uint16_t)maCurrent );
-    txReplay( id, 0 );                        // всего байт, в нулевом - сообщение об ошибках (nu)
+    prepReply( id, 0 );                        // всего байт, в нулевом - сообщение об ошибках (nu)
   }
-  else  txReplay(1, err_tx);                  // ошибка протокола
+  else  prepReply(1, err_tx);                  // ошибка протокола
 }
 
 // 0x13 читать текущее напряжение (мВ) и ток (мА)
@@ -119,9 +120,9 @@ void doGetUI()
     int id = 1;
     id = replyU16( id, (uint16_t)mvVoltage );
     id = replyU16( id, (uint16_t)maCurrent );
-    txReplay( id, 0 );                        // всего байт, в нулевом - сообщение об ошибках (nu)
+    prepReply( id, 0 );                        // всего байт, в нулевом - сообщение об ошибках (nu)
   }
-  else  txReplay(1, err_tx);                  // ошибка протокола
+  else  prepReply(1, err_tx);                  // ошибка протокола
 }
 
 // 0x14 читать текущее состояние
@@ -132,9 +133,9 @@ void doGetState()
     int id = 1;
     id = replyU08( id, state1 );              // информация о состоянии 
     id = replyU08( id, state2 );              // информация о состоянии 
-    txReplay( id, 0 );                        // всего байт, в нулевом - сообщение об ошибках (nu)
+    prepReply( id, 0 );                        // всего байт, в нулевом - сообщение об ошибках (nu)
   }
-  else  txReplay(1, err_tx);                  // ошибка протокола
+  else  prepReply(1, err_tx);                  // ошибка протокола
 }
 
 // 0x15 читать температуру радиатора
@@ -144,9 +145,9 @@ void doCelsius()
   {
     int id = 1;
     id = replyU16( id, (uint16_t)adcCelsius );  // Без пересчета в градусы
-    txReplay( id, 0 );                        // всего байт, в нулевом - сообщение об ошибках (nu)
+    prepReply( id, 0 );                        // всего байт, в нулевом - сообщение об ошибках (nu)
   }
-  else  txReplay(1, err_tx);                  // ошибка протокола
+  else  prepReply(1, err_tx);                  // ошибка протокола
 }
 
 
@@ -160,9 +161,9 @@ void doGetFactorU()
   {
     int id = 1;
     id = replyU16( id, factorU );   // коэффициент преобразования в милливольты
-    txReplay( id, 0x00 );           // подтверждение
+    prepReply( id, 0x00 );           // подтверждение
   }
-  else  txReplay(1, err_tx);        // ошибка протокола
+  else  prepReply(1, err_tx);        // ошибка протокола
 } 
 
   // 0x31 Запись калибровки измерителя напряжения
@@ -173,9 +174,9 @@ void doSetFactorU()
   if( rxNbt == 2 )
   {
     factorU = get16(0);             // коэффициент преобразования в милливольты
-    txReplay( 1, 0x00 );            // подтверждение
+    prepReply( 1, 0x00 );            // подтверждение
   }
-  else  txReplay(1, err_tx);        // ошибка протокола
+  else  prepReply(1, err_tx);        // ошибка протокола
 }
 
   // 0x32 Возврат к заводскому
@@ -184,9 +185,9 @@ void doSetFactorDefaultU()
   if( rxNbt == 0 )
   {
     factorU = SetFactorDefaultU();  // коэффициент преобразования в милливольты
-    txReplay( 1, 0x00 );            // подтверждение
+    prepReply( 1, 0x00 );            // подтверждение
   }
-  else  txReplay(1, err_tx);        // ошибка протокола
+  else  prepReply(1, err_tx);        // ошибка протокола
 }
 
   // 0x33 Читать параметр сглаживания по напряжению
@@ -196,9 +197,9 @@ void doGetSmoothU()
   {
     int id = 1;
     id = replyU08( id, smoothU ); 
-    txReplay( id, 0x00 );            // Об ошибках параметров не сообщается
+    prepReply( id, 0x00 );            // Об ошибках параметров не сообщается
   }
-  else  txReplay(1, err_tx);        // ошибка протокола
+  else  prepReply(1, err_tx);        // ошибка протокола
 }
 
   // 0x34 Записать параметр сглаживания по напряжению
@@ -210,9 +211,9 @@ void doSetSmoothU()
   {
     uint8_t val = rxDat[0];      // 0...8: 0, 2, 4, 8 ... 
     ( val >= 8 ) ? smoothU = 8 : smoothU = val;
-    txReplay( 1, 0x00 );            // Об ошибках параметров не сообщается
+    prepReply( 1, 0x00 );            // Об ошибках параметров не сообщается
   }
-  else  txReplay(1, err_tx);        // ошибка протокола
+  else  prepReply(1, err_tx);        // ошибка протокола
 }
 
   // 0x35 Чтение приборного смещения, мВ 
@@ -222,9 +223,9 @@ void doGetOffsetU()
   {
     int id = 1;
     id = replyU16( id, offsetU );   // смещение, мВ
-    txReplay( id, 0x00 );           // подтверждение
+    prepReply( id, 0x00 );           // подтверждение
   }
-  else  txReplay(1, err_tx);        // ошибка протокола
+  else  prepReply(1, err_tx);        // ошибка протокола
 }
 
   // 0x36 Запись приборного смещения, мВ
@@ -235,9 +236,9 @@ void doSetOffsetU()
   if( rxNbt == 2 )
   {
     offsetU = get16(0);             // смещение, мВ
-    txReplay( 1, 0x00 );            // подтверждение
+    prepReply( 1, 0x00 );            // подтверждение
   }
-  else  txReplay(1, err_tx);        // ошибка протокола
+  else  prepReply(1, err_tx);        // ошибка протокола
 }
 
   // 0x38 Чтение калибровки измерителя тока
@@ -247,9 +248,9 @@ void doGetFactorI()
   {
     int id = 1;
     id = replyU16( id, factorI );   // коэффициент преобразования в миллиамперы
-    txReplay( id, 0x00 );           // подтверждение
+    prepReply( id, 0x00 );           // подтверждение
   }
-  else  txReplay(1, err_tx);        // ошибка протокола
+  else  prepReply(1, err_tx);        // ошибка протокола
 }
 
   // 0x39 Запись калибровки измерителя тока
@@ -258,9 +259,9 @@ void doSetFactorI()
   if( rxNbt == 2 )
   {
     factorI = get16(0);             // коэффициент преобразования в миллиамперы
-    txReplay( 1, 0x00 );            // подтверждение
+    prepReply( 1, 0x00 );            // подтверждение
   }
-  else  txReplay(1, err_tx);        // ошибка протокола
+  else  prepReply(1, err_tx);        // ошибка протокола
 }
 
   // 0x3A Возврат к заводскому множителю
@@ -269,9 +270,9 @@ void doSetFactorDefaultI()
   if( rxNbt == 0 )
   {
     factorI = SetFactorDefaultI();  // коэффициент преобразования в миллиамперы
-    txReplay( 1, 0x00 );            // подтверждение
+    prepReply( 1, 0x00 );            // подтверждение
   }
-  else  txReplay(1, err_tx);        // ошибка протокола
+  else  prepReply(1, err_tx);        // ошибка протокола
 }
 
   // 0x3B Чтение параметра сглаживания по току
@@ -281,9 +282,9 @@ void doGetSmoothI()
   {
     int id = 1;
     id = replyU08( id, smoothI ); 
-    txReplay( id, 0x00 );            // Об ошибках параметров не сообщается
+    prepReply( id, 0x00 );            // Об ошибках параметров не сообщается
   }
-  else  txReplay(1, err_tx);        // ошибка протокола
+  else  prepReply(1, err_tx);        // ошибка протокола
 }
 
   // 0x3C Запись параметра сглаживания по току
@@ -293,9 +294,9 @@ void doSetSmoothI()
   {
     uint8_t val = rxDat[0];      // 0...8: 0, 2, 4, 8 ... 
     ( val >= 8 ) ? smoothI = 8 : smoothI = val;
-    txReplay( 1, 0x00 );            // Об ошибках параметров не сообщается
+    prepReply( 1, 0x00 );            // Об ошибках параметров не сообщается
   }
-  else  txReplay(1, err_tx);        // ошибка протокола
+  else  prepReply(1, err_tx);        // ошибка протокола
 }
 
   // 0x3D Чтение приборного смещения, мA 
@@ -305,9 +306,9 @@ void doGetOffsetI()
   {
     int id = 1;
     id = replyU16( id, offsetI );   // смещение, мА
-    txReplay( id, 0x00 );           // подтверждение
+    prepReply( id, 0x00 );           // подтверждение
   }
-  else  txReplay(1, err_tx);        // ошибка протокола
+  else  prepReply(1, err_tx);        // ошибка протокола
 }
 
   // 0x3E Запись приборного смещения, мА
@@ -316,9 +317,9 @@ void doSetOffsetI()
   if( rxNbt == 2 )
   {
     offsetU = get16(0);             // смещение, мА
-    txReplay( 1, 0x00 );            // подтверждение
+    prepReply( 1, 0x00 );            // подтверждение
   }
-  else  txReplay(1, err_tx);        // ошибка протокола
+  else  prepReply(1, err_tx);        // ошибка протокола
 }
 
 // 0x50 Чтение измерений  в HEX и состояний
@@ -331,9 +332,9 @@ void doReadProbes()
     id = replyU16( id, adcCurrent );
     id = replyU08( id, state1 );      // информация о состоянии 
     id = replyU08( id, state2 );      // информация о состоянии 
-    txReplay( id, 0x00 );             // всего байт, в нулевом - сообщение об ошибках(нет)
+    prepReply( id, 0x00 );             // всего байт, в нулевом - сообщение об ошибках(нет)
   }
-  else  txReplay(1, err_tx);          // ошибка протокола
+  else  prepReply(1, err_tx);          // ошибка протокола
 }
 
   // 0x51 Чтение смещения АЦП
@@ -344,9 +345,9 @@ void doAdcGetOffset()
     powerStop();
     int id = 1;
     id = replyU16( id, uint16_t( adcOffset ) ); 
-    txReplay( id, 0x00 );            // Об ошибках параметров не сообщается
+    prepReply( id, 0x00 );            // Об ошибках параметров не сообщается
   }
-  else  txReplay(1, err_tx);        // ошибка протокола
+  else  prepReply(1, err_tx);        // ошибка протокола
 }
 
   // 0x52 Запись смещения АЦП
@@ -356,9 +357,9 @@ void doAdcSetOffset()
   {
     powerStop();
     adcOffset = int16_t( get16(0) );
-    txReplay( 1, 0x00 );            // Об ошибках параметров не сообщается
+    prepReply( 1, 0x00 );            // Об ошибках параметров не сообщается
   }
-  else  txReplay(1, err_tx);        // ошибка протокола
+  else  prepReply(1, err_tx);        // ошибка протокола
 }
 
 
@@ -371,9 +372,9 @@ void doGetWinLtU()
   {
     int id = 1;
     id = replyU16( id, uint16_t( winLtU ) ); 
-    txReplay( id, 0x00 );            // Об ошибках параметров не сообщается
+    prepReply( id, 0x00 );            // Об ошибках параметров не сообщается
   }
-  else  txReplay(1, err_tx);        // ошибка протокола
+  else  prepReply(1, err_tx);        // ошибка протокола
 }
 
   // 0x61 Запись предела напряжения снизу 
@@ -382,9 +383,9 @@ void doSetWinLtU()
   if( rxNbt == 2 )
   {
     winLtU = int16_t( get16(0) );
-    txReplay( 1, 0x00 );            // Об ошибках параметров не сообщается
+    prepReply( 1, 0x00 );            // Об ошибках параметров не сообщается
   }
-  else  txReplay(1, err_tx);        // ошибка протокола
+  else  prepReply(1, err_tx);        // ошибка протокола
 }
 
   // 0x62 Возврат к заводскому уровню
@@ -394,9 +395,9 @@ void doSetWinLtDefaultU()
   {
     int id = 1;
     winLtU = win_less_default_u;
-    txReplay( id, 0x00 );            // Об ошибках параметров не сообщается
+    prepReply( id, 0x00 );            // Об ошибках параметров не сообщается
   }
-  else  txReplay(1, err_tx);        // ошибка протокола
+  else  prepReply(1, err_tx);        // ошибка протокола
 }
 
   // 0x63 Чтение предела напряжения сверху 
@@ -406,9 +407,9 @@ void doGetWinUpU()
   {
     int id = 1;
     id = replyU16( id, uint16_t( winUpU ) ); 
-    txReplay( id, 0x00 );            // Об ошибках параметров не сообщается
+    prepReply( id, 0x00 );            // Об ошибках параметров не сообщается
   }
-  else  txReplay(1, err_tx);        // ошибка протокола
+  else  prepReply(1, err_tx);        // ошибка протокола
 }
 
   // 0x64 Запись предела напряжения сверху  
@@ -417,9 +418,9 @@ void doSetWinUpU()
   if( rxNbt == 2 )
   {
     winUpU = int16_t( get16(0) );
-    txReplay( 1, 0x00 );            // Об ошибках параметров не сообщается
+    prepReply( 1, 0x00 );            // Об ошибках параметров не сообщается
   }
-  else  txReplay(1, err_tx);        // ошибка протокола
+  else  prepReply(1, err_tx);        // ошибка протокола
 }
 
   // 0x65 Возврат к заводскому уровню 
@@ -429,9 +430,9 @@ void doSetWinUpDefaultU()
   {
     int id = 1;
     winUpU = win_up_default_u;
-    txReplay( id, 0x00 );            // Об ошибках параметров не сообщается
+    prepReply( id, 0x00 );            // Об ошибках параметров не сообщается
   }
-  else  txReplay(1, err_tx);        // ошибка протокола
+  else  prepReply(1, err_tx);        // ошибка протокола
 }
 
   // 0x68 Чтение предела тока снизу 
@@ -441,9 +442,9 @@ void doGetWinLtI()
   {
     int id = 1;
     id = replyU16( id, uint16_t( winLtI ) ); 
-    txReplay( id, 0x00 );            // Об ошибках параметров не сообщается
+    prepReply( id, 0x00 );            // Об ошибках параметров не сообщается
   }
-  else  txReplay(1, err_tx);        // ошибка протокола
+  else  prepReply(1, err_tx);        // ошибка протокола
 }
 
   // 0x69 Запись предела тока снизу  
@@ -452,9 +453,9 @@ void doSetWinLtI()
   if( rxNbt == 2 )
   {
     winLtI = int16_t( get16(0) );
-    txReplay( 1, 0x00 );            // Об ошибках параметров не сообщается
+    prepReply( 1, 0x00 );            // Об ошибках параметров не сообщается
   }
-  else  txReplay(1, err_tx);        // ошибка протокола
+  else  prepReply(1, err_tx);        // ошибка протокола
 }
 
   // 0x6A Возврат к заводскому уровню 
@@ -464,9 +465,9 @@ void doSetWinLtDefaultI()
   {
     int id = 1;
     winUpU = win_less_default_i;
-    txReplay( id, 0x00 );            // Об ошибках параметров не сообщается
+    prepReply( id, 0x00 );            // Об ошибках параметров не сообщается
   }
-  else  txReplay(1, err_tx);        // ошибка протокола
+  else  prepReply(1, err_tx);        // ошибка протокола
 }
 
   // 0x6B Чтение предела тока сверху 
@@ -476,9 +477,9 @@ void doGetWinUpI()
   {
     int id = 1;
     id = replyU16( id, uint16_t( winUpI ) ); 
-    txReplay( id, 0x00 );            // Об ошибках параметров не сообщается
+    prepReply( id, 0x00 );            // Об ошибках параметров не сообщается
   }
-  else  txReplay(1, err_tx);        // ошибка протокола
+  else  prepReply(1, err_tx);        // ошибка протокола
 }
 
   // 0x6C Запись предела тока сверху 
@@ -487,9 +488,9 @@ void doSetWinUpI()
   if( rxNbt == 2 )
   {
     winUpI = int16_t( get16(0) );
-    txReplay( 1, 0x00 );            // Об ошибках параметров не сообщается
+    prepReply( 1, 0x00 );            // Об ошибках параметров не сообщается
   }
-  else  txReplay(1, err_tx);        // ошибка протокола
+  else  prepReply(1, err_tx);        // ошибка протокола
 }
 
   // 0x6D Возврат к заводском
@@ -499,7 +500,7 @@ void doSetWinUpDefaultI()
   {
     int id = 1;
     winUpU = win_up_default_i;
-    txReplay( id, 0x00 );            // Об ошибках параметров не сообщается
+    prepReply( id, 0x00 );            // Об ошибках параметров не сообщается
   }
-  else  txReplay(1, err_tx);        // ошибка протокола
+  else  prepReply(1, err_tx);        // ошибка протокола
 }

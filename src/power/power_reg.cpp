@@ -246,14 +246,14 @@ void doPid( int16_t fbU, int16_t fbI )
       if( pidMode )                     // если не отключено pid-регулирование
       {
         // #ifdef OSC 
-        test2High();                        // Метка для осциллографа
+//       test2High();                        // Метка для осциллографа
         // #endif
         saveState(MODE_U);              // Сохранить регистры регулятора
         restoreState(MODE_I);           // Перейти к регулированию по току
         MyPid.setCoefficients( kP[MODE_I], kI[MODE_I], kD[MODE_I] );
         pidMode = MODE_I;
         // #ifdef OSC 
-        //test2Low();                         // Метка для осциллографа
+//        //test2Low();                         // Метка для осциллографа
         // #endif
       }
     }
@@ -280,7 +280,7 @@ void doPid( int16_t fbU, int16_t fbI )
       if( pidMode )                     // если не отключено 
       {
         //           #ifdef OSC 
-        test2Low();                       // Метка для осциллографа
+//        test2Low();                       // Метка для осциллографа
         //           #endif
         saveState(MODE_I);
         restoreState(MODE_U);
@@ -425,9 +425,9 @@ void doPowerGo()
     pidMode = MODE_U;             // U - начать с установки напряжения
 //    pidStatus = true;             // Разрешить регулирование
     swPinOn();                    // Коммутатор включен      (switchStatus = true;)
-    txReplay( 1, 0 );             // Команда исполнена (0x00)
+    prepReply( 1, 0 );             // Команда исполнена (0x00)
   }
-  else txReplay(1, err_tx);       // Сообщение об ошибке приема команды (0x01)
+  else prepReply(1, err_tx);       // Сообщение об ошибке приема команды (0x01)
 }
 
 // 0x21 Стоп заряд или разряд
@@ -436,9 +436,9 @@ void doPowerStop()
   if( rxNbt == 0 )
   {
     powerStop();              // Перевод в безопасное состояние
-    txReplay(1, 0);           // Команда исполнена (0x00)
+    prepReply(1, 0);           // Команда исполнена (0x00)
   }
-  else txReplay(1, err_tx);   // Сообщение об ошибке приема команды (0x01)
+  else prepReply(1, err_tx);   // Сообщение об ошибке приема команды (0x01)
 }
 
   // 0x22 пока не реализована
@@ -451,9 +451,9 @@ void  doSetPid()
     
 //SerialUSB.print("  0: 0x"); SerialUSB.println( _id, HEX );
 
-    txReplay( 1, _id );
+    prepReply( 1, _id );
   }
-    else txReplay(1, err_tx);       // Ошибка протокола
+    else prepReply(1, err_tx);       // Ошибка протокола
 } 
 
 // 0x40 Тестовая. Конфигурирование пид-регулятора
@@ -486,9 +486,9 @@ void doPidConfigure()
       SerialUSB.print(" kd: ");   SerialUSB.println( (float)((kD[m] / MPid::param_mult) / 10), 2 );
       //SerialUSB.print(" sign: "); SerialUSB.println( signOut[m] );
     #endif
-    txReplay( 1, 0 );  
+    prepReply( 1, 0 );  
   }
-  else  txReplay(1, err_tx);
+  else  prepReply(1, err_tx);
 }
 
 // 0x41 Тестовая: ввод коэффициентов kp, ki, kd для заданного режима
@@ -517,9 +517,9 @@ void doPidSetCoefficients()
       SerialUSB.print(" kd: ");   SerialUSB.println( (float)((kD[m] / MPid::param_mult) / 10), 2 );
     #endif
 
-    txReplay( 1, 0 );             // только подтверждение
+    prepReply( 1, 0 );             // только подтверждение
   }
-  else txReplay(1, err_tx);       // Ошибка протокола
+  else prepReply(1, err_tx);       // Ошибка протокола
 }
 
 // 0x42 Тестовая: ввод диапазона вывода
@@ -540,9 +540,9 @@ void doPidOutputRange()
     default:       break;
     }
     
-    txReplay( 1, 0 );
+    prepReply( 1, 0 );
   }
-  else txReplay(1, err_tx);
+  else prepReply(1, err_tx);
 }
 
 // 0x43 Тестовая: set as 0x40 w/o clear
@@ -574,9 +574,9 @@ void doPidReconfigure()
       SerialUSB.print(" kd: ");   SerialUSB.println( (float)((kD[m] / MPid::param_mult) / 10), 2 );
       //SerialUSB.print(" sign: "); SerialUSB.println( signOut[m] );
     #endif
-    txReplay( 1, 0 );  
+    prepReply( 1, 0 );  
   }
-  else  txReplay(1, err_tx);
+  else  prepReply(1, err_tx);
 }
 
 // 0x44 Очистка регистров регулятора
@@ -594,9 +594,9 @@ void doPidClear()
     default:       break;
     }
 
-    txReplay(1, 0);
+    prepReply(1, 0);
   }
-  else txReplay(1, err_tx);
+  else prepReply(1, err_tx);
 }
 
   // 0x46 Тестовая. Тест пид-регулятора
@@ -633,10 +633,10 @@ void doPidTest()
       //SerialUSB.print("max: 0x"); SerialUSB.println( maxOut[m], HEX );
     #endif
     }
-    txReplay( 1, 0 );               // только подтверждение
+    prepReply( 1, 0 );               // только подтверждение
   
   }
-  else txReplay(1, err_tx);         // Ошибка протокола     
+  else prepReply(1, err_tx);         // Ошибка протокола     
 }
 
 //   // 0x47 Конфигурирование pwm-регулятора Out (C_47_pwmConf.wak)
@@ -651,9 +651,9 @@ void doPidTest()
 //     pwmStepsOut   = get16(2);                // s - задать steps (частоту)
 //     goPwmOut();
 
-//     txReplay( 1, err );  
+//     prepReply( 1, err );  
 //   }
-//   else txReplay(1, err_tx);
+//   else prepReply(1, err_tx);
 // }
 
 // 0x48 Возвращает параметры текущего режима регулирования
@@ -670,9 +670,9 @@ void doPidGetConfigure()
     id = replyU16( id, (uint16_t)minOut[pidMode] );
     id = replyU16( id, (uint16_t)maxOut[pidMode] );
 
-    txReplay( id, 0 );   // всего байт, в нулевом - сообщение об ошибках (подтверждение)
+    prepReply( id, 0 );   // всего байт, в нулевом - сообщение об ошибках (подтверждение)
   }
-  else txReplay(1, err_tx);    // ошибка протокола (пакет не полный)
+  else prepReply(1, err_tx);    // ошибка протокола (пакет не полный)
 }
 
 // 0x49 Задает максимальный интеграл при вычислении шага регулирования
@@ -691,9 +691,9 @@ void doPidSetMaxSum()
     //   SerialUSB.print(" kd: ");   SerialUSB.println( (float)((kD[m] / MPid::param_mult) / 10), 2 );
     // #endif
 
-    txReplay( 1, 0 );             // только подтверждение
+    prepReply( 1, 0 );             // только подтверждение
   }
-  else txReplay(1, err_tx);       // Ошибка протокола
+  else prepReply(1, err_tx);       // Ошибка протокола
 }
 
 // // 0x4A Конфигурирование pwm-регулятора Cool (C_4A_pwmConfCool.wak)
@@ -708,9 +708,9 @@ void doPidSetMaxSum()
 //     pwmStepsCool   = get16(2);                // s - задать steps (частоту)
 //     goPwmCool();
 
-//     txReplay( 1, err );  
+//     prepReply( 1, err );  
 //   }
-//   else txReplay(1, err_tx);
+//   else prepReply(1, err_tx);
 // }
 
 // 0x4F Задать скорость вентилятора
@@ -720,9 +720,9 @@ void doCooler()
   {
         powerStop();                    // Перевод в безопасное состояние
     writePwmCool(get16(0));         // 0...1000
-    txReplay( 1, 0x00 );            // подтверждение
+    prepReply( 1, 0x00 );            // подтверждение
   }
-  else txReplay(1, err_tx);        // ошибка протокола
+  else prepReply(1, err_tx);        // ошибка протокола
 }
 
 
@@ -735,9 +735,9 @@ void doSurgeCompensation()
     surgeVoltage = get16(0);        // Милливольты превышения
     surgeCurrent = get16(2);        // Ток в коде DAC
 
-    txReplay( 1, 0 );
+    prepReply( 1, 0 );
   }
-  else txReplay(1, err_tx);                    // ошибка протокола
+  else prepReply(1, err_tx);                    // ошибка протокола
 }
 
   // 0x5C задать параметры доп. нагрузки на ХХ
@@ -748,9 +748,9 @@ void doIdleLoad()
     //    powerStop();                    // Перевод в безопасное состояние
     idleCurrent  = get16(0);        // Минимальный ток, при котором не нужна дополнительная нагрузка 
     idleDac      = get16(2);        // Ток в коде DAC
-    txReplay( 1, 0 );
+    prepReply( 1, 0 );
   }
-  else txReplay(1, err_tx);                    // ошибка протокола
+  else prepReply(1, err_tx);                    // ошибка протокола
 }
 
 
@@ -789,9 +789,9 @@ void doSwPin()
       switchStatus          = true;  // коммутатор включен
     }
 
-    txReplay( 1, 0 );         // Подтверждение
+    prepReply( 1, 0 );         // Подтверждение
   }
-  else txReplay(1, err_tx);   // ошибка протокола  
+  else prepReply(1, err_tx);   // ошибка протокола  
 }
 
   // Команда 0x56. Для проверки пределов регулирования преобразователя снизу. 
@@ -827,9 +827,9 @@ void setPower()
       SerialUSB.print( "  mA: " );  SerialUSB.println( maCurrent );
     #endif
 
-    txReplay( 1, 0 );         // Подтверждение
+    prepReply( 1, 0 );         // Подтверждение
   }
-  else txReplay(1, err_tx);   // ошибка протокола
+  else prepReply(1, err_tx);   // ошибка протокола
 }
 
 // Команда 0x57 - проверка управления цепью разряда.
@@ -867,9 +867,9 @@ void setDischg()
 //      SerialUSB.println( proc );
     #endif
 
-    txReplay( 1, err );         // Подтверждение
+    prepReply( 1, err );         // Подтверждение
   }
-  else txReplay(1, err_tx);   // ошибка протокола
+  else prepReply(1, err_tx);   // ошибка протокола
 }
 
   // 0x58 Включение и поддержание заданного напряжение в мВ
@@ -949,9 +949,9 @@ void doSetVoltage()
     // Подготовить 3 байта ответа: 0 - нет ошибок и setpoint
     int id = 1;
     id =  replyU16(id, sp);
-    txReplay( id, txDat[0] ); 
+    prepReply( id, txDat[0] ); 
   }
-  else txReplay(1, err_tx);                   // ошибка протокола
+  else prepReply(1, err_tx);                   // ошибка протокола
 } // !doSetVoltage()
 
   // 0x59 задать ток в мА и включить
@@ -1017,11 +1017,11 @@ void doSetCurrent()
     txDat[1] = ( _value >> 8) & 0xFF;      // Hi
     txDat[2] =   _value & 0xFF;            // Lo
     txNbt = 3;
-    txReplay( txNbt, txDat[0] ); 
+    prepReply( txNbt, txDat[0] ); 
   }
   else
   {
-    txReplay(1, err_tx);                   // ошибка протокола
+    prepReply(1, err_tx);                   // ошибка протокола
   }
 } // !doSetCurrent()
 
@@ -1059,7 +1059,7 @@ void doSetDiscurrent()
       setpoint[m] = get16(1);       // Вводится абсолютное значение
     }
   
-    txReplay( 1, 0 ); 
+    prepReply( 1, 0 ); 
   }
-  else  txReplay(1, err_tx);                    // ошибка протокола
+  else  prepReply(1, err_tx);                    // ошибка протокола
 }
