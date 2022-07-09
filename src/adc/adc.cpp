@@ -1,5 +1,5 @@
 /*
-  Версия от 03 июля 2022г.
+  Версия от 09 июля 2022г.
   Измерители тока и напряжения дифференциальные.
   Датчики опрашиваются с частотой 1кГц.
   По обоим датчикам максимально общие настройки. 
@@ -16,7 +16,7 @@
 */
 
 #include <Arduino.h>
-  #include "wake/wake.h"
+#include "wake/wake.h"
 #include "atsamd21_adc.h"
 #include "adc/adc.h"
 #include "power/power_reg.h"
@@ -25,7 +25,7 @@
 #include "merrors.h"
 #include "stdint.h"
 
-constexpr uint16_t measurement_period = 1000UL;                   // Период запуска измерителя в микросекундах (1kHz)
+constexpr uint16_t measurement_period = 1000UL;                 // Период запуска измерителя в микросекундах (1kHz)
 constexpr uint16_t pid_period = 100000UL / measurement_period;  // Период запуска pid-регулятора в тактах измерителя (10Hz)
 
 #ifdef DEBUG_ADC_TIME
@@ -112,15 +112,6 @@ int16_t winUpU = win_up_default_u;
 int16_t winLtI = win_less_default_i;
 int16_t winUpI = win_up_default_i;
 
-// Максимальное значение ADC после автоматической обработки
-// при выборе 16-битного разрешения (adcBits=0x01)
-//constexpr uint16_t maxVal = 4096;
-
-//int16_t measureU();
-//int16_t measureI();
-
-//byte allowReply = false;
-
   // Инициализация измерений
 void initMeasure()
 {
@@ -202,17 +193,7 @@ void measure()
   static uint16_t pp = 0;                       // счетчик отсчета периода запуска пид-регулятора
   uint32_t ms = micros() - ts;
 
-  if(ms >= measurement_period >>2)
-    {
-      //allowReply = false;
-test2Low();
-    }
-    else
-    {
-      //allowReply = true;
-      replyExe();
-test2High();
-    }
+  if(ms < measurement_period >>2)  replyExe();  // Разрешена передача ответа
 
   if(ms >= measurement_period)
   { 

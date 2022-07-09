@@ -1,6 +1,6 @@
 /*
  *
- *
+ *  20220709
  */
 
 #ifndef _WAKE_H_
@@ -35,19 +35,15 @@ void wakeInit( uint8_t addr, long time );
 void wakeRead();
 void replyExe();
 void prepReply(uint8_t, uint8_t);
-void txReplay(uint8_t n, uint8_t err);          // передача ответа на команду
-
 
 int replyU08(int id, uint8_t  value);
 int replyU16(int id, uint16_t value);
 int replyU32(int id, uint32_t value);
-
 
 uint16_t get08(int id);
 uint16_t get16(int id);
 
 float getF16(int i);
 int32_t getI32(int i);
-// void testReply( int n );                        // тест отправить n байт из буфера приемника
 
 #endif //!_WAKE_H_

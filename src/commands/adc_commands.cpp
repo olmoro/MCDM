@@ -58,96 +58,81 @@ extern int16_t winLtI;
 extern int16_t winUpU;
 extern int16_t winUpI;
 
-
-  // comm 0x51, 0x52, 0x53 настройки АЦП
-// extern uint8_t adcRef     [];     // опорное напряжение
-// extern uint8_t adcGain    [];     // усиление
-// extern uint8_t adcBits    [];     // 0x00(12), 0x01(16), 0x02(10), 0x03(8)
-// extern uint8_t adcSamples [];     // 0x00 ... 0x0a (1, 2, 4, 8 ... 1024)
-// extern uint8_t adcDivider [];     // 0x00 ... 0x07 (2^0, 2^1, 2^2 ... 2^7)
-// extern uint8_t adcRefComp [];     // 0x00, 0x01  Это резервная позиция
-// //extern int16_t adcOffset  [];     // if disable the reference buffer offset compensation
-// extern uint8_t adcGainComp[];     // Gain compensation << 0, << 2
-
-// extern uint8_t refComp;
-
-
 // 0x10 Чтение текущих напряжения, тока и состояний 
-//void doReadUI()
 void doGetUIS()
 {
-  if( rxNbt == 0 )
+  if(rxNbt == 0)
   {
     int id = 1;
-    id = replyU16( id, (uint16_t)mvVoltage );
-    id = replyU16( id, (uint16_t)maCurrent );
-    id = replyU08( id, state1 );              // информация о состоянии 
-    id = replyU08( id, state2 );              // информация о состоянии 
-    prepReply( id, 0 );                        // всего байт, в нулевом - сообщение об ошибках (nu)
+    id = replyU16(id, (uint16_t)mvVoltage);
+    id = replyU16(id, (uint16_t)maCurrent);
+    id = replyU08(id, state1);                // информация о состоянии 
+    id = replyU08(id, state2);                // информация о состоянии 
+    prepReply(id, 0);                         // всего байт, в нулевом - сообщение об ошибках (nu)
   }
-  else  prepReply(1, err_tx);                  // ошибка протокола
+  else prepReply(1, err_tx);                  // ошибка протокола
 }
 
 // 0x11 читать текущее напряжение (мВ)
 void doGetU()  
 {
-  if( rxNbt == 0 )
+  if(rxNbt == 0)
   {
     int id = 1;
-    id = replyU16( id, (uint16_t)mvVoltage );
-    prepReply( id, 0 );                        // всего байт, в нулевом - сообщение об ошибках (nu)
+    id = replyU16(id, (uint16_t)mvVoltage);
+    prepReply(id, 0);                         // всего байт, в нулевом - сообщение об ошибках (nu)
   }
-  else  prepReply(1, err_tx);                  // ошибка протокола
+  else prepReply(1, err_tx);                  // ошибка протокола
 }
 
 // 0x12 читать текущий ток (мА)
 void doGetI()
 {
-  if( rxNbt == 0 )
+  if(rxNbt == 0)
   {
     int id = 1;
-    id = replyU16( id, (uint16_t)maCurrent );
-    prepReply( id, 0 );                        // всего байт, в нулевом - сообщение об ошибках (nu)
+    id = replyU16(id, (uint16_t)maCurrent);
+    prepReply(id, 0);                         // всего байт, в нулевом - сообщение об ошибках (nu)
   }
-  else  prepReply(1, err_tx);                  // ошибка протокола
+  else prepReply(1, err_tx);                  // ошибка протокола
 }
 
 // 0x13 читать текущее напряжение (мВ) и ток (мА)
 void doGetUI()
 {
-  if( rxNbt == 0 )
+  if(rxNbt == 0)
   {
     int id = 1;
-    id = replyU16( id, (uint16_t)mvVoltage );
-    id = replyU16( id, (uint16_t)maCurrent );
-    prepReply( id, 0 );                        // всего байт, в нулевом - сообщение об ошибках (nu)
+    id = replyU16(id, (uint16_t)mvVoltage);
+    id = replyU16(id, (uint16_t)maCurrent);
+    prepReply( id, 0);                        // всего байт, в нулевом - сообщение об ошибках (nu)
   }
-  else  prepReply(1, err_tx);                  // ошибка протокола
+  else prepReply(1, err_tx);                  // ошибка протокола
 }
 
 // 0x14 читать текущее состояние
 void doGetState()
 {
-  if( rxNbt == 0 )
+  if(rxNbt == 0)
   {
     int id = 1;
-    id = replyU08( id, state1 );              // информация о состоянии 
-    id = replyU08( id, state2 );              // информация о состоянии 
-    prepReply( id, 0 );                        // всего байт, в нулевом - сообщение об ошибках (nu)
+    id = replyU08(id, state1);                // информация о состоянии 
+    id = replyU08(id, state2);                // информация о состоянии 
+    prepReply(id, 0);                         // всего байт, в нулевом - сообщение об ошибках (nu)
   }
-  else  prepReply(1, err_tx);                  // ошибка протокола
+  else prepReply(1, err_tx);                  // ошибка протокола
 }
 
 // 0x15 читать температуру радиатора
 void doCelsius()
 {
-  if( rxNbt == 0 )
+  if(rxNbt == 0)
   {
     int id = 1;
-    id = replyU16( id, (uint16_t)adcCelsius );  // Без пересчета в градусы
-    prepReply( id, 0 );                        // всего байт, в нулевом - сообщение об ошибках (nu)
+    id = replyU16(id, (uint16_t)adcCelsius);  // Без пересчета в градусы
+    prepReply(id, 0);                         // всего байт, в нулевом - сообщение об ошибках (nu)
   }
-  else  prepReply(1, err_tx);                  // ошибка протокола
+  else prepReply(1, err_tx);                  // ошибка протокола
 }
 
 
@@ -157,13 +142,13 @@ void doCelsius()
   // 0x30 Чтение калибровки измерителя напряжения
 void doGetFactorU()
 {
-  if( rxNbt == 0 )
+  if(rxNbt == 0)
   {
     int id = 1;
-    id = replyU16( id, factorU );   // коэффициент преобразования в милливольты
-    prepReply( id, 0x00 );           // подтверждение
+    id = replyU16(id, factorU);               // коэффициент преобразования в милливольты
+    prepReply(id, 0x00);                      // подтверждение
   }
-  else  prepReply(1, err_tx);        // ошибка протокола
+  else prepReply(1, err_tx);                  // ошибка протокола
 } 
 
   // 0x31 Запись калибровки измерителя напряжения
@@ -171,35 +156,35 @@ void doGetFactorU()
   // Ответ:  0xC0 0x31 0x01 0x00 0x9C
 void doSetFactorU()
 {
-  if( rxNbt == 2 )
+  if(rxNbt == 2)
   {
-    factorU = get16(0);             // коэффициент преобразования в милливольты
-    prepReply( 1, 0x00 );            // подтверждение
+    factorU = get16(0);                       // коэффициент преобразования в милливольты
+    prepReply(1, 0x00);                       // подтверждение
   }
-  else  prepReply(1, err_tx);        // ошибка протокола
+  else prepReply(1, err_tx);                  // ошибка протокола
 }
 
   // 0x32 Возврат к заводскому
 void doSetFactorDefaultU()
 {
-  if( rxNbt == 0 )
+  if(rxNbt == 0)
   {
-    factorU = SetFactorDefaultU();  // коэффициент преобразования в милливольты
-    prepReply( 1, 0x00 );            // подтверждение
+    factorU = SetFactorDefaultU();            // коэффициент преобразования в милливольты
+    prepReply(1, 0x00);                       // подтверждение
   }
-  else  prepReply(1, err_tx);        // ошибка протокола
+  else prepReply(1, err_tx);                  // ошибка протокола
 }
 
   // 0x33 Читать параметр сглаживания по напряжению
 void doGetSmoothU()
 {
-  if( rxNbt == 0 )
+  if(rxNbt == 0)
   {
     int id = 1;
-    id = replyU08( id, smoothU ); 
-    prepReply( id, 0x00 );            // Об ошибках параметров не сообщается
+    id = replyU08(id, smoothU); 
+    prepReply(id, 0x00);                      // Об ошибках параметров не сообщается
   }
-  else  prepReply(1, err_tx);        // ошибка протокола
+  else prepReply(1, err_tx);                  // ошибка протокола
 }
 
   // 0x34 Записать параметр сглаживания по напряжению
@@ -207,25 +192,25 @@ void doGetSmoothU()
   // Ответ:  0xC0 0x34 0x01 0x00 0x9C               ???? байт!
 void doSetSmoothU()
 {
-  if( rxNbt == 1 )
+  if(rxNbt == 1)
   {
-    uint8_t val = rxDat[0];      // 0...8: 0, 2, 4, 8 ... 
-    ( val >= 8 ) ? smoothU = 8 : smoothU = val;
-    prepReply( 1, 0x00 );            // Об ошибках параметров не сообщается
+    uint8_t val = rxDat[0];                   // 0...8: 0, 2, 4, 8 ... 
+    (val >= 8) ? smoothU = 8 : smoothU = val;
+    prepReply(1, 0x00);                       // Об ошибках параметров не сообщается
   }
-  else  prepReply(1, err_tx);        // ошибка протокола
+  else prepReply(1, err_tx);                  // ошибка протокола
 }
 
   // 0x35 Чтение приборного смещения, мВ 
 void doGetOffsetU()
 {
-  if( rxNbt == 0 )
+  if(rxNbt == 0)
   {
     int id = 1;
-    id = replyU16( id, offsetU );   // смещение, мВ
-    prepReply( id, 0x00 );           // подтверждение
+    id = replyU16(id, offsetU);               // смещение, мВ
+    prepReply(id, 0x00);                      // подтверждение
   }
-  else  prepReply(1, err_tx);        // ошибка протокола
+  else prepReply(1, err_tx);                  // ошибка протокола
 }
 
   // 0x36 Запись приборного смещения, мВ
@@ -233,133 +218,133 @@ void doGetOffsetU()
   // Ответ:  0xC0 0x36 0x01 0x00 0xE6
 void doSetOffsetU()
 {
-  if( rxNbt == 2 )
+  if(rxNbt == 2)
   {
-    offsetU = get16(0);             // смещение, мВ
-    prepReply( 1, 0x00 );            // подтверждение
+    offsetU = get16(0);                       // смещение, мВ
+    prepReply(1, 0x00);                       // подтверждение
   }
-  else  prepReply(1, err_tx);        // ошибка протокола
+  else prepReply(1, err_tx);                  // ошибка протокола
 }
 
   // 0x38 Чтение калибровки измерителя тока
 void doGetFactorI()
 {
-  if( rxNbt == 0 )
+  if(rxNbt == 0)
   {
     int id = 1;
-    id = replyU16( id, factorI );   // коэффициент преобразования в миллиамперы
-    prepReply( id, 0x00 );           // подтверждение
+    id = replyU16(id, factorI);               // коэффициент преобразования в миллиамперы
+    prepReply(id, 0x00);                      // подтверждение
   }
-  else  prepReply(1, err_tx);        // ошибка протокола
+  else prepReply(1, err_tx);                  // ошибка протокола
 }
 
   // 0x39 Запись калибровки измерителя тока
 void doSetFactorI()
 {
-  if( rxNbt == 2 )
+  if(rxNbt == 2)
   {
-    factorI = get16(0);             // коэффициент преобразования в миллиамперы
-    prepReply( 1, 0x00 );            // подтверждение
+    factorI = get16(0);                       // коэффициент преобразования в миллиамперы
+    prepReply(1, 0x00);                       // подтверждение
   }
-  else  prepReply(1, err_tx);        // ошибка протокола
+  else prepReply(1, err_tx);                  // ошибка протокола
 }
 
   // 0x3A Возврат к заводскому множителю
 void doSetFactorDefaultI()
 {
-  if( rxNbt == 0 )
+  if(rxNbt == 0)
   {
-    factorI = SetFactorDefaultI();  // коэффициент преобразования в миллиамперы
-    prepReply( 1, 0x00 );            // подтверждение
+    factorI = SetFactorDefaultI();            // коэффициент преобразования в миллиамперы
+    prepReply(1, 0x00);                       // подтверждение
   }
-  else  prepReply(1, err_tx);        // ошибка протокола
+  else prepReply(1, err_tx);                  // ошибка протокола
 }
 
   // 0x3B Чтение параметра сглаживания по току
 void doGetSmoothI()
 {
-  if( rxNbt == 0 )
+  if(rxNbt == 0)
   {
     int id = 1;
-    id = replyU08( id, smoothI ); 
-    prepReply( id, 0x00 );            // Об ошибках параметров не сообщается
+    id = replyU08(id, smoothI); 
+    prepReply(id, 0x00);                      // Об ошибках параметров не сообщается
   }
-  else  prepReply(1, err_tx);        // ошибка протокола
+  else prepReply(1, err_tx);                  // ошибка протокола
 }
 
   // 0x3C Запись параметра сглаживания по току
 void doSetSmoothI()
 {
-  if( rxNbt == 1 )
+  if(rxNbt == 1)
   {
-    uint8_t val = rxDat[0];      // 0...8: 0, 2, 4, 8 ... 
-    ( val >= 8 ) ? smoothI = 8 : smoothI = val;
-    prepReply( 1, 0x00 );            // Об ошибках параметров не сообщается
+    uint8_t val = rxDat[0];                   // 0...8: 0, 2, 4, 8 ... 
+    (val >= 8) ? smoothI = 8 : smoothI = val;
+    prepReply(1, 0x00);                       // Об ошибках параметров не сообщается
   }
-  else  prepReply(1, err_tx);        // ошибка протокола
+  else prepReply(1, err_tx);                  // ошибка протокола
 }
 
   // 0x3D Чтение приборного смещения, мA 
 void doGetOffsetI()
 {
-  if( rxNbt == 0 )
+  if(rxNbt == 0)
   {
     int id = 1;
-    id = replyU16( id, offsetI );   // смещение, мА
-    prepReply( id, 0x00 );           // подтверждение
+    id = replyU16(id, offsetI);               // смещение, мА
+    prepReply(id, 0x00);                      // подтверждение
   }
-  else  prepReply(1, err_tx);        // ошибка протокола
+  else prepReply(1, err_tx);                  // ошибка протокола
 }
 
   // 0x3E Запись приборного смещения, мА
 void doSetOffsetI()
 {
-  if( rxNbt == 2 )
+  if(rxNbt == 2)
   {
-    offsetU = get16(0);             // смещение, мА
-    prepReply( 1, 0x00 );            // подтверждение
+    offsetU = get16(0);                       // смещение, мА
+    prepReply(1, 0x00);                       // подтверждение
   }
-  else  prepReply(1, err_tx);        // ошибка протокола
+  else prepReply(1, err_tx);                  // ошибка протокола
 }
 
 // 0x50 Чтение измерений  в HEX и состояний
 void doReadProbes()
 {
-  if( rxNbt == 0 )
+  if(rxNbt == 0)
   {
     int id = 1;
-    id = replyU16( id, adcVoltage );
-    id = replyU16( id, adcCurrent );
-    id = replyU08( id, state1 );      // информация о состоянии 
-    id = replyU08( id, state2 );      // информация о состоянии 
-    prepReply( id, 0x00 );             // всего байт, в нулевом - сообщение об ошибках(нет)
+    id = replyU16(id, adcVoltage);
+    id = replyU16(id, adcCurrent);
+    id = replyU08(id, state1);                // информация о состоянии 
+    id = replyU08(id, state2);                // информация о состоянии 
+    prepReply(id, 0x00);                      // всего байт, в нулевом - сообщение об ошибках(нет)
   }
-  else  prepReply(1, err_tx);          // ошибка протокола
+  else prepReply(1, err_tx);                  // ошибка протокола
 }
 
   // 0x51 Чтение смещения АЦП
 void doAdcGetOffset()
 {
-  if( rxNbt == 0 )
+  if(rxNbt == 0)
   {
     powerStop();
     int id = 1;
-    id = replyU16( id, uint16_t( adcOffset ) ); 
-    prepReply( id, 0x00 );            // Об ошибках параметров не сообщается
+    id = replyU16( id, uint16_t(adcOffset) ); 
+    prepReply(id, 0x00);                      // Об ошибках параметров не сообщается
   }
-  else  prepReply(1, err_tx);        // ошибка протокола
+  else prepReply(1, err_tx);                  // ошибка протокола
 }
 
   // 0x52 Запись смещения АЦП
 void doAdcSetOffset()
 {
-  if( rxNbt == 2 )
+  if(rxNbt == 2)
   {
     powerStop();
-    adcOffset = int16_t( get16(0) );
-    prepReply( 1, 0x00 );            // Об ошибках параметров не сообщается
+    adcOffset = int16_t(get16(0));
+    prepReply(1, 0x00);                       // Об ошибках параметров не сообщается
   }
-  else  prepReply(1, err_tx);        // ошибка протокола
+  else prepReply(1, err_tx);                  // ошибка протокола
 }
 
 

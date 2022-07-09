@@ -30,7 +30,7 @@ void setup()
   while(!Serial1);
 
   portsInit();
-  wakeInit( 0x00, 500 );            // обмен без адреса, время ожидания 500 ms
+  wakeInit(0x00, 5);                // обмен без адреса, время ожидания 5 ms
 //initAdc(0);                       // не обязательно
   initMeasure();
   initPids();                       // 

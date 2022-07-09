@@ -1,6 +1,6 @@
 /*
   Команды, доступные по UART
-  Версия от 05 мая 2022г.
+  Версия от 09 июля 2022г.
 */
 
 #include "commands.h"
@@ -13,10 +13,10 @@
 #include <Arduino.h>
 
 // Имя устройства
-static constexpr char Info[] = {"MCDM Rev20220703\n\0"};   //
+static constexpr char Info[] = {"MCDM Rev20220709\n\0"};   //
 
   // state1
-bool switchStatus          = false;  // коммутатор выключен ( sw_pin PA14 ) // ???
+bool switchStatus          = false;  // коммутатор выключен ( sw_pin )
 bool powerStatus           = false;  // преобразователь выключен
 bool currentControlStatus  = false;  // регулирование по току отключено
 bool voltageControlStatus  = false;  // регулирование по напряжению отключено
@@ -51,10 +51,7 @@ const uint8_t cmd_power_stop                = 0x21; // отключение ( и
 
 const uint8_t cmd_set_pid                   = 0x22; // set all parameters (в разработке)
 
-
-
-
-  // Команды работы с измерителем напряжения
+// ============== Команды работы с измерителем напряжения ============== 
   // Множитель преобразования в милливольты
 const uint8_t cmd_get_factor_u              = 0x30; // Чтение
 const uint8_t cmd_set_factor_u              = 0x31; // Запись
@@ -66,9 +63,7 @@ const uint8_t cmd_set_smooth_u              = 0x34; // Запись
 const uint8_t cmd_get_offset_u              = 0x35; // Чтение
 const uint8_t cmd_set_offset_u              = 0x36; // Запись
 
-
-
-  // Команды работы с измерителем тока
+// ================= Команды работы с измерителем тока =================
   // Множитель преобразования в миллиамперы
 const uint8_t cmd_get_factor_i              = 0x38; // Чтение
 const uint8_t cmd_set_factor_i              = 0x39; // Запись
@@ -94,7 +89,7 @@ const uint8_t cmd_pid_set_max_sum           = 0x49; // Задает максим
 //const uint8_t cmd_                        = 0x4A; // 
 const uint8_t cmd_set_cooler                = 0x4F; // Задать скорость вентилятора
 
-  // АЦП - настройки
+// ========================== АЦП - настройки ==========================
 const uint8_t cmd_adc_read_probes           = 0x50; // Read all probes
 const uint8_t cmd_adc_get_offset            = 0x51; // Читать смещение АЦП
 const uint8_t cmd_adc_set_offset            = 0x52; // Записать смещение АЦП
@@ -159,8 +154,6 @@ void doCommand()
 {
   cmd = command;
 
-//SerialUSB.print("*");   // TEST
-
   if( cmd != cmd_nop)
   {
     #ifdef DEBUG_COMMANDS
@@ -177,11 +170,9 @@ void doCommand()
       case cmd_get_state:                 doGetState();               break;  // 0x14 Чтение состояние
       case cmd_get_celsius:               doCelsius();                break;  // 0x15 Чтение температуру радиатора
 
-
         // Команды управления
       case cmd_power_go:                  doPowerGo();                break;  // 0x20   57
       case cmd_power_stop:                doPowerStop();              break;  // 0x21   57 
-
       case cmd_set_pid:                   doSetPid();                 break;  // 0x22
 
         // Команды работы с измерителем напряжения 
@@ -245,10 +236,6 @@ void doCommand()
       case cmd_get_win_up_i:              doGetWinUpI();              break;  // 0x6B; 
       case cmd_set_win_up_i:              doSetWinUpI();              break;  // 0x6C;
       case cmd_set_win_up_default_i:      doSetWinUpDefaultI();       break;  // 0x6D; 
-
-
-
-
 
         // Команды универсальные
       case cmd_err:                       doErr();                    break;  // 0x01

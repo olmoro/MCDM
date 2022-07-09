@@ -12,7 +12,6 @@
 #include <Arduino.h>
 #include "wake/wake.h"
 
-
 uint8_t rxSta;        // состояние процесса приема пакета
 uint8_t rxPre;        // предыдущий принятый байт
 uint8_t rxAdd;        // адрес, с которым сравнивается принятый
@@ -75,7 +74,6 @@ void doCrc8(uint8_t b, uint8_t *crc)
     if((b ^ *crc) & 1) *crc = ((*crc ^ 0x18) >> 1) | 0x80;
      else *crc = (*crc >> 1) & ~0x80;
 }
-
 
 // Чение данных последовательного порта
 void wakeRead()
@@ -192,7 +190,6 @@ void wakeRead()
   }
 }
 
-
 // Передача пакета
 void wakeWrite()
 {
@@ -301,34 +298,25 @@ void wakeStartWrite()
 	}
 }
 
-  // Попытка передачи ответного пакета
+  // Подготовленные данные для ответа
+void prepReply(uint8_t n, uint8_t err)
+{
+  buffN   = n;
+  buffErr = err;
+}
+
+  // Передача ответного пакета 
 void replyExe()
 {
   if(command != cmd_nop)
   {
-    txReplay(buffN, buffErr);
+  txNbt     = buffN;              // количество байт
+  txDat[0]  = buffErr;            // код ошибки
+  txCmd     = command;            // команда
+  wakeStartWrite();               // инициализация передачи
+  command   = cmd_nop;            // команда обработана
   }
 }
-
-  //  prepReply()
-void prepReply(uint8_t n, uint8_t err)
-{
-  buffN = n;
-  buffErr = err;
-}
-
-
-
-// передача ответа на команду 
-void txReplay(uint8_t n, uint8_t err)
-{
-  txNbt = n;                      // количество байт
-  txDat[0] = err;                 // код ошибки
-  txCmd = command;                // команда
-  wakeStartWrite();               // инициализация передачи
-  command = cmd_nop;              // команда обработана
-}
-
 
 // ======== Запись в буфер передатчика ========
 // Ответить одним байтом
@@ -384,13 +372,3 @@ int32_t getI32(int i)
    
   return par; 
 }
-
-// void testReply( int rxNbt )
-// {
-//   for( int i = 0; i < rxNbt ; i++ )
-//   {
-//     txDat[i] = rxDat[i];
-//   }
-
-//   txReplay( rxNbt, txDat[0] );
-// }
