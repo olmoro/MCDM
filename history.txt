@@ -77,3 +77,8 @@ Flash: [=         ]   9.2% (used 24228 bytes from 262144 bytes)
 на этапе инициализации, заменяя параметры разработчика (defaults) 
 RAM:   [=         ]   9.5% (used 3120 bytes from 32768 bytes)
 Flash: [=         ]   8.7% (used 22692 bytes from 262144 bytes)
+
+14.07
+COM14 - OK
+RAM:   [=         ]   9.5% (used 3120 bytes from 32768 bytes)
+Flash: [=         ]   8.7% (used 22720 bytes from 262144 bytes)
