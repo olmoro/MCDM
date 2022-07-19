@@ -157,6 +157,8 @@ public:
 
   void setLastSp(int16_t sp);
   void setLastErr(int32_t err);
+
+  short getParamMult();
   
 private:
   void setCfgErr(); 

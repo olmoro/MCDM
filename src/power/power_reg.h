@@ -39,6 +39,7 @@ void doPidClear();                    // 0x44 Очистка регистров 
 void doPidTest();                     // 0x46 Тестовая. Тест пид-регулятора
 //void doPwmOut();                // 0x47 Конфигурирование pwm-регулятора Out
 //void doPwmCool();                // 0x4A Конфигурирование pwm-регулятора Cool
+void doPidGetParamMult();             // 0x47 Возвращает param_mult
 void doPidGetConfigure();             // 0x48 Возвращает параметры текущего режима регулирования
 void doPidSetMaxSum();                // 0x49 Задает максимальный интеграл при вычислении шага регулирования
 

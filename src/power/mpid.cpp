@@ -121,3 +121,5 @@ int16_t MPid::step(int16_t sp, int16_t fb)
 
   return rval;
 }
+
+short MPid::getParamMult() {return param_mult;}

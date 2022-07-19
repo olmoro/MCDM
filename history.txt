@@ -82,3 +82,8 @@ Flash: [=         ]   8.7% (used 22692 bytes from 262144 bytes)
 COM14 - OK
 RAM:   [=         ]   9.5% (used 3120 bytes from 32768 bytes)
 Flash: [=         ]   8.7% (used 22720 bytes from 262144 bytes)
+
+19.07
+Новая команда 0x47 отдает paramMult
+RAM:   [=         ]   9.5% (used 3120 bytes from 32768 bytes)
+Flash: [=         ]   8.7% (used 22784 bytes from 262144 bytes)

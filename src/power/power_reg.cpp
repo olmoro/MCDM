@@ -16,6 +16,7 @@
 //#include "eeprom/drvData.h"
 #include "power/mpwm.h"
 #include "power/power_reg.h"
+  #include "power/mpid.h"
 #include "commands/commands.h"
 #include "power/mpid.h"
 #include "stdint.h"
@@ -639,22 +640,18 @@ void doPidTest()
   else prepReply(1, err_tx);         // Ошибка протокола     
 }
 
-//   // 0x47 Конфигурирование pwm-регулятора Out (C_47_pwmConf.wak)
-// void doPwmOut()
-// {
-//   uint8_t err = 0x00;
-
-//   if( rxNbt == 4 )
-//   {
-//     pwmTurbo      = (bool)get08(0);          // t - False for 48MHz clock, true for 96MHz clock
-//     pwmTccdivOut  = (unsigned int)get08(1);  // d - задать делитель
-//     pwmStepsOut   = get16(2);                // s - задать steps (частоту)
-//     goPwmOut();
-
-//     prepReply( 1, err );  
-//   }
-//   else prepReply(1, err_tx);
-// }
+  // 0x47 
+void doPidGetParamMult()
+{
+  if( rxNbt == 0 )
+  {
+    powerStop();                    // Перевод в безопасное состояние
+    int id = 1;
+    id = replyU16(id, MyPid.getParamMult());
+    prepReply( 1, 0 );  
+  }
+  else prepReply(1, err_tx);
+}
 
 // 0x48 Возвращает параметры текущего режима регулирования
 void doPidGetConfigure()
