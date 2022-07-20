@@ -91,8 +91,8 @@ uint8_t smoothI = smooth_default_i;
   constexpr int16_t offset_default_i = -135;      //  ( неуточненное значение )
 #endif
 #ifdef COM7
-  constexpr int16_t offset_default_u =    0;
-  constexpr int16_t offset_default_i = -100;      //  2022.07.03
+  constexpr int16_t offset_default_u = 0;
+  constexpr int16_t offset_default_i = 0;      //  2022.07.03
 #endif
 int16_t offsetU = offset_default_u;
 int16_t offsetI = offset_default_i;
