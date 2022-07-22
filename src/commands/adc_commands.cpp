@@ -207,20 +207,20 @@ void doGetOffsetU()
   if(rxNbt == 0)
   {
     int id = 1;
-    id = replyU16(id, offsetU);               // смещение, мВ
+    id = replyU16(id, offsetU);               // смещение, adcV
     prepReply(id, 0x00);                      // подтверждение
   }
   else prepReply(1, err_tx);                  // ошибка протокола
 }
 
-  // 0x36 Запись приборного смещения, мВ
+  // 0x36 Запись приборного смещения, adcV
   // Запрос: 0xC0 0x36 0x03 0x00 0x00 0x89 0xC8
   // Ответ:  0xC0 0x36 0x01 0x00 0xE6
 void doSetOffsetU()
 {
   if(rxNbt == 2)
   {
-    offsetU = get16(0);                       // смещение, мВ
+    offsetU = get16(0);                       // смещение, adcV
     prepReply(1, 0x00);                       // подтверждение
   }
   else prepReply(1, err_tx);                  // ошибка протокола
@@ -284,24 +284,24 @@ void doSetSmoothI()
   else prepReply(1, err_tx);                  // ошибка протокола
 }
 
-  // 0x3D Чтение приборного смещения, мA 
+  // 0x3D Чтение приборного смещения, adcI
 void doGetOffsetI()
 {
   if(rxNbt == 0)
   {
     int id = 1;
-    id = replyU16(id, offsetI);               // смещение, мА
+    id = replyU16(id, offsetI);               // смещение, adcI
     prepReply(id, 0x00);                      // подтверждение
   }
   else prepReply(1, err_tx);                  // ошибка протокола
 }
 
-  // 0x3E Запись приборного смещения, мА
+  // 0x3E Запись приборного смещения, adcI
 void doSetOffsetI()
 {
   if(rxNbt == 2)
   {
-    offsetU = get16(0);                       // смещение, мА
+    offsetI = get16(0);                       // смещение, adcI
     prepReply(1, 0x00);                       // подтверждение
   }
   else prepReply(1, err_tx);                  // ошибка протокола

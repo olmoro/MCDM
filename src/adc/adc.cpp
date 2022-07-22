@@ -137,7 +137,8 @@ int16_t adcU()
   analogGain( 0x00 );           // +5us
   analogReference2( 0x03 );    // выбор опорного REFA
   // если analogReferenceCompensation(1) то без -adcOffset
-  adcVoltage = analogDifferentialRaw( MPins::bat_plus_mux, MPins::bat_minus_mux ) - adcOffset;    // Входы 4, 5
+  //adcVoltage = analogDifferentialRaw( MPins::bat_plus_mux, MPins::bat_minus_mux ) - adcOffset;    // Входы 4, 5
+  adcVoltage = analogDifferentialRaw( MPins::bat_plus_mux, MPins::bat_minus_mux ) + adcOffset;    // Входы 4, 5
   return adcVoltage;
 }
   // Инициализация и преобразование по входу датчика тока с учетом смещения АЦП
@@ -146,7 +147,8 @@ int16_t adcI()
   analogGain( 0x01 );
   analogReference2( 0x00 );    // выбор опорного INTREF 
   // если analogReferenceCompensation(1) то без -adcOffset
-  adcCurrent = analogDifferentialRaw( MPins::shunt_plus_mux, MPins::shunt_minus_mux ) - adcOffset;  // Входы 6, 7
+  //adcCurrent = analogDifferentialRaw( MPins::shunt_plus_mux, MPins::shunt_minus_mux ) - adcOffset;  // Входы 6, 7
+  adcCurrent = analogDifferentialRaw( MPins::shunt_plus_mux, MPins::shunt_minus_mux ) + adcOffset;  // Входы 6, 7
   return adcCurrent;
 }
 
